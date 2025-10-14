@@ -117,25 +117,53 @@ protected:
 };
 
 // 二维向量
-class FVector2 : public FVector<float, 2>
+class FVector2
 {
 public:
-	explicit FVector2(float x = 0, float y = 0)
+	FVector2(float x = 0, float y = 0)
 	{
 		Data_[0] = x;
 		Data_[1] = y;
 	}
 
-	FVector2(const FVector<float, 2>& Other) :
-		FVector<float, 2>(Other)
+	FVector2 operator+(const FVector2& Other) const
 	{
+		return { Data_[0] + Other.Data_[0], Data_[1] + Other.Data_[1]};
 	}
 
-	FVector2& operator=(const FVector<float, 2>& Other)
+	FVector2 operator*(const float& Value) const
 	{
-		FVector<float, 2>::operator=(Other);
-		return *this;
+		return { Data_[0] * Value, Data_[1] * Value };
 	}
+
+	float operator*(const FVector2& Other) const
+	{
+		return Data_[0] * Other.Data_[0] + Data_[1] * Other.Data_[1];
+	}
+
+	float& operator[](size_t Index)
+	{
+		return Data_[Index];
+	}
+
+	const float& operator[](size_t Index) const
+	{
+		return Data_[Index];
+	}
+
+	// 模平方
+	const float& NormalSqr() const
+	{
+		return (*this) * (*this);
+	}
+
+	void Debug() const
+	{
+		printf("[ %f, %f ]", Data_[0], Data_[1]);
+	}
+
+private:
+	float Data_[2];
 };
 
 // 三维向量
@@ -155,9 +183,25 @@ public:
 		return { Data_[0] + Other.Data_[0], Data_[1] + Other.Data_[1], Data_[2] + Other.Data_[2] };
 	}
 
+	FVector3& operator+=(const FVector3& Other)
+	{
+		Data_[0] += Other.Data_[0];
+		Data_[1] += Other.Data_[1];
+		Data_[2] += Other.Data_[2];
+		return *this;
+	}
+
 	FVector3 operator*(const float& Value) const
 	{
 		return { Data_[0] * Value, Data_[1] * Value, Data_[2] * Value };
+	}
+
+	FVector3& operator*=(const float& Value)
+	{
+		Data_[0] *= Value;
+		Data_[1] *= Value;
+		Data_[2] *= Value;
+		return *this;
 	}
 
 	float operator*(const FVector3& Other) const
@@ -175,8 +219,18 @@ public:
 		return Data_[Index];
 	}
 
+	FVector3 Normalized() const
+	{
+		float Sqr = NormalSqr();
+
+		if (Sqr < Epsilon)
+			return *this;
+
+		return (*this) * (1.0f / sqrt(Sqr));
+	}
+
 	// 模平方
-	const float& NormalSqr()const
+	const float& NormalSqr() const
 	{
 		return (*this) * (*this);
 	}
@@ -252,7 +306,7 @@ public:
 		Identity();
 	}
 
-	float* GetRawData()
+	const float* GetRawData() const
 	{
 		return Data_;
 	}
@@ -357,6 +411,83 @@ public:
 		return Ret;
 	}
 
+	// 三阶余子式
+	float Determinant3x3(size_t row, size_t col) const
+	{
+		float SubMat[9];
+		size_t Index = 0;
+
+		// 获取子矩阵
+		for (size_t i = 0; i < 4; i++)
+		{
+			if (i == row)
+				continue;
+			for (size_t j = 0; j < 4; j++)
+			{
+				if (j == col)
+					continue;
+				SubMat[Index++] = At(i, j);
+			}
+		}
+
+		float a = SubMat[0], b = SubMat[1], c = SubMat[2],
+			d = SubMat[3], e = SubMat[4], f = SubMat[5],
+			g = SubMat[6], h = SubMat[7], i = SubMat[8];
+
+		return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+	}
+
+	// 四阶矩阵行列式
+	float Determinant() const
+	{
+		return At(0, 0) * Determinant3x3(0, 0) - At(0, 1) * Determinant3x3(0, 1) + At(0, 2) * Determinant3x3(0, 2) - At(0, 3) * Determinant3x3(0, 3);
+	}
+
+	// 逆矩阵
+	FMatrix Inverse() const
+	{
+		FMatrix InverseMat, Adjugate;
+
+		// 行列式
+		float Det = Determinant();
+
+		// 行列式为零，矩阵不可逆
+		if (fabs(Det) < Epsilon)
+		{
+			printf("matrix is not invertible\n");
+			return InverseMat;
+		}
+		
+		// 计算伴随矩阵
+		Adjugate(0, 0) = Determinant3x3(0, 0);
+		Adjugate(1, 0) = -Determinant3x3(0, 1);
+		Adjugate(2, 0) = Determinant3x3(0, 2);
+		Adjugate(3, 0) = -Determinant3x3(0, 3);
+		Adjugate(0, 1) = -Determinant3x3(1, 0);
+		Adjugate(1, 1) = Determinant3x3(1, 1);
+		Adjugate(2, 1) = -Determinant3x3(1, 2);
+		Adjugate(3, 1) = Determinant3x3(1, 3);
+		Adjugate(0, 2) = Determinant3x3(2, 0);
+		Adjugate(1, 2) = -Determinant3x3(2, 1);
+		Adjugate(2, 2) = Determinant3x3(2, 2);
+		Adjugate(3, 2) = -Determinant3x3(2, 3);
+		Adjugate(0, 3) = -Determinant3x3(3, 0);
+		Adjugate(1, 3) = Determinant3x3(3, 1);
+		Adjugate(2, 3) = -Determinant3x3(3, 2);
+		Adjugate(3, 3) = Determinant3x3(3, 3);
+
+		// 计算逆矩阵
+		for (size_t i = 0;i < 4;i++)
+		{
+			for (size_t j = 0;j < 4;j++)
+			{
+				InverseMat(i, j) = Adjugate(i, j) * (1 / Det);
+			}
+		}
+
+		return InverseMat;
+	}
+
 	void Debug()
 	{
 		for (size_t i = 0; i < 4; i++)
@@ -373,4 +504,24 @@ public:
 private:
 	float Data_[16];
 };
+
+// 获取位移矩阵
+inline FMatrix ToTranslationMatrix(const FVector3& Translation)
+{
+	FMatrix Ret;
+	Ret(0, 3) = Translation[0];
+	Ret(1, 3) = Translation[1];
+	Ret(2, 3) = Translation[2];
+	return Ret;
+}
+
+// 获取缩放矩阵
+inline FMatrix ToScaleMatirx(const FVector3& Scale)
+{
+	FMatrix Ret;
+	Ret(0, 0) = Scale[0];
+	Ret(1, 1) = Scale[1];
+	Ret(2, 2) = Scale[2];
+	return Ret;
+}
 }

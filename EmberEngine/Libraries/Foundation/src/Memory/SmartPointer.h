@@ -28,7 +28,7 @@ public:
 	}
 
 	// 移动赋值
-	TUniquePtr<T>& operator=(TUniquePtr<T>&& Other)
+	TUniquePtr<T>& operator=(TUniquePtr<T>&& Other) noexcept
 	{
 		// 非自我赋值
 		if (&Other != this)
@@ -255,7 +255,6 @@ private:
 	// 减少引用
 	void CleanUp()
 	{
-		std::cout << "Call CleanUp : " << typeid(*this).name() << std::endl;
 		if (CntBlk_ == nullptr)
 			return;
 

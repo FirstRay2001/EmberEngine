@@ -20,7 +20,6 @@ namespace MyMath
 		Quaternion(const FVector4& WXYZ) :
 			WXYZ_(WXYZ)
 		{
-
 		}
 
 		// 欧拉(弧度)构造四元数
@@ -59,6 +58,21 @@ namespace MyMath
 			};
 		}
 
+		MyMath::FVector3 operator*(const MyMath::FVector3& Vec) const
+		{
+			// 计算四元数与向量的乘积，向量被视为纯虚四元数(实部为0)
+			Quaternion VecQuat(0, Vec[0], Vec[1], Vec[2]);
+			Quaternion ResultQuat = (*this) * VecQuat * this->Conjugate();
+			return ResultQuat.Image_;
+		}
+
+		// 取消 *= 以避免左右乘失误
+		/*Quaternion& operator*=(const Quaternion& Other)
+		{
+			*this = (*this) * Other;
+			return *this;
+		}*/
+
 		// 共轭
 		Quaternion Conjugate() const
 		{
@@ -71,7 +85,107 @@ namespace MyMath
 			float NormSqr = WXYZ_.NormalSqr();
 			if (NormSqr < Epsilon)
 				return { 1,0,0,0 };
-			return { WXYZ_ * (1 / NormSqr) };
+			return { WXYZ_ * (1 / sqrt(NormSqr)) };
+		}
+
+		// 获取旋转矩阵
+		FMatrix ToMatrix() const
+		{
+			Quaternion NormalQuat = Normalized();
+
+			float xx = NormalQuat.X_ * NormalQuat.X_;
+			float xy = NormalQuat.X_ * NormalQuat.Y_;
+			float xz = NormalQuat.X_ * NormalQuat.Z_;
+			float xw = NormalQuat.X_ * NormalQuat.W_;
+			float yy = NormalQuat.Y_ * NormalQuat.Y_;
+			float yz = NormalQuat.Y_ * NormalQuat.Z_;
+			float yw = NormalQuat.Y_ * NormalQuat.W_;
+			float zz = NormalQuat.Z_ * NormalQuat.Z_;
+			float zw = NormalQuat.Z_ * NormalQuat.W_;
+
+			FMatrix Ret;
+
+			Ret(0, 0) = 1 - 2 * (yy + zz);
+			Ret(0, 1) = 2 * (xy - zw);
+			Ret(0, 2) = 2 * (xz + yw);
+			Ret(1, 0) = 2 * (xy + zw);
+			Ret(1, 1) = 1 - 2 * (xx + zz);
+			Ret(1, 2) = 2 * (yz - xw);
+			Ret(2, 0) = 2 * (xz - yw);
+			Ret(2, 1) = 2 * (yz + xw);
+			Ret(2, 2) = 1 - 2 * (xx + yy);
+
+			return Ret;
+		}
+
+		// 转为欧拉角(弧度)
+		FVector3 ToEular() const
+		{
+			FVector3 Ret;
+
+			// pitch
+			float SinPitch = 2.0f * (W_ * X_ + Y_ * Z_);
+			float CosPitch = 1.0f - 2.0f * (X_ * X_ + Y_ * Y_);
+			Ret[0] = atan2(SinPitch, CosPitch);
+			if (Ret[0] > 90.0f * Deg2Rad)
+			{
+				Ret[0] -= 180.0f * Deg2Rad;
+			}
+			else if (Ret[0] < -90.0f * Deg2Rad)
+			{
+				Ret[0] += 180.0f * Deg2Rad;
+			}
+			
+			// yaw
+			float SinYaw = 2.0f * (W_ * Y_ - Z_ * X_);
+			if (fabs(SinYaw) >= 1)
+				Ret[1] = copysign(PI / 2, SinYaw);
+			else
+				Ret[1] = asin(SinYaw);
+			
+			// roll
+			float SinRoll = 2.0f * (W_ * Z_ + X_ * Y_);
+			float CosRoll = 1.0f - 2.0f * (Y_ * Y_ + Z_ * Z_);
+			Ret[2] = atan2(SinRoll, CosRoll);
+			return Ret;
+		}
+
+		// 获取方向向量（初始方向为Z轴负方向）
+		FVector3 GetForwardDirection() const
+		{
+			FVector3 Forward = { 0,0,-1 };
+
+			FVector3 NewForward = {
+				(1 - 2 * (Y_ * Y_ + Z_ * Z_)) * Forward[0] + (2 * (X_ * Y_ - W_ * Z_)) * Forward[1] + (2 * (X_ * Z_ + W_ * Y_)) * Forward[2],
+				(2 * (X_ * Y_ + W_ * Z_)) * Forward[0] + (1 - 2 * (X_ * X_ + Z_ * Z_)) * Forward[1] + (2 * (Y_ * Z_ - W_ * X_)) * Forward[2],
+				(2 * (X_ * Z_ - W_ * Y_)) * Forward[0] + (2 * (Y_ * Z_ + W_ * X_)) * Forward[1] + (1 - 2 * (X_ * X_ + Y_ * Y_)) * Forward[2]
+			};
+
+			return NewForward.Normalized();
+		}
+
+		// 获取上方向向量（初始方向为Y轴正方向）
+		FVector3 GetUpDirection() const
+		{
+			FVector3 Up = { 0,1,0 };
+			FVector3 NewUp = {
+				(1 - 2 * (Y_ * Y_ + Z_ * Z_)) * Up[0] + (2 * (X_ * Y_ - W_ * Z_)) * Up[1] + (2 * (X_ * Z_ + W_ * Y_)) * Up[2],
+				(2 * (X_ * Y_ + W_ * Z_)) * Up[0] + (1 - 2 * (X_ * X_ + Z_ * Z_)) * Up[1] + (2 * (Y_ * Z_ - W_ * X_)) * Up[2],
+				(2 * (X_ * Z_ - W_ * Y_)) * Up[0] + (2 * (Y_ * Z_ + W_ * X_)) * Up[1] + (1 - 2 * (X_ * X_ + Y_ * Y_)) * Up[2]
+			};
+			return NewUp.Normalized();
+		}
+
+		// 获取右方向向量（初始方向为X轴正方向）
+		FVector3 GetRightDirection() const
+		{
+			FVector3 Right = { 1,0,0 };
+			FVector3 NewRight = {
+				(1 - 2 * (Y_ * Y_ + Z_ * Z_)) * Right[0] + (2 * (X_ * Y_ - W_ * Z_)) * Right[1] + (2 * (X_ * Z_ + W_ * Y_)) * Right[2],
+				(2 * (X_ * Y_ + W_ * Z_)) * Right[0] + (1 - 2 * (X_ * X_ + Z_ * Z_)) * Right[1] + (2 * (Y_ * Z_ - W_ * X_)) * Right[2],
+				(2 * (X_ * Z_ - W_ * Y_)) * Right[0] + (2 * (Y_ * Z_ + W_ * X_)) * Right[1] + (1 - 2 * (X_ * X_ + Y_ * Y_)) * Right[2]
+			};
+			return NewRight.Normalized();
 		}
 
 		void Debug() const

@@ -4,7 +4,7 @@
 int main()
 {
 
-	Application AppInstance(800, 600, "EmberEngine 0.0.1");
+	Application AppInstance(1600, 1200, "EmberEngine 0.0.1");
 
 	MyTest();
 

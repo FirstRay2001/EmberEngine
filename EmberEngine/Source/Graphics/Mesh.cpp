@@ -3,6 +3,7 @@
 // created by FirstRay2001, Sep/15/2025
 
 #include "Mesh.h"
+#include "Shader.h"
 
 FMesh::FMesh(const MySTL::TVector<FVertex>& Vertices, const MySTL::TVector<unsigned int> Indices) :
 	VAO_(),

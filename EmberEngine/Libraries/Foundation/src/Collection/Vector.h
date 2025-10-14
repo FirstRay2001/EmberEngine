@@ -67,7 +67,7 @@ public:
 	}
 
 	// ÒÆ¶¯¸³ÖµÔËËã·û
-	TVector& operator=(TVector<T>&& Other)
+	TVector& operator=(TVector<T>&& Other) noexcept
 	{
 		if (this != &Other)
 		{

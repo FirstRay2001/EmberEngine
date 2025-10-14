@@ -118,10 +118,15 @@ public:
 		Size_ = 0;
 	}
 
-	// 访问运算符，必须确保Key在Hash表内
 	TV& operator[](const TK& Key)
 	{
-		return *Find(Key);
+		TV* Res = Find(Key);
+
+		if (Res != nullptr)
+			return *Res;
+
+		// 未找到，插入新键
+		return InsertAndReturn(Key, TV{});
 	}
 
 	TV* Find(const TK& Key) const
@@ -179,10 +184,26 @@ private:
 		return Buckets_.Empty() ? 0.0f : static_cast<float>(Size_) / Buckets_.Size();
 	}
 
+	TV& InsertAndReturn(const TK& Key, TV&& Value) 
+	{
+		// 检查扩容
+		if (LoadFactor() > MaxLoadFactor) {
+			Rehash(Buckets_.Size() * 2);
+		}
+
+		size_t Index = BucketIndex(Key);
+		Node* NewNode = new Node(Key, std::move(Value));
+		NewNode->Next_ = Buckets_[Index];
+		Buckets_[Index] = NewNode;
+		++Size_;
+
+		return NewNode->Value_;
+	}
+
 private:
-	TVector<Node*> Buckets_;
-	size_t Size_;
-	THash Hash_;
-	float MaxLoadFactor;
+	TVector<Node*>	Buckets_;
+	size_t			Size_;
+	THash			Hash_;
+	float			MaxLoadFactor;
 };
 }

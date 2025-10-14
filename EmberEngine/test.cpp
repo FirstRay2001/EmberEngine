@@ -8,12 +8,10 @@
 #include "Source/Graphics/Shader.h"
 #include "Common.h"
 #include "Source/Graphics/Texture.h"
+#include "Source/Scene/Actor/Actor.h"
+#include "Source/Scene/Actor/MeshActor.h"
 
 void MyTest()
 {
-	MySTL::THashTable<int, int> mp;
-	mp.Insert(1, 2);
-	auto* a = mp.Find(1);
-	std::cout << *a;
 }
 	

@@ -133,16 +133,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Libraries\Foundation\src\Collection\HashTable.h" />
+    <ClCompile Include="Libraries\Foundation\src\MyFileSystem\FileReader.cpp" />
     <ClCompile Include="Source\Graphics\Texture.cpp" />
+    <ClCompile Include="Source\Scene\Actor\CameraActor.cpp" />
+    <ClCompile Include="Source\Scene\Actor\MeshActor.cpp" />
+    <ClCompile Include="Source\Scene\Manager\InputManager.cpp" />
+    <ClCompile Include="Source\Scene\Rotator.cpp" />
     <ClCompile Include="Source\Scene\Transform.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="Libraries\Third\glad.c" />
     <ClCompile Include="Source\Core\Application.cpp" />
-    <ClCompile Include="Source\Graphics\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Mesh.cpp" />
     <ClCompile Include="Source\Graphics\Shader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Source\Scene\Actor.cpp" />
+    <ClCompile Include="Source\Scene\Actor\Actor.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,8 +154,14 @@
     <ClInclude Include="Libraries\Foundation\Include\Math.h" />
     <ClInclude Include="Libraries\Foundation\Include\Collection.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Libraries\Foundation\Include\MyFileSystem.h" />
+    <ClInclude Include="Libraries\Foundation\Include\Network.h" />
     <ClInclude Include="Libraries\Foundation\src\Math\MathCommon.h" />
     <ClInclude Include="Libraries\Foundation\src\Math\Quaternion.h" />
+    <ClInclude Include="Libraries\Foundation\src\MyFileSystem\FileReader.h" />
+    <ClInclude Include="Source\Scene\Actor\CameraActor.h" />
+    <ClInclude Include="Source\Scene\Actor\MeshActor.h" />
+    <ClInclude Include="Source\Scene\Manager\InputManager.h" />
     <ClInclude Include="Source\Scene\Rotator.h" />
     <ClInclude Include="Libraries\Foundation\src\Memory\SmartPointer.h" />
     <ClInclude Include="Source\Graphics\Texture.h" />
@@ -159,10 +169,9 @@
     <ClInclude Include="test.h" />
     <ClInclude Include="Libraries\Foundation\src\Collection\Vector.h" />
     <ClInclude Include="Source\Core\Application.h" />
-    <ClInclude Include="Source\Graphics\Camera.h" />
     <ClInclude Include="Source\Graphics\Mesh.h" />
     <ClInclude Include="Source\Graphics\Shader.h" />
-    <ClInclude Include="Source\Scene\Actor.h" />
+    <ClInclude Include="Source\Scene\Actor\Actor.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

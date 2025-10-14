@@ -14,8 +14,9 @@ FTexture::FTexture(const char* PicturePath)	:
 	TextureChannelNum_()
 {
 	stbi_set_flip_vertically_on_load(true);
+
 	// 读取图片
-	Data_.Reset(stbi_load(PicturePath, &TextureWidth_, &TextureHeight_, &TextureChannelNum_, 0));
+	Data_ = stbi_load(PicturePath, &TextureWidth_, &TextureHeight_, &TextureChannelNum_, 0);
 
 	// 创建ID
 	glGenTextures(1, &ID_);
@@ -28,6 +29,9 @@ FTexture::FTexture(const char* PicturePath)	:
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// 绑定数据
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TextureWidth_, TextureHeight_, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data_.Get());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TextureWidth_, TextureHeight_, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data_);
 	glGenerateMipmap(GL_TEXTURE_2D);
+
+	// 释放内存
+	stbi_image_free(Data_);
 }

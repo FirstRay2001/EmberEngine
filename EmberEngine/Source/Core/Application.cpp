@@ -3,17 +3,18 @@
 // created by FirstRay2001, Sep/15/2025
 
 #include "Application.h"
-
-#include "Source/Graphics/Mesh.h"
-#include "Source/Graphics/Shader.h"
-#include "Source/Graphics/Texture.h"
+#include "Source/Scene/Scene.h"
+#include "Source/Scene/Manager/InputManager.h"
 
 Application::Application(int Width, int Height, const char* title) :
 	Window_(nullptr),
 	CurrentScene_(nullptr),
 	WindowWidth_(Width),
 	WindowHeight_(Height),
-	Titile_(title)
+	Titile_(title),
+	DeltaTime_(0.0f),
+	LastFrameTime_(0.0f),
+	CurrentFrameTime_(0.0f)
 {
 	Initialize();
 }
@@ -26,7 +27,15 @@ void Application::Run()
 {
 	IfFailGo(Window_ != NULL);
 
+	// 载入场景
+	CurrentScene_ = MySTL::TSharedPtr<FScene>(new FScene());
+	CurrentScene_->Load();
+
+	// 启动循环
 	MainLoop();
+
+	// 结束
+	CurrentScene_->Unload();
 	Terminate();
 }
 
@@ -74,37 +83,19 @@ void Application::Initialize()
 	LOG_INFO("Window intialized: %s", Titile_);
 
 	// 设置清屏颜色
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	// test
-	FVertex
-		ver1{ MyMath::FVector3(-0.5, -0.5, 0.0), MyMath::FVector3(1,1,1), MyMath::FVector2(0,0) },
-		ver2{ MyMath::FVector3(0.5, -0.5, 0.0), MyMath::FVector3(1,1,1), MyMath::FVector2(1,0) },
-		ver3{ MyMath::FVector3(0.5,  0.5, 0.0), MyMath::FVector3(1,1,1), MyMath::FVector2(1,1) },
-		ver4{ MyMath::FVector3(-0.5,  0.5, 0.0), MyMath::FVector3(1,1,1), MyMath::FVector2(0,1) };
-	MySTL::TVector<FVertex> Vertices;
-	Vertices.push_back(ver1);
-	Vertices.push_back(ver2);
-	Vertices.push_back(ver3);
-	Vertices.push_back(ver4);
+	// 初始化帧时间
+	LastFrameTime_ = glfwGetTime();
 
-	MySTL::TVector<unsigned int> Indices;
-	Indices.push_back(0);
-	Indices.push_back(1);
-	Indices.push_back(2);
-	Indices.push_back(0);
-	Indices.push_back(3);
-	Indices.push_back(2);
+	// 启用深度测试
+	glEnable(GL_DEPTH_TEST);
 
-	Mesh_ = MySTL::TUniquePtr<FMesh>(new FMesh(Vertices, Indices));
+	// 输入管理器初始化
+	MInputManager::GetInstance().Initialize(Window_);
 
-	const char* VertexPath = "D:/Dev/Project/EmberEngine/EmberEngine/Resources/Shader/TestShader/testvs.vert";
-	const char* FragmentPath = "D:/Dev/Project/EmberEngine/EmberEngine/Resources/Shader/TestShader/testfs.frag";
-	Shader_ = MySTL::TUniquePtr<FShader>(new FShader(VertexPath, FragmentPath));
-
-	const char* PicPath = "./Resources/Texture/awesomeface.png";
-	FTexture tex(PicPath);
-
+	// 捕获鼠标
+	glfwSetInputMode(Window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Application::MainLoop()
@@ -112,18 +103,29 @@ void Application::MainLoop()
 	while (!glfwWindowShouldClose(Window_))
 	{
 		//////// 处理输入 ////////
-		HandleInput();
+		ShouldClose();
+		
+		//////// 场景逻辑 ////////
+		// 计算帧间隔
+		CurrentFrameTime_ = glfwGetTime();
+		DeltaTime_ = CurrentFrameTime_ - LastFrameTime_;
+		LastFrameTime_ = CurrentFrameTime_;
 
+		// 驱动场景
+		CurrentScene_->Tick(DeltaTime_);
 
-		//////// 渲染 ////////
-
+		//////// 渲染场景 ////////
 		// 清屏
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Shader_->Use();
-		Mesh_->Draw();
+		// 渲染
+		CurrentScene_->Render();
+
+		// 交换颜色缓冲
 		glfwSwapBuffers(Window_);
 
+
+		MInputManager::GetInstance().Tick();
 
 		glfwPollEvents();
 	}
@@ -135,11 +137,26 @@ void Application::Terminate()
 	glfwTerminate();
 }
 
-void Application::HandleInput()
+void Application::ShouldClose()
 {
 	// 按下ESC关闭窗口
-	if (glfwGetKey(Window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (MInputManager::GetInstance().IsKeyPressed(GLFW_KEY_ESCAPE))
+	{
 		glfwSetWindowShouldClose(Window_, true);
+		glfwSetInputMode(Window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
+	// 按M捕获鼠标
+	if (MInputManager::GetInstance().IsKeyPressed(GLFW_KEY_M))
+	{
+		glfwSetInputMode(Window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
+	// 按N释放鼠标
+	if (MInputManager::GetInstance().IsKeyPressed(GLFW_KEY_N))
+	{
+		glfwSetInputMode(Window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }
 
 void Application::FrameBufferSizeCallback(GLFWwindow* Window, int Width, int Height)

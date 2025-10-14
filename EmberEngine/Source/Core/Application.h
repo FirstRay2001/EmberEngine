@@ -26,18 +26,18 @@ private:
 	void Terminate();
 
 private:
-	void HandleInput();
+	void ShouldClose();
 
 	// 窗口大小调整回调
 	static void FrameBufferSizeCallback(GLFWwindow* Window, int Width, int Height);
 
 private:
-	// TODO: 使用智能指针
-	GLFWwindow* Window_;
-	FScene*		CurrentScene_;
-	int			WindowWidth_;
-	int			WindowHeight_;
-	const char*	Titile_;
-	MySTL::TUniquePtr<FMesh>		Mesh_;
-	MySTL::TUniquePtr<FShader>	Shader_;
+	GLFWwindow*						Window_;
+	MySTL::TSharedPtr<FScene>		CurrentScene_;
+	int								WindowWidth_;
+	int								WindowHeight_;
+	const char*						Titile_;
+	float							DeltaTime_;
+	float							LastFrameTime_;
+	float							CurrentFrameTime_;
 };

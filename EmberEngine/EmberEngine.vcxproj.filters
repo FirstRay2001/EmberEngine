@@ -21,16 +21,13 @@
     <ClCompile Include="Source\Core\Application.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Camera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Graphics\Mesh.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene\Actor.cpp">
+    <ClCompile Include="Source\Scene\Actor\Actor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\Scene.cpp">
@@ -51,12 +48,24 @@
     <ClCompile Include="Libraries\Foundation\src\Collection\HashTable.h">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\Actor\MeshActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Rotator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Actor\CameraActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Manager\InputManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Foundation\src\MyFileSystem\FileReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\Application.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Mesh.h">
@@ -65,7 +74,7 @@
     <ClInclude Include="Source\Graphics\Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene\Actor.h">
+    <ClInclude Include="Source\Scene\Actor\Actor.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\Scene.h">
@@ -105,6 +114,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\Rotator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Foundation\Include\Network.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Actor\MeshActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Actor\CameraActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Manager\InputManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Foundation\Include\MyFileSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Foundation\src\MyFileSystem\FileReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

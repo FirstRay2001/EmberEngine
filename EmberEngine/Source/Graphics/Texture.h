@@ -13,9 +13,9 @@ public:
 	FTexture(const char* PicturePath);
 
 private:
-	unsigned int						ID_;
-	MySTL::TSharedPtr<unsigned char>	Data_;
-	int									TextureWidth_;
-	int									TextureHeight_;
-	int									TextureChannelNum_;
+	unsigned int	ID_;
+	unsigned char*	Data_;
+	int				TextureWidth_;
+	int				TextureHeight_;
+	int				TextureChannelNum_;
 };

@@ -86,9 +86,21 @@ void FShader::SetFloat(const char* UniformName, float Value) const
 {
 }
 
+void FShader::SetVector3(const char* UniformName, const MyMath::FVector3& Value) const
+{
+	unsigned int UniformLoc = glGetUniformLocation(ID_, UniformName);
+	glUniform3f(UniformLoc, Value[0], Value[1], Value[2]);
+}
+
 void FShader::SetTexture(const char* UniformName, const FTexture& Value) const
 {
 	// glUniform1i(glGetUniformLocation(ID_, UniformName), )
+}
+
+void FShader::SetMatrix(const char* UniformName, const MyMath::FMatrix& Matrix) const
+{
+	unsigned int UniformLoc = glGetUniformLocation(ID_, UniformName);
+	glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, Matrix.GetRawData());
 }
 
 void FShader::CheckCompileErrors(unsigned int Shader, std::string type)
