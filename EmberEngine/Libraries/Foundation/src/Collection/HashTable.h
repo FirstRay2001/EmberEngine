@@ -5,6 +5,7 @@
 #pragma once
 
 #include<utility>	// TODO: 实现自己的Hash算法，而不是使用标准库
+#include <stdexcept>
 #include "Vector.h"
 
 namespace MySTL
@@ -127,6 +128,16 @@ public:
 
 		// 未找到，插入新键
 		return InsertAndReturn(Key, TV{});
+	}
+
+	const TV& operator[](const TK& Key) const
+	{
+		TV* Res = Find(Key);
+
+		if (Res != nullptr)
+			return *Res;
+
+		throw std::out_of_range("Key not found in HashTable");
 	}
 
 	TV* Find(const TK& Key) const

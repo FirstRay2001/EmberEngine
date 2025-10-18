@@ -24,6 +24,11 @@ void AActor::SetActorWorldScale(const MyMath::FVector3& NewScale)
 	ActorTransform_.SetAbsoluteScale(NewScale);
 }
 
+void AActor::Rotate(const MyMath::Quaternion& DeltaRotation)
+{
+	ActorTransform_.Rotate(DeltaRotation);
+}
+
 MyMath::FVector3 AActor::GetActorWorldLocation() const
 {
 	return ActorTransform_.GetAbsoluteLocation();

@@ -1,0 +1,117 @@
+// TextureManager.cpp
+// 纹理管理器
+// created by FirstRay2001, Oct/15/2025
+
+#include "TextureManager.h"
+#include "Source/Scene/Component/Graphic/Shader.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+const std::string TextureDirectory = "D:/Dev/Project/EmberEngine/EmberEngine/Resources/Texture/";
+
+void MTextureManager::Initialize()
+{
+}
+
+void MTextureManager::Tick()
+{
+	// 每一帧重置已使用纹理单元数量
+	Clear();
+}
+
+void MTextureManager::Clear()
+{
+	UsedTextureUnitCount_ = 0;
+}
+
+bool MTextureManager::LoadTexture(std::string TextureName)
+{
+	// 纹理已加载
+	if (TextureMap_.Find(TextureName) != nullptr)
+	{
+		LOG_WARN("Texture already loaded: %s", TextureName.c_str());
+		return true;
+	}
+
+	// 相对路径转化为绝对路径
+	// std::string PicPath = TextureDirectory + TextureName;
+
+	// 垂直翻转图片
+	stbi_set_flip_vertically_on_load(true);
+
+	// 读取图片
+	int PicWidth, PicHeight, PicChannelNum;
+	auto* Data = stbi_load(TextureName.c_str(), &PicWidth, &PicHeight, &PicChannelNum, 0);
+
+	// 检测是否读取成功
+	if (Data == NULL)
+	{
+		LOG_ERROR("Failed to load texture: %s", TextureName.c_str());
+		return false;
+	}
+	LOG_INFO("Texture loaded: %s (Width: %d, Height: %d, Channels: %d)",
+		TextureName.c_str(), PicWidth, PicHeight, PicChannelNum);
+	
+	// 生成纹理
+	GLuint TextureID;
+	glGenTextures(1, &TextureID);
+
+	// 绑定纹理
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+
+	// 传入图片数据
+	GLenum Format;
+	if (PicChannelNum == 1)
+		Format = GL_RED;
+	else if (PicChannelNum == 3)
+		Format = GL_RGB;
+	else if (PicChannelNum == 4)
+		Format = GL_RGBA;
+	else
+	{
+		LOG_ERROR("Unsupported texture format: %s", TextureName.c_str());
+		stbi_image_free(Data);
+		return false;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, Format, PicWidth, PicHeight, 0, Format, GL_UNSIGNED_BYTE, Data);
+
+	// 设置纹理参数
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// 存储纹理单元索引
+	TextureMap_.Insert(TextureName, TextureID);
+	TextureCount_++;
+
+	// 释放图片内存
+	stbi_image_free(Data);
+}
+
+void MTextureManager::BindSampler(std::string TextureName, const FShader& Shader, const char* UniformName)
+{
+	auto It = TextureMap_.Find(TextureName);
+
+	// 纹理不存在
+	if (It == nullptr)
+	{
+		LOG_ERROR("Texture not found: %s", TextureName.c_str());
+		return;
+	}
+
+	GLuint TextureID = *It;
+
+	// 激活纹理单元
+	glActiveTexture(GL_TEXTURE0 + UsedTextureUnitCount_);
+
+	// 绑定纹理
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+
+	// 设置采样器
+	Shader.SetInt(UniformName, UsedTextureUnitCount_);
+
+	UsedTextureUnitCount_++;
+}

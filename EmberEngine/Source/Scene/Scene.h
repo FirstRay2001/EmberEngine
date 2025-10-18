@@ -26,7 +26,9 @@ public:
 	void Render();
 
 private:
-	MySTL::TUniquePtr<ACameraActor> CameraActor_;
-	MySTL::TUniquePtr<AMeshActor>	MeshActor_;
-	MySTL::TUniquePtr<AMeshActor>	LightActor_;
+	MySTL::TVector<MySTL::TSharedPtr<AActor>>	Actors_;
+	MySTL::TSharedPtr<ACameraActor>				CameraActor_;
+	MySTL::TSharedPtr<AModelActor>				TestModelActor_;
+	MySTL::TSharedPtr<APointLightActor>			PointLightActor;
+	MySTL::TSharedPtr<ADirectionalLightActor>		DirectionalLightActor_;
 };

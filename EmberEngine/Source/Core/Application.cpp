@@ -4,7 +4,8 @@
 
 #include "Application.h"
 #include "Source/Scene/Scene.h"
-#include "Source/Scene/Manager/InputManager.h"
+#include "Source/Manager/InputManager.h"
+#include "Source/Manager/TextureManager.h"
 
 Application::Application(int Width, int Height, const char* title) :
 	Window_(nullptr),
@@ -83,7 +84,7 @@ void Application::Initialize()
 	LOG_INFO("Window intialized: %s", Titile_);
 
 	// 设置清屏颜色
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
 
 	// 初始化帧时间
 	LastFrameTime_ = glfwGetTime();
@@ -124,8 +125,9 @@ void Application::MainLoop()
 		// 交换颜色缓冲
 		glfwSwapBuffers(Window_);
 
-
+		//////// Post Tick ////////
 		MInputManager::GetInstance().Tick();
+		MTextureManager::GetInstance().Tick();
 
 		glfwPollEvents();
 	}

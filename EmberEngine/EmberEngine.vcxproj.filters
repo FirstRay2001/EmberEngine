@@ -21,10 +21,10 @@
     <ClCompile Include="Source\Core\Application.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Mesh.cpp">
+    <ClCompile Include="Source\Scene\Component\Graphic\Mesh.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Shader.cpp">
+    <ClCompile Include="Source\Scene\Component\Graphic\Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\Actor\Actor.cpp">
@@ -39,10 +39,10 @@
     <ClCompile Include="test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Texture.cpp">
+    <ClCompile Include="Source\Scene\Component\Graphic\Texture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene\Transform.cpp">
+    <ClCompile Include="Source\Scene\Component\Transform\Transform.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Libraries\Foundation\src\Collection\HashTable.h">
@@ -51,16 +51,43 @@
     <ClCompile Include="Source\Scene\Actor\MeshActor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene\Rotator.cpp">
+    <ClCompile Include="Source\Scene\Component\Transform\Rotator.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\Actor\CameraActor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene\Manager\InputManager.cpp">
+    <ClCompile Include="Source\Manager\InputManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Libraries\Foundation\src\MyFileSystem\FileReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Manager\TextureManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Actor\PointLightActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Component\Graphic\Material.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Actor\DirectionalLightActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Component\Graphic\Model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Component\Graphic\Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Actor\ModelActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Manager\ModelManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Manager\ShaderManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,10 +95,10 @@
     <ClInclude Include="Source\Core\Application.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Mesh.h">
+    <ClInclude Include="Source\Scene\Component\Graphic\Mesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Shader.h">
+    <ClInclude Include="Source\Scene\Component\Graphic\Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\Actor\Actor.h">
@@ -104,16 +131,16 @@
     <ClInclude Include="Libraries\Foundation\src\Collection\Vector.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Texture.h">
+    <ClInclude Include="Source\Scene\Component\Graphic\Texture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene\Transform.h">
+    <ClInclude Include="Source\Scene\Component\Transform\Transform.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\Foundation\src\Math\Quaternion.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene\Rotator.h">
+    <ClInclude Include="Source\Scene\Component\Transform\Rotator.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\Foundation\Include\Network.h">
@@ -125,13 +152,40 @@
     <ClInclude Include="Source\Scene\Actor\CameraActor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene\Manager\InputManager.h">
+    <ClInclude Include="Source\Manager\InputManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\Foundation\Include\MyFileSystem.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\Foundation\src\MyFileSystem\FileReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Manager\TextureManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Actor\PointLightActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Component\Graphic\Material.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Actor\DirectionalLightActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Component\Graphic\Model.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Component\Graphic\Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Actor\ModelActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Manager\ModelManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Manager\ShaderManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

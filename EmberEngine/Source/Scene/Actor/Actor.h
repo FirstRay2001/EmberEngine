@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Common.h"
-#include "Source/Scene/Transform.h"
+#include "Source/Scene/Component/Transform/Transform.h"
 
 class AActor
 {
@@ -24,9 +24,9 @@ public:
 	void SetActorWorldRotation(const FRotator& NewRotation);
 	void SetActorWorldScale(const MyMath::FVector3& NewScale);
 
-	MyMath::FVector3 GetActorWorldLocation() const;
+	void Rotate(const MyMath::Quaternion& DeltaRotation);
 
-protected:
+	MyMath::FVector3 GetActorWorldLocation() const;
 	MyMath::FMatrix GetWorldMatrix() const;
 
 protected:

@@ -23,8 +23,14 @@ class FScene;
 class FMesh;
 class FShader;
 class FTexture;
+class FMaterial;
+class FModel;
+class AActor;
 class AMeshActor;
+class AModelActor;
 class ACameraActor;
+class APointLightActor;
+class ADirectionalLightActor;
 
 //////// ºê¿ª¹Ø ////////
 #define DEBUG 1

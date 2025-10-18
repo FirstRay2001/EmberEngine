@@ -4,7 +4,8 @@
 
 #include "CameraActor.h"
 #include "MeshActor.h"
-#include "Source/Scene/Manager/InputManager.h"
+#include "PointLightActor.h"
+#include "Source/Manager/InputManager.h"
 
 ACameraActor::ACameraActor(float FovDegree, float Aspect, float Near, float Far) :
     FovDegree_(FovDegree),
@@ -128,6 +129,9 @@ MyMath::FMatrix ACameraActor::GetProjectionMatrix() const
 
 void ACameraActor::RenderMesh(AMeshActor* MeshActor) const
 {
+	// 设置相机位置
+	MeshActor->SetCameraPos(GetActorWorldLocation());
+
     // 设置MVP矩阵
     MeshActor->SetModelMatrix();
     MeshActor->SetViewMatrix(ViewMatrix_);
@@ -135,4 +139,15 @@ void ACameraActor::RenderMesh(AMeshActor* MeshActor) const
 
     // 绘制
     MeshActor->Draw();
+}
+
+void ACameraActor::RenderPointLight(APointLightActor* PointLight) const
+{
+	// 设置MVP矩阵
+	PointLight->SetModelMatrix();
+	PointLight->SetViewMatrix(ViewMatrix_);
+	PointLight->SetProjectionMatrix(ProjectionMatrix_);
+
+	// 绘制
+	PointLight->Draw();
 }

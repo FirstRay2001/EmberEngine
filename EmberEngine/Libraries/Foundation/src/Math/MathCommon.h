@@ -306,6 +306,14 @@ public:
 		Identity();
 	}
 
+	// ∏≥÷µ‘ÀÀ„
+	FMatrix& operator=(const FMatrix& Other)
+	{
+		if (this != &Other)
+			memcpy(Data_, Other.Data_, 16 * sizeof(float));
+		return *this;
+	}
+
 	const float* GetRawData() const
 	{
 		return Data_;
@@ -371,7 +379,7 @@ public:
 	// æÿ’Û ˝≥À
 	FMatrix operator*(const float& Value) const
 	{
-		FMatrix Ret;
+		FMatrix Ret = *this;
 		for (size_t i = 0; i < 16; i++)
 			Ret.Data_[i] *= Value;
 		return Ret;
@@ -477,13 +485,7 @@ public:
 		Adjugate(3, 3) = Determinant3x3(3, 3);
 
 		// º∆À„ƒÊæÿ’Û
-		for (size_t i = 0;i < 4;i++)
-		{
-			for (size_t j = 0;j < 4;j++)
-			{
-				InverseMat(i, j) = Adjugate(i, j) * (1 / Det);
-			}
-		}
+		InverseMat = Adjugate * (1 / Det);
 
 		return InverseMat;
 	}

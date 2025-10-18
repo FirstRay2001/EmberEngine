@@ -12,7 +12,7 @@ namespace MyMath
 	class Quaternion
 	{
 	public:
-		Quaternion(float W = 0, float X = 0, float Y = 0, float Z = 0) :
+		Quaternion(float W = 0, float X = 0, float Y = 1, float Z = 0) :
 			WXYZ_(W, X, Y, Z)
 		{
 		}

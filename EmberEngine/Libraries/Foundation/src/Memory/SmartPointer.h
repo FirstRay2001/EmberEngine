@@ -93,7 +93,7 @@ public:
 	}
 
 	// 有效性检查
-	explicit operator bool()
+	explicit operator bool() const
 	{
 		return Ptr_ != nullptr;
 	}
@@ -215,7 +215,7 @@ public:
 	}
 
 public:
-	size_t GetCount()
+	size_t GetCount() const
 	{
 		if (CntBlk_ != nullptr)
 			return CntBlk_->SharedCount;
@@ -227,14 +227,19 @@ public:
 		return Ptr_;
 	}
 
-	bool IsUnique()
+	const T* Get() const
+	{
+		return Ptr_;
+	}
+
+	bool IsUnique() const
 	{
 		if (CntBlk_ != nullptr && CntBlk_->SharedCount == 1)
 			return true;
 		return false;
 	}
 
-	bool IsValid()
+	bool IsValid() const
 	{
 		if (CntBlk_ != nullptr && CntBlk_->SharedCount > 0)
 			return true;
@@ -337,7 +342,7 @@ public:
 	}
 
 	// 移动构造
-	TWeakPtr(TWeakPtr<T>&& Other) :
+	TWeakPtr(TWeakPtr<T>&& Other) noexcept:
 		Ptr_(Other.Ptr_),
 		CntBlk_(Other.CntBlk_)
 	{
@@ -353,13 +358,38 @@ public:
 
 public:
 	// 获取资源
-	T& Get()
+	T* Get()
+	{
+		return Ptr_;
+	}
+
+	const T* Get() const
+	{
+		return Ptr_;
+	}
+
+	T& operator*()
 	{
 		return *Ptr_;
 	}
 
+	const T& operator*() const
+	{
+		return *Ptr_;
+	}
+
+	T* operator->()
+	{
+		return Ptr_;
+	}
+
+	const T* operator->() const
+	{
+		return Ptr_;
+	}
+
 	// 有效性检查
-	bool IsValid()
+	bool IsValid() const
 	{
 		if (CntBlk_ != nullptr && CntBlk_->SharedCount > 0)
 			return true;
@@ -376,7 +406,7 @@ public:
 
 public:
 	// 获取引用计数
-	size_t GetSharedCount()
+	size_t GetSharedCount() const
 	{
 		if (CntBlk_ != nullptr)
 			return CntBlk_->SharedCount;
@@ -384,7 +414,7 @@ public:
 	}
 
 	// 获取弱引用计数
-	size_t GetWeakCount()
+	size_t GetWeakCount() const
 	{
 		if (CntBlk_ != nullptr)
 			return CntBlk_->WeakCount;

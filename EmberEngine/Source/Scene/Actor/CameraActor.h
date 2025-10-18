@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Actor.h"
-// #include "Source/Graphics/Camera.h"
+// #include "Source/Scene/Component/Graphic/Camera.h"
 
 class ACameraActor : public AActor
 {
@@ -19,6 +19,8 @@ public:
 	MyMath::FMatrix GetProjectionMatrix() const;
 
 	void RenderMesh(AMeshActor* MeshActor) const;
+
+	void RenderPointLight(APointLightActor* PointLight) const;
 
 private:
 	float FovDegree_;
