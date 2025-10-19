@@ -15,8 +15,8 @@
 #include "Source/Manager/TextureManager.h"
 #include "Source/Manager/ModelManager.h"
 #include "Source/Manager/ShaderManager.h"
-
 #include "Source/Scene/Component/Graphic/Model.h"
+#include "Source/Scene/Renderer/ForwardRenderer.h"
 
 FScene::FScene()
 {
@@ -24,6 +24,10 @@ FScene::FScene()
 
 void FScene::Load()
 {
+	// 初始化渲染管线
+	ForwardRenderer_ = MySTL::TUniquePtr<FForwardRenderer>(new FForwardRenderer());
+	ForwardRenderer_->Initialize();
+
 	//////// TEST ////////
 	// 点光源模型
 	MySTL::TVector<FVertex> Vertices;
@@ -40,49 +44,95 @@ void FScene::Load()
 	auto LightShaderPtr = MShaderManager::GetInstance().GetShader(LightShaderIndex);
 
 	// 光源Actor
-	PointLightActor = MySTL::TSharedPtr<APointLightActor>(new APointLightActor(MySTL::TSharedPtr<FMesh>(Mesh), LightShaderPtr));
-	//Actors_.push_back(PointLightActor);
-	PointLightActor->SetActorWorldLocation(MyMath::FVector3(0, 2, 1));
-	PointLightActor->SetActorWorldScale(MyMath::FVector3(0.2, 0.2, 0.2));
-	PointLightActor->SetAmbientColor(MyMath::FVector3(0.05f, 0.05f, 0.05f));
-	PointLightActor->SetDiffuseColor(MyMath::FVector3(0.5f, 0.5f, 0.5f));
-	PointLightActor->SetSpecularColor(MyMath::FVector3(1.0f, 1.0f, 1.0f));
+	PointLightActor_ = MySTL::TSharedPtr<APointLightActor>(new APointLightActor(MySTL::TSharedPtr<FMesh>(Mesh), LightShaderPtr));
+	PointLightActor_->SetActorWorldLocation(MyMath::FVector3(0, 1.3, 1));
+	PointLightActor_->SetActorWorldScale(MyMath::FVector3(0.2, 0.2, 0.2));
+	PointLightActor_->SetAmbientColor(MyMath::FVector3(0.05f, 0.05f, 0.05f));
+	PointLightActor_->SetDiffuseColor(MyMath::FVector3(1.5, 1.5, 1.5));
+	PointLightActor_->SetSpecularColor(MyMath::FVector3(1.0f, 1.0f, 1.0f));
+
+	// 将点光源加入渲染管线
+	ForwardRenderer_->AddPointLight(PointLightActor_);
+
 	DirectionalLightActor_ = MySTL::TSharedPtr<ADirectionalLightActor>(new ADirectionalLightActor());
-	DirectionalLightActor_->SetDirection(MyMath::FVector3(-0.2f, -1.0f, -0.3f));
+	DirectionalLightActor_->SetDirection(MyMath::FVector3(-0.2f, -0.1f, -0.3f));
+	DirectionalLightActor_->SetActorWorldLocation(DirectionalLightActor_->GetDirection() * -5.0f);
 	DirectionalLightActor_->SetAmbientColor(MyMath::FVector3(0.1f, 0.1f, 0.15f));
+	DirectionalLightActor_->SetDiffuseColor(MyMath::FVector3(0.8, 0.8, 0.8));
+
+	// 将平行光加入渲染管线
+	ForwardRenderer_->SetDirectionalLight(DirectionalLightActor_);
 
 	// 相机Actor
 	CameraActor_ = MySTL::TSharedPtr<ACameraActor>(new ACameraActor(45.0f, 8.0f / 6.0f, 0.1f, 100.0f));
-	//Actors_.push_back(CameraActor_);
-	CameraActor_->SetActorWorldLocation(MyMath::FVector3(0, 0, 5));
+	CameraActor_->SetActorWorldLocation(MyMath::FVector3(0, 1, 5));
 	CameraActor_->SetActorWorldRotation(FRotator(float(0 * MyMath::Deg2Rad), MyMath::FVector3(0, 1, 0)));
 
-	// 背包模型
-	int ModelIndex = MModelManager::GetInstance().LoadModel("backpack/backpack.obj");
-	auto ModelPtr = MModelManager::GetInstance().GetModel(ModelIndex);
-	int ShaderIndex = MShaderManager::GetInstance().LoadShader("BlinnPhong", "BlinnPhong/PhongVert.vert", "BlinnPhong/PhongFrag.frag");
-	auto TestShader_ = MShaderManager::GetInstance().GetShader(ShaderIndex);
-	TestModelActor_ = MySTL::TSharedPtr<AModelActor>(new AModelActor(ModelPtr, TestShader_));
-	//Actors_.push_back(TestModelActor_);
+	// 设置当前相机
+	ForwardRenderer_->SetCurrentCamera(CameraActor_);
+
+	int ShaderIndex = MShaderManager::GetInstance().LoadShader("Toon", "Toon/ToonVert.vert", "Toon/ToonFrag.frag");
+	auto ToonShader = MShaderManager::GetInstance().GetShader(ShaderIndex);
+
+	// 莱娜
+	int LennaModelIndex = MModelManager::GetInstance().LoadModel("Lenna/Lenna.obj");
+	auto LennaPtr = MModelManager::GetInstance().GetModel(LennaModelIndex);
+	ModelActor_ = MySTL::TSharedPtr<AModelActor>(new AModelActor(LennaPtr, ToonShader));
+	ModelActor_->SetActorWorldLocation(MyMath::FVector3(0, -1, 0));
+
+	ForwardRenderer_->AddModel(ModelActor_);
+
+	// 墙
+	MyMath::Quaternion InitialQuat(MyMath::PI * (0.5), MyMath::FVector3(1, 0, 0));
+	InitialQuat = MyMath::Quaternion(MyMath::PI / 2, MyMath::FVector3(0, 1, 0)) * InitialQuat;;
+	for (int i = 0; i < 3; i++)
+	{
+		int WallModelIndex = MModelManager::GetInstance().LoadModel("wall/wall.obj");
+		auto WallPtr = MModelManager::GetInstance().GetModel(WallModelIndex);
+		WallActors_.emplace_back(new AModelActor(WallPtr, ToonShader));
+		WallActors_[WallActors_.Size() - 1]->SetActorWorldRotation(InitialQuat);
+		InitialQuat = MyMath::Quaternion(-MyMath::PI / 2, MyMath::FVector3(0, 1, 0)) * InitialQuat;
+	}
+	int WallModelIndex = MModelManager::GetInstance().LoadModel("wall/wall.obj");
+	auto WallPtr = MModelManager::GetInstance().GetModel(WallModelIndex);
+	WallActors_.emplace_back(new AModelActor(WallPtr, ToonShader));
+	WallActors_[WallActors_.Size() - 1]->Rotate(MyMath::Quaternion(MyMath::PI, MyMath::FVector3(1, 0, 0)));
+	WallActors_.emplace_back(new AModelActor(WallPtr, ToonShader));
+
+	WallActors_[0]->SetActorWorldLocation(MyMath::FVector3(-2, 1, 0));
+	WallActors_[0]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
+	WallActors_[1]->SetActorWorldLocation(MyMath::FVector3(0, 1, -2));
+	WallActors_[1]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
+	WallActors_[2]->SetActorWorldLocation(MyMath::FVector3(2, 1, 0));
+	WallActors_[2]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
+	WallActors_[3]->SetActorWorldLocation(MyMath::FVector3(0, 3, 0));
+	WallActors_[3]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
+	WallActors_[4]->SetActorWorldLocation(MyMath::FVector3(0, -1, 0));
+	WallActors_[4]->SetActorWorldScale(MyMath::FVector3(3, 3, 3));
+
+	/*for (int i = 0; i < WallActors_.Size(); i++)
+		ForwardRenderer_->AddModel(WallActors_[i]);*/
+	ForwardRenderer_->AddModel(WallActors_[4]);
 }
 
 void FScene::Unload()
 {
+	// 关闭渲染管线
+	ForwardRenderer_->Shutdown();
 }
 
 void FScene::Tick(float DeltaTime)
 {
 	CameraActor_->Tick(DeltaTime);
-	TestModelActor_->Tick(DeltaTime);
+
+	auto Direction = DirectionalLightActor_->GetDirection();
+	Direction = MyMath::Quaternion(DeltaTime * 0.5f, MyMath::FVector3(0, 1, 0)) * Direction;
+	DirectionalLightActor_->SetDirection(Direction);
+	PointLightActor_->SetActorWorldLocation(Direction * -2);
 }
 
 void FScene::Render() 
 {
-	TestModelActor_->SetCamera(*CameraActor_);
-	TestModelActor_->SetPointLight(*PointLightActor);
-	TestModelActor_->SetDirectionalLight(*DirectionalLightActor_);
-
-	TestModelActor_->Draw();
-	
-	CameraActor_->RenderPointLight(PointLightActor.Get());
+	// 前向渲染
+	ForwardRenderer_->RenderScene();
 }

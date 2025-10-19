@@ -147,6 +147,7 @@
     <ClCompile Include="Source\Manager\InputManager.cpp" />
     <ClCompile Include="Source\Scene\Actor\ModelActor.cpp" />
     <ClCompile Include="Source\Scene\Actor\PointLightActor.cpp" />
+    <ClCompile Include="Source\Scene\Renderer\ForwardRenderer.cpp" />
     <ClCompile Include="Source\Scene\Component\Transform\Rotator.cpp" />
     <ClCompile Include="Source\Scene\Component\Transform\Transform.cpp" />
     <ClCompile Include="test.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Source\Manager\InputManager.h" />
     <ClInclude Include="Source\Scene\Actor\ModelActor.h" />
     <ClInclude Include="Source\Scene\Actor\PointLightActor.h" />
+    <ClInclude Include="Source\Scene\Renderer\ForwardRenderer.h" />
     <ClInclude Include="Source\Scene\Component\Transform\Rotator.h" />
     <ClInclude Include="Libraries\Foundation\src\Memory\SmartPointer.h" />
     <ClInclude Include="Source\Scene\Component\Graphic\Texture.h" />

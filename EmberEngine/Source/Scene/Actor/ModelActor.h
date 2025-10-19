@@ -24,7 +24,13 @@ public:
 	void SetPointLight(const APointLightActor& PointLight) const;
 	void SetDirectionalLight(const ADirectionalLightActor& DirectionalLight) const;
 
+	void SetLightSpaceMatrix(const MyMath::FMatrix& LightSpacecMatrix) const;
+
 	void Draw() const;
+
+	void RawDraw() const;
+
+	const FShader* GetShader() const;
 
 private:
 	MySTL::TWeakPtr<FModel> Model_;

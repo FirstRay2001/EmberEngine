@@ -21,8 +21,17 @@ public:
 	}
 
 public:
-	// 加载模型, 传入模型名称，返回模型ID，失败返回-1
+	void Initialize();
+
+public:
+	// 加载模型，传入模型名称，返回模型ID，失败返回-1
 	int LoadModel(const std::string& ModelName);
+
+	// 加载OBJ模型，传入模型名称，返回模型ID，失败返回-1
+	int LoadModelOBJ(const std::string& ModelName);
+
+	// 加载FBX模型，传入模型名称，返回模型ID，失败返回-1
+	int LoadModelFBX(const std::string& ModelName);
 
 	// 查找模型，传入模型名称，返回模型ID，未找到返回-1
 	int FindModel(const std::string& ModelName) const;

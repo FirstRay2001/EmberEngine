@@ -404,6 +404,11 @@ public:
 		return TSharedPtr<T>();
 	}
 
+	void Reset()
+	{
+		WeakCleanUp();
+	}
+
 public:
 	// 获取引用计数
 	size_t GetSharedCount() const

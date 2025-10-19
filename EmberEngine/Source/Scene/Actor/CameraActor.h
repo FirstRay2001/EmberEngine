@@ -22,6 +22,9 @@ public:
 
 	void RenderPointLight(APointLightActor* PointLight) const;
 
+	float GetNearClip() const { return Near_; }
+	float GetFarClip() const { return Far_; }
+
 private:
 	float FovDegree_;
 	float Aspect_;

@@ -26,9 +26,11 @@ public:
 	void Render();
 
 private:
-	MySTL::TVector<MySTL::TSharedPtr<AActor>>	Actors_;
-	MySTL::TSharedPtr<ACameraActor>				CameraActor_;
-	MySTL::TSharedPtr<AModelActor>				TestModelActor_;
-	MySTL::TSharedPtr<APointLightActor>			PointLightActor;
+	MySTL::TVector<MySTL::TSharedPtr<AActor>>		Actors_;
+	MySTL::TSharedPtr<ACameraActor>					CameraActor_;
+	MySTL::TSharedPtr<AModelActor>					ModelActor_;
+	MySTL::TVector<MySTL::TSharedPtr<AModelActor>>	WallActors_;
+	MySTL::TSharedPtr<APointLightActor>				PointLightActor_;
 	MySTL::TSharedPtr<ADirectionalLightActor>		DirectionalLightActor_;
+	MySTL::TUniquePtr<FForwardRenderer>				ForwardRenderer_;
 };

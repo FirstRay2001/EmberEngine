@@ -25,6 +25,7 @@ class FShader;
 class FTexture;
 class FMaterial;
 class FModel;
+class FForwardRenderer;
 class AActor;
 class AMeshActor;
 class AModelActor;
@@ -38,10 +39,11 @@ class ADirectionalLightActor;
 
 //////// ∫Í∂®“Â ////////
 #ifdef  DEBUG
-	#define LOG_INFO(fmt, ...)	printf("[INFO] " fmt "\n", ##__VA_ARGS__) 
-	#define LOG_WARN(fmt, ...)	printf("[WARN] " fmt "\n", ##__VA_ARGS__)
-	#define LOG_ERROR(fmt, ...)	printf("[ERROR] " fmt "\n", ##__VA_ARGS__)
-	#define LOG_DEBUG(fmt, ...)	printf("[DEBUG][%s:%d] " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+static unsigned int ErrorCnt = 0;
+	#define LOG_INFO(fmt, ...)	printf("\033[37m[INFO] " fmt "\033[0m\n", ##__VA_ARGS__) 
+	#define LOG_WARN(fmt, ...)	printf("\033[93m[WARN] " fmt "\033[0m\n", ##__VA_ARGS__)
+	#define LOG_ERROR(fmt, ...)	printf("\033[91m[ERROR][ERROR_COUNT:%d] " fmt "\033[0m\n", ++ErrorCnt, ##__VA_ARGS__)
+	#define LOG_DEBUG(fmt, ...)	printf("[DEBUG][%s:%d] " fmt "\033[0m\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #else
 	#define LOG_INFO(fmt, ...)
 	#define LOG_WARN(fmt, ...)

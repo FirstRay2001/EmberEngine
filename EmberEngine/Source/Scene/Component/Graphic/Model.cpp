@@ -35,3 +35,12 @@ void FModel::Draw(const FShader& Shader) const
 		Mesh.Draw();
 	}
 }
+
+void FModel::RawDraw() const
+{
+	for (int i = 0; i < Meshs_.Size(); i++)
+	{
+		FMesh Mesh = Meshs_[i];
+		Mesh.Draw();
+	}
+}

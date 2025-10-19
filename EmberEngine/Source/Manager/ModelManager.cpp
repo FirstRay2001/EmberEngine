@@ -13,7 +13,22 @@
 
 const std::string ModelDirectory = "D:/Dev/Project/EmberEngine/EmberEngine/Resources/Model/";
 
+void MModelManager::Initialize()
+{
+}
+
 int MModelManager::LoadModel(const std::string& ModelName)
+{
+	std::string FormatStr = ModelName.substr(ModelName.find_last_of('.'));
+	if (FormatStr == ".obj")
+		return LoadModelOBJ(ModelName);
+	if (FormatStr == ".fbx")
+		return LoadModelFBX(ModelName);
+	LOG_ERROR("Failed to load model: %s, unsupport format", ModelName.c_str());
+	return 0;
+}
+
+int MModelManager::LoadModelOBJ(const std::string& ModelName)
 {
 	// 是否已加载
 	int ModelIndex = FindModel(ModelName);
@@ -34,6 +49,11 @@ int MModelManager::LoadModel(const std::string& ModelName)
 	Models_.emplace_back(NewModel);
 	ModelMap_[ModelName] = NewModelID;
 	return NewModelID;
+}
+
+int MModelManager::LoadModelFBX(const std::string& ModelName)
+{
+	return 0;
 }
 
 int MModelManager::FindModel(const std::string& ModelName) const
@@ -150,19 +170,22 @@ void MModelManager::ProcessMesh(aiMesh* AMesh, const aiScene* AScene, MySTL::TVe
 	aiMaterial* AMaterial = AScene->mMaterials[AMesh->mMaterialIndex];
 
 	// 获取纹理路径
-	aiString DiffuseTexPath, SpecularTexPath;
+	aiString DiffuseTexPath, SpecularTexPath, NormalPath;
 	AMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &DiffuseTexPath);
 	AMaterial->GetTexture(aiTextureType_SPECULAR, 0, &SpecularTexPath);
+	AMaterial->GetTexture(aiTextureType_HEIGHT, 0, &NormalPath);
 
 	std::string DiffusePathStr = ModelDirectory + std::string(DiffuseTexPath.C_Str());
 	std::string SpecularPathStr = ModelDirectory + std::string(SpecularTexPath.C_Str());
+	std::string NormalPathStr = ModelDirectory + std::string(NormalPath.C_Str());
 
 	// 材质去重
 	for (unsigned int i = 0; i < Materials.Size(); i++)
 	{
 		std::string ExistingDiffusePath = Materials[i].GetDiffuseTexturePath();
 		std::string ExistingSpecularPath = Materials[i].GetSpecularTexturePath();
-		if (ExistingDiffusePath == DiffusePathStr && ExistingSpecularPath == SpecularPathStr)
+		std::string ExistingNormalPath = Materials[i].GetNormalMapPath();
+		if (ExistingDiffusePath == DiffusePathStr && ExistingSpecularPath == SpecularPathStr && ExistingNormalPath == NormalPathStr)
 		{
 			MeshMaterialIndices.push_back(i);
 			return;
@@ -170,7 +193,15 @@ void MModelManager::ProcessMesh(aiMesh* AMesh, const aiScene* AScene, MySTL::TVe
 	}
 
 	// 创建材质
-	FMaterial NewMaterial(DiffusePathStr, SpecularPathStr, 32.0f);
+	FMaterial NewMaterial;
+
+	if (!std::string(DiffuseTexPath.C_Str()).empty())
+		NewMaterial.SetDiffuse(DiffusePathStr);
+	if (!std::string(SpecularTexPath.C_Str()).empty())
+		NewMaterial.SetSpecular(SpecularPathStr);
+	if (!std::string(NormalPath.C_Str()).empty())
+		NewMaterial.SetNormal(NormalPathStr);
 	Materials.push_back(NewMaterial);
 	MeshMaterialIndices.push_back(static_cast<unsigned int>(Materials.Size() - 1));
 }
+		

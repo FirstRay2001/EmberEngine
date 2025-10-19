@@ -10,15 +10,20 @@ class FMaterial
 {
 public:
 	FMaterial();
-	FMaterial(std::string DiffuseTexturName, std::string SpecularTextureName, float Shininess);
 	~FMaterial() = default;
 
 public:
+	void SetDiffuse(std::string NewDiffuseName);
+	void SetSpecular(std::string NewSpecularName);
+	void SetNormal(std::string NewNormalName);
+	void SetShininess(float NewShininess);
+
 	// 应用材质到Shader
 	void ApplyTo(const FShader& Shader) const;
 
 	std::string GetDiffuseTexturePath() const;
 	std::string GetSpecularTexturePath() const;
+	std::string GetNormalMapPath() const;
 
 public:
 	bool operator==(const FMaterial& Other) const;
@@ -26,5 +31,6 @@ public:
 private:
 	std::string DiffuseTextureName_;
 	std::string SpecularTextureName_;
+	std::string NormalMapName_;
 	float Shininess_;
 };

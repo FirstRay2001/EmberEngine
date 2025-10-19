@@ -47,6 +47,12 @@ public:
 	// 设置透视矩阵
 	void SetProjectionMatrix(MyMath::FMatrix ProjectionMatrix, const char* UniformName = "projection") const;
 
+	// 设置自身
+	void SetPointLight() const;
+
+	// 设置相机位置
+	void SetCameraPos(const MyMath::FVector3& CameraPos) const;
+
 	// 绘制点光源
 	void Draw() const;
 

@@ -16,6 +16,10 @@ public:
 		return Instance;
 	}
 
+public:
+	void Initialize();
+
+public:
 	// 加载Shader, 传入Shader名称、顶点着色器路径、片段着色器路径，返回Shader ID
 	int LoadShader(const char* ShaderName, std::string VertexPath, std::string FragmentPath);
 

@@ -33,6 +33,9 @@ public:
 	// 绑定纹理采样器
 	void BindSampler(std::string TextureName, const FShader& Shader, const char* UniformName);
 
+	// 使用ShadowMap
+	void UseShadowMap(const FShader& Shader, unsigned int ShadowMapFBO);
+
 private:
 	MTextureManager() = default;
 
@@ -41,7 +44,7 @@ private:
 	int TextureCount_ = 0;
 
 	// 已使用纹理单元数量
-	int UsedTextureUnitCount_ = 0;
+	int UsedTextureUnitCount_ = 1;
 
 	// 文件名称-纹理ID映射表
 	MySTL::THashTable<std::string, GLuint> TextureMap_;

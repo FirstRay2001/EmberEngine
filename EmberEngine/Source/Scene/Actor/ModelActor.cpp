@@ -88,6 +88,16 @@ void AModelActor::SetDirectionalLight(const ADirectionalLightActor& DirectionalL
 	}
 }
 
+void AModelActor::SetLightSpaceMatrix(const MyMath::FMatrix& LightSpacecMatrix) const
+{
+	if (Shader_.IsValid())
+	{
+		Shader_->Use();
+
+		Shader_->SetMatrix("lightSpaceMatrix", LightSpacecMatrix.TransposeConst());
+	}
+}
+
 void AModelActor::Draw() const
 {
 	if (Model_.IsValid() && Shader_.IsValid())
@@ -95,4 +105,17 @@ void AModelActor::Draw() const
 		Shader_->SetMatrix("model", GetWorldMatrix().Transpose());
 		Model_->Draw(*Shader_);
 	}
+}
+
+void AModelActor::RawDraw() const
+{
+	if (Model_.IsValid())
+	{
+		Model_->RawDraw();
+	}
+}
+
+const FShader* AModelActor::GetShader() const
+{
+	return Shader_.Get();
 }

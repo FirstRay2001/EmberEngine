@@ -90,6 +90,9 @@
     <ClCompile Include="Source\Manager\ShaderManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\Renderer\ForwardRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\Application.h">
@@ -186,6 +189,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\Manager\ShaderManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Renderer\ForwardRenderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

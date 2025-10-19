@@ -6,6 +6,8 @@
 #include "Source/Scene/Scene.h"
 #include "Source/Manager/InputManager.h"
 #include "Source/Manager/TextureManager.h"
+#include "Source//Manager/ShaderManager.h"
+#include "Source/Manager/ModelManager.h"
 
 Application::Application(int Width, int Height, const char* title) :
 	Window_(nullptr),
@@ -92,8 +94,15 @@ void Application::Initialize()
 	// 启用深度测试
 	glEnable(GL_DEPTH_TEST);
 
+	// 启用混合
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	// 输入管理器初始化
 	MInputManager::GetInstance().Initialize(Window_);
+	MTextureManager::GetInstance().Initialize();
+	MModelManager::GetInstance().Initialize();
+	MShaderManager::GetInstance().Initialize();
 
 	// 捕获鼠标
 	glfwSetInputMode(Window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

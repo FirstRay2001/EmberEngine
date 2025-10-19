@@ -183,6 +183,11 @@ public:
 		return { Data_[0] + Other.Data_[0], Data_[1] + Other.Data_[1], Data_[2] + Other.Data_[2] };
 	}
 
+	FVector3 operator-(const FVector3& Other) const
+	{
+		return { Data_[0] - Other.Data_[0], Data_[1] - Other.Data_[1], Data_[2] - Other.Data_[2] };
+	}
+
 	FVector3& operator+=(const FVector3& Other)
 	{
 		Data_[0] += Other.Data_[0];
@@ -376,6 +381,17 @@ public:
 		return *this;
 	}
 
+	FMatrix TransposeConst() const
+	{
+		float Temp[16];
+		memcpy(Temp, Data_, 16 * sizeof(float));
+		FMatrix Ret;
+		for (size_t i = 0; i < 4; i++)
+			for (size_t j = 0; j < 4; j++)
+				Ret.Data_[j * 4 + i] = Temp[i * 4 + j];
+		return Ret;
+	}
+
 	// 矩阵数乘
 	FMatrix operator*(const float& Value) const
 	{
@@ -517,6 +533,22 @@ inline FMatrix ToTranslationMatrix(const FVector3& Translation)
 	return Ret;
 }
 
+// 向量叉乘
+inline FVector3 Cross(const FVector3& A, const FVector3& B)
+{
+	return FVector3(
+		A[1] * B[2] - A[2] * B[1],
+		A[2] * B[0] - A[0] * B[2],
+		A[0] * B[1] - A[1] * B[0]
+	);
+}
+
+// 向量点乘
+inline float Dot(const FVector3& A, const FVector3& B)
+{
+	return A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
+}
+
 // 获取缩放矩阵
 inline FMatrix ToScaleMatirx(const FVector3& Scale)
 {
@@ -526,4 +558,55 @@ inline FMatrix ToScaleMatirx(const FVector3& Scale)
 	Ret(2, 2) = Scale[2];
 	return Ret;
 }
+
+// 获取LookAt矩阵
+inline FMatrix GetLookAt(const FVector3& Eye, const FVector3& Target, const FVector3& Up)
+{
+	FVector3 ZAxis = (Eye - Target).Normalized();
+	FVector3 XAxis = Cross(Up, ZAxis).Normalized();
+	FVector3 YAxis = Cross(ZAxis, XAxis);
+	FMatrix ViewMatrix;
+	ViewMatrix(0, 0) = XAxis[0];
+	ViewMatrix(0, 1) = XAxis[1];
+	ViewMatrix(0, 2) = XAxis[2];
+	ViewMatrix(0, 3) = -(XAxis * Eye);
+	ViewMatrix(1, 0) = YAxis[0];
+	ViewMatrix(1, 1) = YAxis[1];
+	ViewMatrix(1, 2) = YAxis[2];
+	ViewMatrix(1, 3) = -(YAxis * Eye);
+	ViewMatrix(2, 0) = ZAxis[0];
+	ViewMatrix(2, 1) = ZAxis[1];
+	ViewMatrix(2, 2) = ZAxis[2];
+	ViewMatrix(2, 3) = -(ZAxis * Eye);
+	ViewMatrix(3, 0) = 0;
+	ViewMatrix(3, 1) = 0;
+	ViewMatrix(3, 2) = 0;
+	ViewMatrix(3, 3) = 1;
+	return ViewMatrix;
 }
+
+// 获取正交投影矩阵
+inline FMatrix GetOrthoProjection(float Left, float Right, float Bottom, float Top, float Near, float Far)
+{
+	FMatrix ProjectionMatrix;
+	ProjectionMatrix(0, 0) = 2.0f / (Right - Left);
+	ProjectionMatrix(0, 1) = 0;
+	ProjectionMatrix(0, 2) = 0;
+	ProjectionMatrix(0, 3) = -(Right + Left) / (Right - Left);
+	ProjectionMatrix(1, 0) = 0;
+	ProjectionMatrix(1, 1) = 2.0f / (Top - Bottom);
+	ProjectionMatrix(1, 2) = 0;
+	ProjectionMatrix(1, 3) = -(Top + Bottom) / (Top - Bottom);
+	ProjectionMatrix(2, 0) = 0;
+	ProjectionMatrix(2, 1) = 0;
+	ProjectionMatrix(2, 2) = -2.0f / (Far - Near);
+	ProjectionMatrix(2, 3) = -(Far + Near) / (Far - Near);
+	ProjectionMatrix(3, 0) = 0;
+	ProjectionMatrix(3, 1) = 0;
+	ProjectionMatrix(3, 2) = 0;
+	ProjectionMatrix(3, 3) = 1;
+	return ProjectionMatrix;
+}
+
+
+} // namespace MyMath

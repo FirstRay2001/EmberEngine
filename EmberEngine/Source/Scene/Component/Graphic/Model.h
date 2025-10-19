@@ -26,6 +26,8 @@ public:
 	// »æÖÆ
 	void Draw(const FShader& Shader) const;
 
+	void RawDraw() const;
+
 private:
 	MySTL::TVector<FMesh>	Meshs_;
 	MySTL::TVector<FMaterial>	Materials_;

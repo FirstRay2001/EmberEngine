@@ -62,6 +62,36 @@ void APointLightActor::SetProjectionMatrix(MyMath::FMatrix ProjectionMatrix, con
 	Shader_->SetMatrix(UniformName, ProjectionMatrix);
 }
 
+void APointLightActor::SetPointLight() const
+{
+	if (Shader_.IsValid())
+	{
+		Shader_->Use();
+
+		// 设置点光源位置
+		Shader_->SetVector3("pointLight.position", GetActorWorldLocation());
+
+		// 设置点光源颜色
+		Shader_->SetVector3("pointLight.ambient", GetAmbientColor());
+		Shader_->SetVector3("pointLight.diffuse", GetDiffuseColor());
+		Shader_->SetVector3("pointLight.specular", GetSpecularColor());
+
+		// 设置点光源衰减
+		Shader_->SetFloat("pointLight.constant", GetConstant());
+		Shader_->SetFloat("pointLight.linear", GetLinear());
+		Shader_->SetFloat("pointLight.quadratic", GetQuadratic());
+	}
+}
+
+void APointLightActor::SetCameraPos(const MyMath::FVector3& CameraPos) const
+{
+	if (Shader_.IsValid())
+	{
+		Shader_->Use();
+		Shader_->SetVector3("cameraPos", CameraPos);
+	}
+}
+
 void APointLightActor::Draw() const
 {
 	// 激活Shader

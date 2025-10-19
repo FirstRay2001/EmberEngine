@@ -9,9 +9,11 @@
 #include "stb_image.h"
 
 const std::string TextureDirectory = "D:/Dev/Project/EmberEngine/EmberEngine/Resources/Texture/";
+const std::string FullyBlackTexture = "fully_black.png";
 
 void MTextureManager::Initialize()
 {
+	LoadTexture(TextureDirectory + FullyBlackTexture);
 }
 
 void MTextureManager::Tick()
@@ -22,7 +24,8 @@ void MTextureManager::Tick()
 
 void MTextureManager::Clear()
 {
-	UsedTextureUnitCount_ = 0;
+	// ShadowMap
+	UsedTextureUnitCount_ = 1;
 }
 
 bool MTextureManager::LoadTexture(std::string TextureName)
@@ -93,6 +96,14 @@ bool MTextureManager::LoadTexture(std::string TextureName)
 
 void MTextureManager::BindSampler(std::string TextureName, const FShader& Shader, const char* UniformName)
 {
+	// 空纹理
+	if (TextureName.empty())
+	{
+		// LOG_WARN("empty texture, use default to %s", UniformName);
+		BindSampler(TextureDirectory + FullyBlackTexture, Shader, UniformName);
+		return;
+	}
+
 	auto It = TextureMap_.Find(TextureName);
 
 	// 纹理不存在
@@ -114,4 +125,16 @@ void MTextureManager::BindSampler(std::string TextureName, const FShader& Shader
 	Shader.SetInt(UniformName, UsedTextureUnitCount_);
 
 	UsedTextureUnitCount_++;
+}
+
+void MTextureManager::UseShadowMap(const FShader& Shader, unsigned int ShadowMapFBO)
+{
+	// 激活纹理单元0
+	glActiveTexture(GL_TEXTURE0);
+
+	// 绑定ShadowMap纹理
+	glBindTexture(GL_TEXTURE_2D, ShadowMapFBO);
+
+	// 绑定深度贴图
+	Shader.SetInt("shadowMap", 0);
 }

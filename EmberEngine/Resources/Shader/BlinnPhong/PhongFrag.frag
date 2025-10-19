@@ -5,6 +5,7 @@ out vec4 FragColor;
 in vec3 WorldPos;
 in vec3 Normal;
 in vec2 TexCoord;
+in vec4 FragPosLightSpace;
 
 // 点光源
 struct PointLight
@@ -43,6 +44,23 @@ uniform Material material;
 
 uniform vec3 cameraPos;
 
+uniform sampler2D shadowMap;
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // 透视除法
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    
+    // NDC
+    projCoords = projCoords * 0.5 + 0.5;
+
+    float closestDepth = texture(shadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+    float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+    
+    return shadow;
+}
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
@@ -97,7 +115,9 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 fragPos, vec
     float NH = max(dot(N, H), 0);
     vec3 specular = pow(NH, material.shininess) * light.specular * specularCoef;
 
-    vec3 result = ambient + diffuse + specular;
+    // 计算阴影
+    float shadow = ShadowCalculation(FragPosLightSpace);
+    vec3 result = ambient + (diffuse + specular) * (1 - shadow);
 
     return result;
 }

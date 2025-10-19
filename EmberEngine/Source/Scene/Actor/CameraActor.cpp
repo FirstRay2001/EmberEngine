@@ -148,6 +148,8 @@ void ACameraActor::RenderPointLight(APointLightActor* PointLight) const
 	PointLight->SetViewMatrix(ViewMatrix_);
 	PointLight->SetProjectionMatrix(ProjectionMatrix_);
 
+	PointLight->SetCameraPos(GetActorWorldLocation());
+
 	// »æÖÆ
 	PointLight->Draw();
 }

@@ -7,6 +7,10 @@
 
 const std::string ShaderDirectory = "D:/Dev/Project/EmberEngine/EmberEngine/Resources/Shader/";
 
+void MShaderManager::Initialize()
+{
+}
+
 int MShaderManager::LoadShader(const char* ShaderName, std::string VertexPath, std::string FragmentPath)
 {
 	//  «∑Ò“—º”‘ÿ
