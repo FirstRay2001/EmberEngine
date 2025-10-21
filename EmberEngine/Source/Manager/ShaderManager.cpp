@@ -25,6 +25,22 @@ int MShaderManager::LoadShader(const char* ShaderName, std::string VertexPath, s
 	return NewShaderID;
 }
 
+int MShaderManager::LoadShader(const char* ShaderName, std::string VertexPath, std::string GeometryPath, std::string FragmentPath)
+{
+	// 是否已加载
+	int ShaderIndex = FindShader(ShaderName);
+	if (ShaderIndex != -1)
+		return ShaderIndex;
+
+	// 新建Shader
+	int NewShaderID = Shaders_.Size();
+	Shaders_.emplace_back(new FShader((ShaderDirectory + VertexPath).c_str(),
+		(ShaderDirectory + GeometryPath).c_str(),
+		(ShaderDirectory + FragmentPath).c_str()));
+	ShaderMap_[ShaderName] = NewShaderID;
+	return NewShaderID;
+}
+
 int MShaderManager::FindShader(const char* ShaderName) const
 {
 	if (ShaderMap_.Find(ShaderName) != nullptr)

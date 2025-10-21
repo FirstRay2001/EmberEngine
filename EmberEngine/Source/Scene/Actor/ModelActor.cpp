@@ -13,11 +13,17 @@
 
 AModelActor::AModelActor(MySTL::TSharedPtr<FModel> Model, MySTL::TSharedPtr<FShader> Shader) :
 	Model_(Model),
-	Shader_(Shader)
+	Shader_(Shader),
+	bDrawOutline_(false),
+	bDrawNormal_(false)
 {
 }
 
-AModelActor::AModelActor(FMesh* Mesh, FMaterial* Material, FShader* Shader)
+AModelActor::AModelActor(FMesh* Mesh, FMaterial* Material, FShader* Shader) :
+	Model_(MySTL::TSharedPtr<FModel>(new FModel(Mesh, Material))),
+	Shader_(MySTL::TSharedPtr<FShader>(Shader)),
+	bDrawOutline_(false),
+	bDrawNormal_(false)
 {
 }
 
@@ -28,10 +34,6 @@ AModelActor::~AModelActor()
 void AModelActor::Tick(float DeltaTime)
 {
 	AActor::Tick(DeltaTime);
-
-	// TEST ÈÆYÖáÐý×ª
-	MyMath::Quaternion Quat(DeltaTime * 0.2f, MyMath::FVector3(0, 1, 0));
-	Rotate(Quat);
 }
 
 void AModelActor::SetCamera(const ACameraActor& Camera) const

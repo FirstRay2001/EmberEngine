@@ -11,6 +11,8 @@ struct FVertex
 	MyMath::FVector3 Position;
 	MyMath::FVector3 Normal;
 	MyMath::FVector2 TexCoords;
+	MyMath::FVector3 Tangent;
+	MyMath::FVector3 BiTangent;
 };
 
 class FMesh
@@ -34,12 +36,15 @@ private:
 	MySTL::TVector<unsigned int>	Indices_;
 
 public:
-	static FVertex CreateVertex(const MyMath::FVector3& Position, const MyMath::FVector3& Normal, const MyMath::FVector2& TexCoords)
+	static FVertex CreateVertex(const MyMath::FVector3& Position, const MyMath::FVector3& Normal, 
+		const MyMath::FVector2& TexCoords, const MyMath::FVector3& Tangnet = MyMath::FVector3(1,0,0), const MyMath::FVector3& BiTangent = MyMath::FVector3(0,1,0))
 	{
 		FVertex Vertex;
 		Vertex.Position = Position;
 		Vertex.Normal = Normal;
 		Vertex.TexCoords = TexCoords;
+		Vertex.Tangent = Tangnet;
+		Vertex.BiTangent = BiTangent;
 		return Vertex;
 	}
 
@@ -49,6 +54,8 @@ public:
 		Vertex.Position = MyMath::FVector3(x, y, z);
 		Vertex.Normal = MyMath::FVector3(nx, ny, nz);
 		Vertex.TexCoords = MyMath::FVector2(u, v);
+		Vertex.Tangent = MyMath::FVector3(1, 0, 0);
+		Vertex.BiTangent = MyMath::FVector3(0, 1, 0);
 		return Vertex;
 	}
 
@@ -75,4 +82,7 @@ public:
 			OutVec.push_back(v);
 		}
 	}
+
+	// 创建立方体
+	static FMesh CreateCube(float Size);
 };

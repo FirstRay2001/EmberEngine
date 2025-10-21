@@ -23,6 +23,9 @@ public:
 	// 加载Shader, 传入Shader名称、顶点着色器路径、片段着色器路径，返回Shader ID
 	int LoadShader(const char* ShaderName, std::string VertexPath, std::string FragmentPath);
 
+	// 加载Shader, 传入Shader名称、顶点着色器路径、几何着色器路径、片段着色器路径，返回Shader ID
+	int LoadShader(const char* ShaderName, std::string VertexPath, std::string GeometryPath, std::string FragmentPath);
+
 	// 查找Shader，传入Shader名称，返回Shader ID，未找到返回-1
 	int FindShader(const char* ShaderName) const;
 

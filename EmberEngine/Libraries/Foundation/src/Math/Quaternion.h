@@ -153,7 +153,7 @@ namespace MyMath
 		// 获取方向向量（初始方向为Z轴负方向）
 		FVector3 GetForwardDirection() const
 		{
-			FVector3 Forward = { 0,0,-1 };
+			FVector3 Forward = { 0, 0, -1 };
 
 			FVector3 NewForward = {
 				(1 - 2 * (Y_ * Y_ + Z_ * Z_)) * Forward[0] + (2 * (X_ * Y_ - W_ * Z_)) * Forward[1] + (2 * (X_ * Z_ + W_ * Y_)) * Forward[2],

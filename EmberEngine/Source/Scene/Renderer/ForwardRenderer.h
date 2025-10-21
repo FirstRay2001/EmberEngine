@@ -9,12 +9,12 @@
 class FForwardRenderer
 {
 public:
-	FForwardRenderer();
+	FForwardRenderer(unsigned int ScreenWidth = 1600, unsigned int ScreenHeight = 1200);
 	~FForwardRenderer();
 
 public:
 	// 初始化
-	void Initialize(unsigned int ScreenWidth = 1600, unsigned int ScreenHeight = 1200);
+	void Initialize();
 
 	// 渲染场景
 	void RenderScene();
@@ -38,19 +38,56 @@ public:
 	void ClearSceneData();
 
 private:
-	// 获取阴影贴图
-	void UpdateShadowMaps();
+	void InitialzeShadowMap();
+
+	void InitializeOutline();
+
+	void InitializeSkybox();
+
+	void InitializePostProcess();
+
+	// 更新平行光阴影贴图
+	void UpdateDirectionalLightShadowMaps();
+
+	// 更新点光源阴影贴图
+	void UpdatePointLightShadowMaps();
+
+	// 绘制天空盒
+	void RenderSkybox();
+
+	// 绘制模型
+	void RenderModels();
+
+	// 绘制轮廓、法线
+	void RenderOutline();
+
+	// 后处理
+	void PostProcess();
+
+	// 绘制UI
+	void RenderUI();
+
+	// 启用模板写入
+	void EnableStencilWrite();
+
+	// 禁用模板写入
+	void DisableStencilWrite();
 
 private:
 	MySTL::TWeakPtr<ACameraActor>						CurrentCamera_;
 	MySTL::TWeakPtr<ADirectionalLightActor>				DirectionalLight_;
 	MySTL::TVector<MySTL::TWeakPtr<APointLightActor>>	PointLights_;
 	MySTL::TVector<MySTL::TWeakPtr<AModelActor>>		Models_;
+	MySTL::TUniquePtr<FMesh>							SkyboxMesh_;
+	MySTL::TUniquePtr<FMesh>							ScreenQuadMesh_;
+	MyMath::FMatrix										DirectionalLightSpaceMatrix_;
 	unsigned int SCREEN_WIDTH;
 	unsigned int SCREEN_HEIGHT;
 	unsigned int SHADOW_WIDTH;
 	unsigned int SHADOW_HEIGHT;
-	unsigned int ShadowMapTex_;
-	unsigned int DepthMapFBO_;
-	MyMath::FMatrix LightSpaceMatrix_;
+	unsigned int DirectionalShadowMapFBO_;
+	unsigned int PointShadowMapFBO_;
+	unsigned int SceneColorFBO_;
+	float PointLightShadowFarPlane_ = 25.0f;
+	unsigned int VAO_;
 };

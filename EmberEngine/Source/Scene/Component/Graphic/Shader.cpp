@@ -15,6 +15,12 @@ FShader::FShader(const char* VertexPath, const char* FragmentPath) :
 	LoadShader(VertexPath, FragmentPath);
 }
 
+FShader::FShader(const char* VertexPath, const char* GeometryPath, const char* FragmentPath) :
+	ID_()
+{
+	LoadShader(VertexPath, GeometryPath, FragmentPath);
+}
+
 void FShader::Use() const
 {
 	glUseProgram(ID_);
@@ -128,6 +134,86 @@ bool FShader::LoadShader(const char* VertexPath, const char* FragmentPath)
 
 	// 释放资源
 	glDeleteShader(VertexShader);
+	glDeleteShader(FragmentShader);
+
+	return true;
+}
+
+bool FShader::LoadShader(const char* VertexPath, const char* GeometryPath, const char* FragmentPath)
+{
+	std::string VertexSourceCode, GeometrySourceCode, FragmenSourceCode;
+	std::ifstream VertexFile, GeometryFile, FragmentFile;
+
+	// 确保ifstream object可以抛出异常
+	VertexFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	GeometryFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	FragmentFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+	// 读取Shader源码
+	try
+	{
+		// 打开文件
+		VertexFile.open(VertexPath);
+		GeometryFile.open(GeometryPath);
+		FragmentFile.open(FragmentPath);
+
+		// 读取
+		std::stringstream VertexStringStream, GeometryStringStream, FragmentStringStream;
+		VertexStringStream << VertexFile.rdbuf();
+		GeometryStringStream << GeometryFile.rdbuf();
+		FragmentStringStream << FragmentFile.rdbuf();
+
+		// 转换为string
+		VertexSourceCode = VertexStringStream.str();
+		GeometrySourceCode = GeometryStringStream.str();
+		FragmenSourceCode = FragmentStringStream.str();
+
+		// 关闭句柄
+		VertexFile.close();
+		GeometryFile.close();
+		FragmentFile.close();
+	}
+	catch (std::ifstream::failure& e)
+	{
+		LOG_ERROR("[SHADER] file not successfully read: %s", e.what());
+		return false;
+	}
+
+	unsigned int VertexShader, GeometryShader, FragmentShader;
+	VertexShader = glCreateShader(GL_VERTEX_SHADER);
+	GeometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+	// 编译shader源码
+	const char* c_vertex = VertexSourceCode.c_str();
+	const char* c_geometry = GeometrySourceCode.c_str();
+	const char* c_fragment = FragmenSourceCode.c_str();
+
+	glShaderSource(VertexShader, 1, &c_vertex, NULL);
+	glShaderSource(GeometryShader, 1, &c_geometry, NULL);
+	glShaderSource(FragmentShader, 1, &c_fragment, NULL);
+	glCompileShader(VertexShader);
+	glCompileShader(GeometryShader);
+	glCompileShader(FragmentShader);
+
+	// 检查编译错误
+	CheckCompileErrors(VertexShader, "VERTEX");
+	CheckCompileErrors(GeometryShader, "GEOMETRY");
+	CheckCompileErrors(FragmentShader, "FRAGMENT");
+
+	// 链接shader
+	ID_ = glCreateProgram();
+	glAttachShader(ID_, VertexShader);
+	glAttachShader(ID_, GeometryShader);
+	glAttachShader(ID_, FragmentShader);
+	glLinkProgram(ID_);
+
+	// 检查链接错误
+	CheckCompileErrors(ID_, "PROGRAM");
+
+	// 释放资源
+	glDeleteShader(VertexShader);
+	glDeleteShader(GeometryShader);
 	glDeleteShader(FragmentShader);
 
 	return true;

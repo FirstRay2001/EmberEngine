@@ -533,6 +533,16 @@ inline FMatrix ToTranslationMatrix(const FVector3& Translation)
 	return Ret;
 }
 
+// 获取缩放矩阵
+inline FMatrix ToScaleMatirx(const FVector3& Scale)
+{
+	FMatrix Ret;
+	Ret(0, 0) = Scale[0];
+	Ret(1, 1) = Scale[1];
+	Ret(2, 2) = Scale[2];
+	return Ret;
+}
+
 // 向量叉乘
 inline FVector3 Cross(const FVector3& A, const FVector3& B)
 {
@@ -547,16 +557,6 @@ inline FVector3 Cross(const FVector3& A, const FVector3& B)
 inline float Dot(const FVector3& A, const FVector3& B)
 {
 	return A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
-}
-
-// 获取缩放矩阵
-inline FMatrix ToScaleMatirx(const FVector3& Scale)
-{
-	FMatrix Ret;
-	Ret(0, 0) = Scale[0];
-	Ret(1, 1) = Scale[1];
-	Ret(2, 2) = Scale[2];
-	return Ret;
 }
 
 // 获取LookAt矩阵
@@ -608,5 +608,29 @@ inline FMatrix GetOrthoProjection(float Left, float Right, float Bottom, float T
 	return ProjectionMatrix;
 }
 
+// 获取透视投影矩阵
+inline FMatrix GetPerspectiveProjection(float FovDegree, float Aspect, float Near, float Far)
+{
+	float FovRad = FovDegree * Deg2Rad;
+	float TanHalfFov = tan(FovRad / 2.0f);
+	FMatrix ProjectionMatrix;
+	ProjectionMatrix(0, 0) = 1.0f / (Aspect * TanHalfFov);
+	ProjectionMatrix(0, 1) = 0;
+	ProjectionMatrix(0, 2) = 0;
+	ProjectionMatrix(0, 3) = 0;
+	ProjectionMatrix(1, 0) = 0;
+	ProjectionMatrix(1, 1) = 1.0f / (TanHalfFov);
+	ProjectionMatrix(1, 2) = 0;
+	ProjectionMatrix(1, 3) = 0;
+	ProjectionMatrix(2, 0) = 0;
+	ProjectionMatrix(2, 1) = 0;
+	ProjectionMatrix(2, 2) = -(Far + Near) / (Far - Near);
+	ProjectionMatrix(2, 3) = -(2.0f * Far * Near) / (Far - Near);
+	ProjectionMatrix(3, 0) = 0;
+	ProjectionMatrix(3, 1) = 0;
+	ProjectionMatrix(3, 2) = -1.0f;
+	ProjectionMatrix(3, 3) = 0;
+	return ProjectionMatrix;
+}
 
 } // namespace MyMath

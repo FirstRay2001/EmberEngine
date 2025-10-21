@@ -46,9 +46,25 @@ uniform Material material;
 
 uniform vec3 cameraPos;
 
-uniform sampler2D shadowMap;
+uniform sampler2D dirShadowMap;
+uniform samplerCube pointShadowMap;
+uniform float farPlane;
 
-float ShadowCalculation(vec4 fragPosLightSpace)
+float PointShadowCalculation(vec3 fragPos)
+{
+    vec3 lightToFrag = fragPos - pointLight.position;
+    float closestDepth = texture(pointShadowMap, lightToFrag).r;
+    closestDepth *= farPlane;
+
+    float currentDepth = length(lightToFrag);
+
+    float bias = 0.05;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
+}
+
+float DirShadowCalculation(vec4 fragPosLightSpace)
 {
     // 透视除法
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -60,13 +76,13 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
     // PCF
     float shadow = 0.0;
-    float bias = 0.001;
+    float bias = 0.0002;
     vec2 texelSize = 1.0 / vec2(1024, 1024);
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            float pcfDepth = texture(dirShadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
             shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
         }    
     }
@@ -99,9 +115,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // 衰减
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance) + 0.00001); 
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance)); 
 
-    vec3 result = (ambient + diffuse + specular) * attenuation;
+    // 阴影
+    float shadow = PointShadowCalculation(WorldPos);
+
+    vec3 result = (ambient + (diffuse + specular) * (1 - shadow)) * attenuation;
     
     return result;
 }
@@ -130,7 +149,7 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 fragPos, vec
 
 
     // 计算阴影
-    float shadow = ShadowCalculation(FragPosLightSpace);
+    float shadow = DirShadowCalculation(FragPosLightSpace);
 
     vec3 result = ambient + (diffuse + specular) * (1 - shadow);
 

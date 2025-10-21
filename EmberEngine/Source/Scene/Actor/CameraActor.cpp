@@ -74,19 +74,17 @@ void ACameraActor::Tick(float DeltaTime)
 			// ÏÞÖÆPitch·¶Î§
 			if (abs(Eular[0] * MyMath::Rad2Deg + AngleY * MyMath::Rad2Deg) > 89.0f)
 			{
-				AngleY = 0.0f;
+				// AngleY = 0.0f;
 			}
 
 			// Yaw
 			MyMath::FVector3 Up = MyMath::FVector3(0, 1, 0);
 			MyMath::Quaternion QuatYaw = MyMath::Quaternion(AngleX, Up);
-			Rotation = QuatYaw * Rotation;
+			Rotate(QuatYaw);
 
 			// Pitch
 			MyMath::Quaternion QuatPitch = MyMath::Quaternion(AngleY, Right);
-			Rotation = QuatPitch * Rotation;
-
-			ActorTransform_.SetAbsoluteRotation(FRotator(Rotation));
+			Rotate(QuatPitch);
 		}
 	}
 
@@ -112,19 +110,7 @@ void ACameraActor::Tick(float DeltaTime)
 
 MyMath::FMatrix ACameraActor::GetProjectionMatrix() const
 {
-    MyMath::FMatrix ProjectionMat;
-
-    float TanHalfFov = tan(FovDegree_ * MyMath::Deg2Rad * 0.5f);
-    float Range = Near_ - Far_;
-
-    ProjectionMat(0, 0) = 1.0f / (Aspect_ * TanHalfFov);
-    ProjectionMat(1, 1) = 1.0f / TanHalfFov;
-    ProjectionMat(2, 2) = (Far_ + Near_) / Range;
-    ProjectionMat(3, 2) = -1;
-    ProjectionMat(2, 3) = (2.0f * Far_ * Near_) / Range;
-    ProjectionMat(3, 3) = 0;
-
-    return ProjectionMat;
+	return MyMath::GetPerspectiveProjection(FovDegree_, Aspect_, Near_, Far_);
 }
 
 void ACameraActor::RenderMesh(AMeshActor* MeshActor) const

@@ -30,11 +30,20 @@ public:
 	// 加载纹理, 传入纹理名称，返回是否加载成功
 	bool LoadTexture(std::string TextureName);
 
-	// 绑定纹理采样器
-	void BindSampler(std::string TextureName, const FShader& Shader, const char* UniformName);
+	// 储存纹理
+	bool StoreTexture(std::string TextureName, GLuint TextureID);
 
-	// 使用ShadowMap
-	void UseShadowMap(const FShader& Shader, unsigned int ShadowMapFBO);
+	// 加载CubeMap纹理, 传入纹理名称数组，返回是否加载成功
+	bool LoadCubeTexture(const MySTL::TVector<std::string>& TextureNames, std::string CubeMapName);
+
+	// 绑定2D纹理采样器
+	void BindSampler2D(std::string TextureName, const FShader& Shader, const char* UniformName);
+
+	// 绑定CubeMap纹理采样器
+	void BindSamplerCube(std::string CubeMapName, const FShader& Shader, const char* UniformName);
+
+	// 查找纹理ID
+	GLuint FindTextureID(std::string TextureName);
 
 private:
 	MTextureManager() = default;
@@ -44,7 +53,7 @@ private:
 	int TextureCount_ = 0;
 
 	// 已使用纹理单元数量
-	int UsedTextureUnitCount_ = 1;
+	int UsedTextureUnitCount_ = 0;
 
 	// 文件名称-纹理ID映射表
 	MySTL::THashTable<std::string, GLuint> TextureMap_;

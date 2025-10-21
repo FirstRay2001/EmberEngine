@@ -25,8 +25,7 @@ FScene::FScene()
 void FScene::Load()
 {
 	// 初始化渲染管线
-	ForwardRenderer_ = MySTL::TUniquePtr<FForwardRenderer>(new FForwardRenderer());
-	ForwardRenderer_->Initialize();
+	ForwardRenderer_ = MySTL::TUniquePtr<FForwardRenderer>(new FForwardRenderer(1600, 1200));
 
 	//////// TEST ////////
 	// 点光源模型
@@ -45,27 +44,27 @@ void FScene::Load()
 
 	// 光源Actor
 	PointLightActor_ = MySTL::TSharedPtr<APointLightActor>(new APointLightActor(MySTL::TSharedPtr<FMesh>(Mesh), LightShaderPtr));
-	PointLightActor_->SetActorWorldLocation(MyMath::FVector3(0, 1.3, 1));
+	PointLightActor_->SetActorWorldLocation(MyMath::FVector3(1, 1, 1));
 	PointLightActor_->SetActorWorldScale(MyMath::FVector3(0.2, 0.2, 0.2));
 	PointLightActor_->SetAmbientColor(MyMath::FVector3(0.05f, 0.05f, 0.05f));
-	PointLightActor_->SetDiffuseColor(MyMath::FVector3(1.5, 1.5, 1.5));
+	PointLightActor_->SetDiffuseColor(MyMath::FVector3(0.45, 0.45, 0.45));
 	PointLightActor_->SetSpecularColor(MyMath::FVector3(1.0f, 1.0f, 1.0f));
 
 	// 将点光源加入渲染管线
 	ForwardRenderer_->AddPointLight(PointLightActor_);
 
 	DirectionalLightActor_ = MySTL::TSharedPtr<ADirectionalLightActor>(new ADirectionalLightActor());
-	DirectionalLightActor_->SetDirection(MyMath::FVector3(-0.2f, -0.1f, -0.3f));
+	DirectionalLightActor_->SetDirection(MyMath::FVector3(-0.2f, -0.1f, -0.8f));
 	DirectionalLightActor_->SetActorWorldLocation(DirectionalLightActor_->GetDirection() * -5.0f);
 	DirectionalLightActor_->SetAmbientColor(MyMath::FVector3(0.1f, 0.1f, 0.15f));
-	DirectionalLightActor_->SetDiffuseColor(MyMath::FVector3(0.8, 0.8, 0.8));
+	DirectionalLightActor_->SetDiffuseColor(MyMath::FVector3(0.6, 0.6, 0.3));
 
 	// 将平行光加入渲染管线
 	ForwardRenderer_->SetDirectionalLight(DirectionalLightActor_);
 
 	// 相机Actor
 	CameraActor_ = MySTL::TSharedPtr<ACameraActor>(new ACameraActor(45.0f, 8.0f / 6.0f, 0.1f, 100.0f));
-	CameraActor_->SetActorWorldLocation(MyMath::FVector3(0, 1, 5));
+	CameraActor_->SetActorWorldLocation(MyMath::FVector3(0, 0, 5));
 	CameraActor_->SetActorWorldRotation(FRotator(float(0 * MyMath::Deg2Rad), MyMath::FVector3(0, 1, 0)));
 
 	// 设置当前相机
@@ -78,7 +77,9 @@ void FScene::Load()
 	int LennaModelIndex = MModelManager::GetInstance().LoadModel("Lenna/Lenna.obj");
 	auto LennaPtr = MModelManager::GetInstance().GetModel(LennaModelIndex);
 	ModelActor_ = MySTL::TSharedPtr<AModelActor>(new AModelActor(LennaPtr, ToonShader));
-	ModelActor_->SetActorWorldLocation(MyMath::FVector3(0, -1, 0));
+	ModelActor_->SetActorWorldLocation(MyMath::FVector3(0, -2, 0));
+
+	ModelActor_->SetDrawOutline(true);
 
 	ForwardRenderer_->AddModel(ModelActor_);
 
@@ -99,20 +100,21 @@ void FScene::Load()
 	WallActors_[WallActors_.Size() - 1]->Rotate(MyMath::Quaternion(MyMath::PI, MyMath::FVector3(1, 0, 0)));
 	WallActors_.emplace_back(new AModelActor(WallPtr, ToonShader));
 
-	WallActors_[0]->SetActorWorldLocation(MyMath::FVector3(-2, 1, 0));
-	WallActors_[0]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
-	WallActors_[1]->SetActorWorldLocation(MyMath::FVector3(0, 1, -2));
-	WallActors_[1]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
-	WallActors_[2]->SetActorWorldLocation(MyMath::FVector3(2, 1, 0));
-	WallActors_[2]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
-	WallActors_[3]->SetActorWorldLocation(MyMath::FVector3(0, 3, 0));
-	WallActors_[3]->SetActorWorldScale(MyMath::FVector3(2, 2, 2));
-	WallActors_[4]->SetActorWorldLocation(MyMath::FVector3(0, -1, 0));
-	WallActors_[4]->SetActorWorldScale(MyMath::FVector3(3, 3, 3));
+	WallActors_[0]->SetActorWorldLocation(MyMath::FVector3(-4, 2, 0));
+	WallActors_[0]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[1]->SetActorWorldLocation(MyMath::FVector3(0, 2, -4));
+	WallActors_[1]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[2]->SetActorWorldLocation(MyMath::FVector3(4, 2, 0));
+	WallActors_[2]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[3]->SetActorWorldLocation(MyMath::FVector3(0, 6, 0));
+	WallActors_[3]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[4]->SetActorWorldLocation(MyMath::FVector3(0, -2, 0));
+	WallActors_[4]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
 
-	/*for (int i = 0; i < WallActors_.Size(); i++)
-		ForwardRenderer_->AddModel(WallActors_[i]);*/
-	ForwardRenderer_->AddModel(WallActors_[4]);
+	for (int i = 0; i < WallActors_.Size(); i++)
+		ForwardRenderer_->AddModel(WallActors_[i]);
+
+	//////// END TEST ////////
 }
 
 void FScene::Unload()
@@ -125,10 +127,9 @@ void FScene::Tick(float DeltaTime)
 {
 	CameraActor_->Tick(DeltaTime);
 
-	auto Direction = DirectionalLightActor_->GetDirection();
-	Direction = MyMath::Quaternion(DeltaTime * 0.5f, MyMath::FVector3(0, 1, 0)) * Direction;
-	DirectionalLightActor_->SetDirection(Direction);
-	PointLightActor_->SetActorWorldLocation(Direction * -2);
+	auto Location = PointLightActor_->GetActorWorldLocation();
+	Location = MyMath::Quaternion(DeltaTime * 0.5f, MyMath::FVector3(-0.5, 1, 0)) * Location;
+	PointLightActor_->SetActorWorldLocation(Location);
 }
 
 void FScene::Render() 

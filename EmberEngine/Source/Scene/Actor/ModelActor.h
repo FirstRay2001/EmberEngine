@@ -32,7 +32,18 @@ public:
 
 	const FShader* GetShader() const;
 
+	bool IsDrawOutline() const { return bDrawOutline_; }
+	void SetDrawOutline(bool bInDrawOutline) { bDrawOutline_ = bInDrawOutline; }
+	bool IsDrawNormal() const { return bDrawNormal_; }
+	void SetDrawNormal(bool bInDrawNormal) { bDrawNormal_ = bInDrawNormal; }
+
 private:
 	MySTL::TWeakPtr<FModel> Model_;
 	MySTL::TWeakPtr<FShader> Shader_;
+
+	// 轮廓绘制开关
+	bool bDrawOutline_;
+
+	// 法线绘制开关
+	bool bDrawNormal_;
  };

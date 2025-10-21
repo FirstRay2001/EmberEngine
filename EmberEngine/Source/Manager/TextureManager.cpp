@@ -24,8 +24,7 @@ void MTextureManager::Tick()
 
 void MTextureManager::Clear()
 {
-	// ShadowMap
-	UsedTextureUnitCount_ = 1;
+	UsedTextureUnitCount_ = 0;
 }
 
 bool MTextureManager::LoadTexture(std::string TextureName)
@@ -36,9 +35,6 @@ bool MTextureManager::LoadTexture(std::string TextureName)
 		LOG_WARN("Texture already loaded: %s", TextureName.c_str());
 		return true;
 	}
-
-	// 相对路径转化为绝对路径
-	// std::string PicPath = TextureDirectory + TextureName;
 
 	// 垂直翻转图片
 	stbi_set_flip_vertically_on_load(true);
@@ -92,15 +88,86 @@ bool MTextureManager::LoadTexture(std::string TextureName)
 
 	// 释放图片内存
 	stbi_image_free(Data);
+
+	return true;
 }
 
-void MTextureManager::BindSampler(std::string TextureName, const FShader& Shader, const char* UniformName)
+bool MTextureManager::StoreTexture(std::string TextureName, GLuint TextureID)
+{
+	TextureMap_[TextureName] = TextureID;
+	return true;
+}
+
+bool MTextureManager::LoadCubeTexture(const MySTL::TVector<std::string>& TextureNames, std::string CubeMapName)
+{
+	// 纹理已加载
+	if (TextureMap_.Find(CubeMapName) != nullptr)
+	{
+		LOG_WARN("CubeMap texture already loaded: %s", CubeMapName.c_str());
+		return true;
+	}
+
+	// 垂直翻转图片
+	stbi_set_flip_vertically_on_load(false);
+
+	// 生成纹理
+	GLuint TextureID;
+	glGenTextures(1, &TextureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
+
+	// 读取图片
+	int PicWidth, PicHeight, PicChannelNum;
+	for (unsigned int i = 0; i < TextureNames.Size(); i++)
+	{
+		auto* Data = stbi_load(TextureNames[i].c_str(), &PicWidth, &PicHeight, &PicChannelNum, 0);
+		if (Data == NULL)
+		{
+			LOG_ERROR("Failed to load cube map texture: %s", TextureNames[i].c_str());
+			return false;
+		}
+
+		// 传入图片数据
+		GLenum Format;
+		if (PicChannelNum == 1)
+			Format = GL_RED;
+		else if (PicChannelNum == 3)
+			Format = GL_RGB;
+		else if (PicChannelNum == 4)
+			Format = GL_RGBA;
+		else
+		{
+			LOG_ERROR("Unsupported texture format: %s", TextureNames[i].c_str());
+			stbi_image_free(Data);
+			return false;
+		}
+
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, Format, PicWidth, PicHeight, 0, Format, GL_UNSIGNED_BYTE, Data);
+
+		// 释放图片内存
+		stbi_image_free(Data);
+	}
+
+	// 设置纹理参数
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	// 存储纹理单元索引
+	TextureMap_.Insert(CubeMapName, TextureID);
+	TextureCount_++;
+
+	return true;
+}
+
+void MTextureManager::BindSampler2D(std::string TextureName, const FShader& Shader, const char* UniformName)
 {
 	// 空纹理
 	if (TextureName.empty())
 	{
 		// LOG_WARN("empty texture, use default to %s", UniformName);
-		BindSampler(TextureDirectory + FullyBlackTexture, Shader, UniformName);
+		BindSampler2D(TextureDirectory + FullyBlackTexture, Shader, UniformName);
 		return;
 	}
 
@@ -127,14 +194,32 @@ void MTextureManager::BindSampler(std::string TextureName, const FShader& Shader
 	UsedTextureUnitCount_++;
 }
 
-void MTextureManager::UseShadowMap(const FShader& Shader, unsigned int ShadowMapFBO)
+void MTextureManager::BindSamplerCube(std::string CubeMapName, const FShader& Shader, const char* UniformName)
 {
-	// 激活纹理单元0
-	glActiveTexture(GL_TEXTURE0);
+	auto It = TextureMap_.Find(CubeMapName);
 
-	// 绑定ShadowMap纹理
-	glBindTexture(GL_TEXTURE_2D, ShadowMapFBO);
+	// 纹理不存在
+	if (It == nullptr)
+	{
+		LOG_ERROR("CubeMap texture not found: %s", CubeMapName.c_str());
+		return;
+	}
 
-	// 绑定深度贴图
-	Shader.SetInt("shadowMap", 0);
+	GLuint TextureID = *It;
+
+	// 激活纹理单元
+	glActiveTexture(GL_TEXTURE0 + UsedTextureUnitCount_);
+	
+	// 绑定纹理
+	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
+
+	// 设置采样器
+	Shader.SetInt(UniformName, UsedTextureUnitCount_);
+
+	UsedTextureUnitCount_++;
+}
+
+GLuint MTextureManager::FindTextureID(std::string TextureName)
+{
+	return *TextureMap_.Find(TextureName);
 }

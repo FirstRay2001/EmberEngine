@@ -11,6 +11,7 @@ class FShader
 public:
 	FShader();
 	FShader(const char* VertexPath, const char* FragmentPath);
+	FShader(const char* VertexPath, const char* GeometryPath, const char* FragmentPath);
 
 public:
 	// 使用着色器程序
@@ -26,7 +27,11 @@ public:
 	void SetMatrix(const char* UniformName, const MyMath::FMatrix& Matrix) const;
 
 private:
+	// 顶点片段着色器加载
 	bool LoadShader(const char* VertexPath, const char* FragmentPath);
+
+	// 顶点几何片段着色器加载
+	bool LoadShader(const char* VertexPath, const char* GeometryPath, const char* FragmentPath);
 
 public:
 	unsigned int ID_;

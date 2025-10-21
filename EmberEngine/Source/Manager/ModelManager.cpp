@@ -53,7 +53,8 @@ int MModelManager::LoadModelOBJ(const std::string& ModelName)
 
 int MModelManager::LoadModelFBX(const std::string& ModelName)
 {
-	return 0;
+	LOG_WARN("not implemented: LoadModelFBX");
+	return -1;
 }
 
 int MModelManager::FindModel(const std::string& ModelName) const
@@ -86,7 +87,7 @@ FModel* MModelManager::LoadModelInternal(const char* ModelPath)
 {
 	// 读取场景
 	Assimp::Importer Importer;
-	const aiScene* Scene = Importer.ReadFile(ModelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* Scene = Importer.ReadFile(ModelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 	// 检测错误
 	if (Scene == nullptr || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || Scene->mRootNode == nullptr)
@@ -133,24 +134,45 @@ void MModelManager::ProcessMesh(aiMesh* AMesh, const aiScene* AScene, MySTL::TVe
 	// 处理顶点
 	for (unsigned int i = 0; i < AMesh->mNumVertices; i++)
 	{
+		// 位置
 		MyMath::FVector3 Position(
 			AMesh->mVertices[i].x,
 			AMesh->mVertices[i].y,
 			AMesh->mVertices[i].z);
 
+		// 法线
 		MyMath::FVector3 Normal(
 			AMesh->mNormals[i].x,
 			AMesh->mNormals[i].y,
 			AMesh->mNormals[i].z);
-
+		
+		// 纹理坐标
 		MyMath::FVector2 TexCoords(0.0f, 0.0f);
-		if (AMesh->mTextureCoords[0]) // 检测是否有纹理坐标
+		if (AMesh->mTextureCoords[0])
 		{
 			TexCoords[0] = AMesh->mTextureCoords[0][i].x;
 			TexCoords[1] = AMesh->mTextureCoords[0][i].y;
 		}
 
-		FVertex Vertex = FMesh::CreateVertex(Position, Normal, TexCoords);
+		// 切线
+		MyMath::FVector3 Tangent(1, 0, 0);
+		if(AMesh->mTangents)
+		{
+			Tangent[0] = AMesh->mTangents[i].x;
+			Tangent[1] = AMesh->mTangents[i].y;
+			Tangent[2] = AMesh->mTangents[i].z;
+		}
+
+		// 副切线
+		MyMath::FVector3 BiTangent(0, 1, 0);
+		if (AMesh->mBitangents)
+		{
+			BiTangent[0] = AMesh->mBitangents[i].x;
+			BiTangent[1] = AMesh->mBitangents[i].y;
+			BiTangent[2] = AMesh->mBitangents[i].z;
+		}
+
+		FVertex Vertex = FMesh::CreateVertex(Position, Normal, TexCoords, Tangent, BiTangent);
 		Vertices.push_back(Vertex);
 	}
 

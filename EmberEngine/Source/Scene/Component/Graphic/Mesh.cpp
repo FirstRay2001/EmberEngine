@@ -34,16 +34,24 @@ FMesh::FMesh(const MySTL::TVector<FVertex>& Vertices, const MySTL::TVector<unsig
 	glBufferData(GL_ARRAY_BUFFER, Vertices_.Size() * sizeof(FVertex), Vertices_.GetRawData(), GL_STATIC_DRAW);
 
 	// 顶点位置属性
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// 顶点法线属性
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
 	// 顶点UV坐标
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
+
+	// 切线
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (void*)(8 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);
+
+	// 副切线
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (void*)(11 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(4);
 
 	// 传入顶点索引
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
@@ -71,4 +79,38 @@ GLfloat* FMesh::ProcessVertex()
 	}
 	return Ret;*/
 	return nullptr;
+}
+
+FMesh FMesh::CreateCube(float Size)
+{
+	// 立方体顶点数据
+	MySTL::TVector<FVertex> Vertices;
+
+	float HalfSize = Size / 2.0f;
+
+	Vertices.push_back(CreateVertex(-HalfSize, -HalfSize, -HalfSize, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f));
+	Vertices.push_back(CreateVertex(HalfSize, -HalfSize, -HalfSize, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f));
+	Vertices.push_back(CreateVertex(HalfSize, HalfSize, -HalfSize, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f));
+	Vertices.push_back(CreateVertex(-HalfSize, HalfSize, -HalfSize, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f));
+	Vertices.push_back(CreateVertex(-HalfSize, -HalfSize, HalfSize, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f));
+	Vertices.push_back(CreateVertex(HalfSize, -HalfSize, HalfSize, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f));
+	Vertices.push_back(CreateVertex(HalfSize, HalfSize, HalfSize, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f));
+	Vertices.push_back(CreateVertex(-HalfSize, HalfSize, HalfSize, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f));
+
+	// 立方体索引数据
+	MySTL::TVector<unsigned int> Indices;
+	Indices.push_back(0); Indices.push_back(1); Indices.push_back(2);
+	Indices.push_back(2); Indices.push_back(3); Indices.push_back(0);
+	Indices.push_back(4); Indices.push_back(5); Indices.push_back(6);
+	Indices.push_back(6); Indices.push_back(7); Indices.push_back(4);
+	Indices.push_back(0); Indices.push_back(4); Indices.push_back(7);
+	Indices.push_back(7); Indices.push_back(3); Indices.push_back(0);
+	Indices.push_back(1); Indices.push_back(5); Indices.push_back(6);
+	Indices.push_back(6); Indices.push_back(2); Indices.push_back(1);
+	Indices.push_back(3); Indices.push_back(2); Indices.push_back(6);
+	Indices.push_back(6); Indices.push_back(7); Indices.push_back(3);
+	Indices.push_back(0); Indices.push_back(1); Indices.push_back(5);
+	Indices.push_back(5); Indices.push_back(4); Indices.push_back(0);
+
+	return FMesh(Vertices, Indices);
 }

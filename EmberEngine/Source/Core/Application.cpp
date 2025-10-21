@@ -85,9 +85,6 @@ void Application::Initialize()
 
 	LOG_INFO("Window intialized: %s", Titile_);
 
-	// 设置清屏颜色
-	glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
-
 	// 初始化帧时间
 	LastFrameTime_ = glfwGetTime();
 
@@ -125,9 +122,6 @@ void Application::MainLoop()
 		CurrentScene_->Tick(DeltaTime_);
 
 		//////// 渲染场景 ////////
-		// 清屏
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		// 渲染
 		CurrentScene_->Render();
 
