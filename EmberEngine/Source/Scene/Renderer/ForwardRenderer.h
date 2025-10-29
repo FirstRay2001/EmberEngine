@@ -46,6 +46,8 @@ private:
 
 	void InitializePostProcess();
 
+	void InitializeDebug();
+
 	// 更新平行光阴影贴图
 	void UpdateDirectionalLightShadowMaps();
 
@@ -60,6 +62,9 @@ private:
 
 	// 绘制轮廓、法线
 	void RenderOutline();
+
+	// Debug绘制
+	void RenderDebug();
 
 	// 后处理
 	void PostProcess();
@@ -89,5 +94,4 @@ private:
 	unsigned int PointShadowMapFBO_;
 	unsigned int SceneColorFBO_;
 	float PointLightShadowFarPlane_ = 25.0f;
-	unsigned int VAO_;
 };

@@ -30,6 +30,9 @@ public:
 	// 加载纹理, 传入纹理名称，返回是否加载成功
 	bool LoadTexture(std::string TextureName);
 
+	// 从内存加载纹理, 传入纹理数据、宽高和纹理名称，返回是否加载成功
+	bool LoadTextureFromMemory(std::string TextureName, const unsigned char* Data, int DataSize);
+
 	// 储存纹理
 	bool StoreTexture(std::string TextureName, GLuint TextureID);
 

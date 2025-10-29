@@ -104,7 +104,7 @@ MyMath::FMatrix FTransform::GetTransformMatrix() const
 	MyMath::FMatrix RotationMat = AbsoluteRotation_.GetMatrix();
 
 	// Ëõ·Å
-	MyMath::FMatrix ScaleMat = MyMath::ToScaleMatirx(AbsoluteScale_);
+	MyMath::FMatrix ScaleMat = MyMath::ToScaleMatrix(AbsoluteScale_);
 
 	return TranslationMat * RotationMat * ScaleMat;
 }

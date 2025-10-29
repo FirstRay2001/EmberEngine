@@ -25,13 +25,13 @@ public:
 
 public:
 	// 加载模型，传入模型名称，返回模型ID，失败返回-1
-	int LoadModel(const std::string& ModelName);
+	int LoadModel(const std::string& ModelName, float ScaleFactor = 1.0f);
 
 	// 加载OBJ模型，传入模型名称，返回模型ID，失败返回-1
-	int LoadModelOBJ(const std::string& ModelName);
+	int LoadModelOBJ(const std::string& ModelName, float ScaleFactor);
 
 	// 加载FBX模型，传入模型名称，返回模型ID，失败返回-1
-	int LoadModelFBX(const std::string& ModelName);
+	int LoadModelFBX(const std::string& ModelName, float ScaleFactor);
 
 	// 查找模型，传入模型名称，返回模型ID，未找到返回-1
 	int FindModel(const std::string& ModelName) const;
@@ -43,15 +43,35 @@ public:
 	MySTL::TSharedPtr<FModel> GetModel(const std::string& ModelName);
 
 private:
-	class FModelUnit;
-
 	MModelManager() = default;
 
-	FModel* LoadModelInternal(const char* ModelPath);
+	FModel* LoadModelOBJInternal(const char* ModelPath, float ScaleFactor);
 
-	void ProcessNode(aiNode* ANode, const aiScene* AScene, MySTL::TVector<FMesh>& Meshs, MySTL::TVector<FMaterial>& Materials, MySTL::TVector<unsigned int>& MeshMaterialIndices, std::string ModelDirectory);
+	FModel* LoadModelFBXInternal(const char* ModelPath, float ScaleFactor);
 
-	void ProcessMesh(aiMesh* AMesh, const aiScene* AScene, MySTL::TVector<FMesh>& Meshs, MySTL::TVector<FMaterial>& Materials, MySTL::TVector<unsigned int>& MeshMaterialIndices, std::string ModelDirectory);
+	struct FProcessNodeInfo
+	{
+		MySTL::TVector<FMesh> Meshs;
+		MySTL::TVector<FMaterial> Materials;
+		MySTL::TVector<unsigned int> MeshMaterialIndices;
+		std::string ModelDirectory;
+		float ScaleFactor;
+		MySTL::TVector<FBone*> Bones;
+		MySTL::THashTable<std::string, size_t> BoneMap;
+	};
+
+	void ProcessNodeOBJ(aiNode* ANode, const aiScene* AScene, FProcessNodeInfo& Info);
+
+	void ProcessNodeFBX(aiNode* ANode, const aiScene* AScene, FProcessNodeInfo& Info);
+
+	void ProcessMeshOBJ(aiMesh* AMesh, const aiScene* AScene, FProcessNodeInfo& Info);
+
+	void ProcessMeshFBX(aiMesh* AMesh, const aiScene* AScene, FProcessNodeInfo& Info);
+
+	void ProcessEmbededTextures(const aiScene* AScene, std::string ModelPath);
+
+	// 设置骨骼层级关系
+	void SetBoneHierarchy(aiNode* ANode, FSkeleton& Skeleton, int Depth = 0) const;
 
 private:
 	MySTL::THashTable<std::string, int>			ModelMap_;

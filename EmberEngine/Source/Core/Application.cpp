@@ -8,6 +8,8 @@
 #include "Source/Manager/TextureManager.h"
 #include "Source//Manager/ShaderManager.h"
 #include "Source/Manager/ModelManager.h"
+#include "Source/Manager/AnimationManager.h"
+#include "Source/Manager/DebugDrawManager.h"
 
 Application::Application(int Width, int Height, const char* title) :
 	Window_(nullptr),
@@ -95,11 +97,13 @@ void Application::Initialize()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// 输入管理器初始化
+	// 管理器初始化
 	MInputManager::GetInstance().Initialize(Window_);
 	MTextureManager::GetInstance().Initialize();
 	MModelManager::GetInstance().Initialize();
 	MShaderManager::GetInstance().Initialize();
+	MAnimationManager::GetInstance().Initialize();
+	MDebugDrawManager::GetInstance().Initialize();
 
 	// 捕获鼠标
 	glfwSetInputMode(Window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -131,6 +135,8 @@ void Application::MainLoop()
 		//////// Post Tick ////////
 		MInputManager::GetInstance().Tick();
 		MTextureManager::GetInstance().Tick();
+		MDebugDrawManager::GetInstance().Tick();
+		MAnimationManager::GetInstance().Tick(DeltaTime_);
 
 		glfwPollEvents();
 	}

@@ -76,7 +76,7 @@ float DirShadowCalculation(vec4 fragPosLightSpace)
 
     // PCF
     float shadow = 0.0;
-    float bias = 0.0002;
+    float bias = 0.005;
     vec2 texelSize = 1.0 / vec2(1024, 1024);
     for(int x = -1; x <= 1; ++x)
     {

@@ -25,6 +25,7 @@ public:
 	void SetDirectionalLight(const ADirectionalLightActor& DirectionalLight) const;
 
 	void SetLightSpaceMatrix(const MyMath::FMatrix& LightSpacecMatrix) const;
+	void SetBoneMatricesToShader(const MySTL::TWeakPtr<FShader>& Shader) const;
 
 	void Draw() const;
 
@@ -36,10 +37,14 @@ public:
 	void SetDrawOutline(bool bInDrawOutline) { bDrawOutline_ = bInDrawOutline; }
 	bool IsDrawNormal() const { return bDrawNormal_; }
 	void SetDrawNormal(bool bInDrawNormal) { bDrawNormal_ = bInDrawNormal; }
+	void SetDrawBone(bool bDebug);
+
+	void SetSkeleton(MySTL::TSharedPtr<FSkeleton> NewSkeleton);
 
 private:
-	MySTL::TWeakPtr<FModel> Model_;
-	MySTL::TWeakPtr<FShader> Shader_;
+	MySTL::TWeakPtr<FModel>			Model_;
+	MySTL::TWeakPtr<FShader>		Shader_;
+	MySTL::TWeakPtr<FSkeleton>		Skeleton_;
 
 	// ÂÖÀª»æÖÆ¿ª¹Ø
 	bool bDrawOutline_;

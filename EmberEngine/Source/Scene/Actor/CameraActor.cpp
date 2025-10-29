@@ -74,17 +74,17 @@ void ACameraActor::Tick(float DeltaTime)
 			// ÏÞÖÆPitch·¶Î§
 			if (abs(Eular[0] * MyMath::Rad2Deg + AngleY * MyMath::Rad2Deg) > 89.0f)
 			{
-				// AngleY = 0.0f;
+				AngleY = 0.0f;
 			}
+
+			// Pitch
+			MyMath::Quaternion QuatPitch = MyMath::Quaternion(AngleY, Right);
+			Rotate(QuatPitch);
 
 			// Yaw
 			MyMath::FVector3 Up = MyMath::FVector3(0, 1, 0);
 			MyMath::Quaternion QuatYaw = MyMath::Quaternion(AngleX, Up);
 			Rotate(QuatYaw);
-
-			// Pitch
-			MyMath::Quaternion QuatPitch = MyMath::Quaternion(AngleY, Right);
-			Rotate(QuatPitch);
 		}
 	}
 

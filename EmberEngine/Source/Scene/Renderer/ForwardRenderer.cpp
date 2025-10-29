@@ -9,6 +9,7 @@
 #include "Source/Scene/Actor/DirectionalLightActor.h"
 #include "Source/Manager/ShaderManager.h"
 #include "Source/Manager/TextureManager.h"
+#include "Source/Manager/DebugDrawManager.h"
 #include "Source/Scene/Component/Graphic/Shader.h"
 #include "Source/Scene/Component/Graphic/Mesh.h"
 
@@ -35,42 +36,21 @@ void FForwardRenderer::Initialize()
 	InitializeOutline();
 	InitializeSkybox();
 	InitializePostProcess();
-
-	float points[] = {
-		-0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
-		 0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
-		 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
-		-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
-	};
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glGenVertexArrays(1, &VAO_);
-	glBindVertexArray(VAO_);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-	glBindVertexArray(0);
-
-	MShaderManager::GetInstance().LoadShader("GeomTest", 
-		"Test/GeometryTest/GeomTest.vert", "Test/GeometryTest/GeomTest.geom", "Test/GeometryTest/GeomTest.frag");
+	InitializeDebug();
 }
 
 void FForwardRenderer::RenderScene()
 {
+
 	// DirectionalShadowMapFBO
 	{
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, DirectionalShadowMapFBO_);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glCullFace(GL_FRONT);
 
 		// Directional Light Shadow Pass
 		UpdateDirectionalLightShadowMaps();
 
-		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
@@ -80,12 +60,10 @@ void FForwardRenderer::RenderScene()
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, PointShadowMapFBO_);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glCullFace(GL_FRONT);
 
 		// Point Light Shadow Pass
 		UpdatePointLightShadowMaps();
 
-		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
@@ -106,6 +84,9 @@ void FForwardRenderer::RenderScene()
 
 		// Outline Pass
 		RenderOutline();
+
+		// Debug Pass
+		RenderDebug();
 
 		// 清除缓冲区
 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -190,6 +171,10 @@ void FForwardRenderer::UpdateDirectionalLightShadowMaps()
 	for (int i = 0; i < Models_.Size(); i++)
 	{
 		auto ModelActor = Models_[i];
+
+		// 应用骨骼动画
+		ModelActor->SetBoneMatricesToShader(ShadowMapShader);
+
 		ShadowMapShader->SetMatrix("model", ModelActor->GetWorldMatrix().Transpose());
 		ModelActor->RawDraw();
 	}
@@ -237,6 +222,10 @@ void FForwardRenderer::UpdatePointLightShadowMaps()
 	for (int i = 0; i < Models_.Size(); i++)
 	{
 		auto ModelActor = Models_[i];
+
+		// 应用骨骼动画
+		ModelActor->SetBoneMatricesToShader(PointShadowMapShader);
+
 		PointShadowMapShader->SetMatrix("model", ModelActor->GetWorldMatrix().Transpose());
 		ModelActor->RawDraw();
 	}
@@ -279,7 +268,9 @@ void FForwardRenderer::RenderSkybox()
 
 void FForwardRenderer::RenderModels()
 {
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);	// 深度测试
+	glEnable(GL_CULL_FACE);		// 面剔除
+	glCullFace(GL_BACK);
 
 	for (int i = 0; i < Models_.Size(); i++)
 	{
@@ -320,6 +311,7 @@ void FForwardRenderer::RenderModels()
 		ModelActor->Draw();
 	}
 
+	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 }
 
@@ -340,9 +332,11 @@ void FForwardRenderer::RenderOutline()
 		auto ModelActor = Models_[i];
 		if (ModelActor->IsDrawOutline())
 		{
-			// TODO: 可改进，根据物体中心进行缩放(而非模型原点)
+			// 设置骨骼矩阵
+			ModelActor->SetBoneMatricesToShader(SingleColorShader);
+
 			// 放大一点，并稍微下移
-			MyMath::FMatrix ScaleMatrix = MyMath::ToScaleMatirx(MyMath::FVector3(1.05f, 1.02f, 1.05f));
+			MyMath::FMatrix ScaleMatrix = MyMath::ToScaleMatrix(MyMath::FVector3(1.05f, 1.02f, 1.05f));
 			MyMath::FMatrix TranslationMatrix = MyMath::ToTranslationMatrix(MyMath::FVector3(0,-0.015,0));
 			MyMath::FMatrix ModelMatrix = TranslationMatrix * ModelActor->GetWorldMatrix() * ScaleMatrix;
 
@@ -352,6 +346,15 @@ void FForwardRenderer::RenderOutline()
 			ModelActor->RawDraw();
 		}
 	}
+
+	glStencilMask(0xFF);
+	glEnable(GL_DEPTH_TEST);
+}
+
+void FForwardRenderer::RenderDebug()
+{
+	glStencilMask(0x00);
+	glDisable(GL_DEPTH_TEST);
 
 	// 使用Normal Visualize Shader
 	auto NormalVisualizeShader = MShaderManager::GetInstance().GetShader("NormalVisualize");
@@ -366,10 +369,22 @@ void FForwardRenderer::RenderOutline()
 		auto ModelActor = Models_[i];
 		if (ModelActor->IsDrawNormal())
 		{
+			// 设置骨骼矩阵
+			ModelActor->SetBoneMatricesToShader(NormalVisualizeShader);
+
 			NormalVisualizeShader->SetMatrix("model", ModelActor->GetWorldMatrix().TransposeConst());
 			ModelActor->RawDraw();
 		}
 	}
+
+	// 使用Debug Line Shader
+	auto DebugLineShader = MShaderManager::GetInstance().GetShader("DebugLine");
+	DebugLineShader->Use();
+	DebugLineShader->SetMatrix("view", CurrentCamera_->GetWorldMatrix().Inverse().TransposeConst());
+	DebugLineShader->SetMatrix("projection", CurrentCamera_->GetProjectionMatrix().TransposeConst());
+
+	// 绘制调试线
+	MDebugDrawManager::GetInstance().DrawLines();
 
 	glStencilMask(0xFF);
 	glEnable(GL_DEPTH_TEST);
@@ -490,9 +505,7 @@ void FForwardRenderer::InitializeOutline()
 	// Single Color Shader
 	MShaderManager::GetInstance().LoadShader("SingleColor", "SingleColor/SingleColor.vert", "SingleColor/SingleColor.frag");
 
-	// Normal Visualize Shader
-	MShaderManager::GetInstance().LoadShader("NormalVisualize", 
-		"Debug/NormalVisualize/NormalVisualize.vert", "Debug/NormalVisualize/NormalVisualize.geom", "Debug/NormalVisualize/NormalVisualize.frag");
+	
 
 	// 启用模板测试
 	glEnable(GL_STENCIL_TEST);
@@ -578,4 +591,15 @@ void FForwardRenderer::InitializePostProcess()
 
 	// 解绑FrameBuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FForwardRenderer::InitializeDebug()
+{
+	// Normal Visualize Shader
+	MShaderManager::GetInstance().LoadShader("NormalVisualize",
+		"Debug/NormalVisualize/NormalVisualize.vert", "Debug/NormalVisualize/NormalVisualize.geom", "Debug/NormalVisualize/NormalVisualize.frag");
+
+	// Debug Line Shader
+	MShaderManager::GetInstance().LoadShader("DebugLine",
+		"Debug/DebugLine/DebugLine.vert", "Debug/DebugLine/DebugLine.frag");
 }

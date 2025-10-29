@@ -10,6 +10,7 @@
 #include "Source/Scene/Component/Graphic/Mesh.h"
 #include "Source/Scene/Component/Graphic/Material.h"
 #include "Source/Scene/Component/Graphic/Shader.h"
+#include "Source/Scene/Component/Animator/Skeleton.h"
 
 AModelActor::AModelActor(MySTL::TSharedPtr<FModel> Model, MySTL::TSharedPtr<FShader> Shader) :
 	Model_(Model),
@@ -100,11 +101,37 @@ void AModelActor::SetLightSpaceMatrix(const MyMath::FMatrix& LightSpacecMatrix) 
 	}
 }
 
+void AModelActor::SetBoneMatricesToShader(const MySTL::TWeakPtr<FShader>& InShader) const
+{
+	// 检测有效性
+	IfFailGo(Skeleton_.IsValid() && InShader.IsValid());
+
+	// 激活Shader
+	InShader->Use();
+
+	// 设置骨骼动画矩阵
+	const MySTL::TVector<MyMath::FMatrix>& BoneMatrices = Skeleton_->GetBoneMatrices();
+	for (size_t i = 0; i < BoneMatrices.Size(); i++)
+	{
+		std::string UniformName = "finalBonesMatrices[" + std::to_string(i) + "]";
+		InShader->SetMatrix(UniformName.c_str(), BoneMatrices[i].TransposeConst());
+	}
+}
+
 void AModelActor::Draw() const
 {
 	if (Model_.IsValid() && Shader_.IsValid())
 	{
+		// 激活Shader
+		Shader_->Use();
+
+		// 设置模型矩阵
 		Shader_->SetMatrix("model", GetWorldMatrix().Transpose());
+
+		// 设置骨骼矩阵
+		SetBoneMatricesToShader(Shader_);
+
+		// 绘制模型
 		Model_->Draw(*Shader_);
 	}
 }
@@ -120,4 +147,16 @@ void AModelActor::RawDraw() const
 const FShader* AModelActor::GetShader() const
 {
 	return Shader_.Get();
+}
+
+void AModelActor::SetDrawBone(bool bDebug)
+{
+	if (Skeleton_.IsValid())
+		Skeleton_->SetDebugDrawBone(bDebug);
+}
+
+void AModelActor::SetSkeleton(MySTL::TSharedPtr<FSkeleton> NewSkeleton)
+{
+	Skeleton_ = NewSkeleton;
+	Skeleton_->SetModelMatrix(GetWorldMatrix());
 }

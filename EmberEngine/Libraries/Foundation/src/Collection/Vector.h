@@ -132,6 +132,38 @@ public:
 			--Size_;
 	}
 
+	int GetIndexOf(const T& Value)
+	{
+		for (size_t i = 0; i < Size_; i++)
+			if (Data_[i] == Value)
+				return static_cast<int>(i);
+		return -1;
+	}
+
+	bool EraseAtIndex(int Index)
+	{
+		if (Index < 0 || Index >= static_cast<int>(Size_))
+			return false;
+
+		for (size_t i = Index; i < Size_ - 1; i++)
+			Data_[i] = Data_[i + 1];
+
+		--Size_;
+		return true;
+	}
+
+	bool Erase(const T& Value)
+	{
+		int Index = GetIndexOf(Value);
+
+		if (Index != -1)
+		{
+			return EraseAtIndex(Index);
+		}
+
+		return false;
+	}
+
 	T* GetRawData()
 	{
 		return Data_;

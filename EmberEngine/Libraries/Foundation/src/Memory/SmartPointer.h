@@ -214,6 +214,11 @@ public:
 		return Ptr_;
 	}
 
+	bool operator==(const TSharedPtr<T>& Other) const
+	{
+		return Ptr_ == Other.Ptr_;
+	}
+
 public:
 	size_t GetCount() const
 	{
@@ -386,6 +391,18 @@ public:
 	const T* operator->() const
 	{
 		return Ptr_;
+	}
+
+	// 弱指针与弱指针相比
+	bool operator==(const TWeakPtr<T>& Other) const
+	{
+		return Ptr_ == Other.Ptr_;
+	}
+
+	// 弱指针与强指针相比
+	bool operator==(const TSharedPtr<T>& Other) const
+	{
+		return Ptr_ == Other.Ptr_;
 	}
 
 	// 有效性检查

@@ -6,6 +6,8 @@
 
 #include "Common.h"
 
+#define MAX_BONE_INFLUENCE 4
+
 struct FVertex
 {
 	MyMath::FVector3 Position;
@@ -13,6 +15,8 @@ struct FVertex
 	MyMath::FVector2 TexCoords;
 	MyMath::FVector3 Tangent;
 	MyMath::FVector3 BiTangent;
+	int BoneID[MAX_BONE_INFLUENCE] = {-1, -1, -1, -1};
+	float BoneWeight[MAX_BONE_INFLUENCE] = {0.0f, 0.0f, 0.0f, 0.0f};
 };
 
 class FMesh
@@ -29,11 +33,11 @@ private:
 	GLfloat* ProcessVertex();
 
 private:
-	unsigned int					VAO_;
-	unsigned int					VBO_;
-	unsigned int					EBO_;
-	MySTL::TVector<FVertex>			Vertices_;
-	MySTL::TVector<unsigned int>	Indices_;
+	unsigned int							VAO_;
+	unsigned int							VBO_;
+	unsigned int							EBO_;
+	MySTL::TVector<FVertex>					Vertices_;
+	MySTL::TVector<unsigned int>			Indices_;
 
 public:
 	static FVertex CreateVertex(const MyMath::FVector3& Position, const MyMath::FVector3& Normal, 
@@ -84,5 +88,5 @@ public:
 	}
 
 	// 创建立方体
-	static FMesh CreateCube(float Size);
+	static FMesh CreateCube(float Size, MyMath::FVector3 Offset = MyMath::FVector3(), int BoneId = -1);
 };

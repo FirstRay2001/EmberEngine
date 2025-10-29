@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Source/Scene/Component/Animator/Skeleton.h"
 
 FModel::FModel()
 {
@@ -29,9 +30,18 @@ void FModel::Draw(const FShader& Shader) const
 {
 	for (int i = 0; i < Meshs_.Size(); i++)
 	{
+		// Ó¦ÓÃ¹Ç÷À¶¯»­
+		if (Skeleton_.IsValid())
+		{
+
+		}
+
 		FMesh Mesh = Meshs_[i];
-		FMaterial Material = Materials_[MeshMaterialIndices_[i]];
-		Material.ApplyTo(Shader);
+		if (Materials_.Size() > 0)
+		{
+			FMaterial Material = Materials_[MeshMaterialIndices_[i]];
+			Material.ApplyTo(Shader);
+		}
 		Mesh.Draw();
 	}
 }

@@ -6,6 +6,8 @@
 #include "Source/Scene/Component/Graphic/Mesh.h"
 #include "Source/Scene/Component/Graphic/Shader.h"
 #include "Source/Scene/Component/Graphic/Material.h"
+#include "Source/Scene/Component/Animator/Bone.h"
+#include "Source/Scene/Component/Animator/Skeleton.h"
 #include "Source/Scene/Actor/MeshActor.h"
 #include "Source/Scene/Actor/ModelActor.h"
 #include "Source/Scene/Actor/CameraActor.h"
@@ -15,6 +17,7 @@
 #include "Source/Manager/TextureManager.h"
 #include "Source/Manager/ModelManager.h"
 #include "Source/Manager/ShaderManager.h"
+#include "Source/Manager/AnimationManager.h"
 #include "Source/Scene/Component/Graphic/Model.h"
 #include "Source/Scene/Renderer/ForwardRenderer.h"
 
@@ -36,14 +39,15 @@ void FScene::Load()
 	MySTL::TUniquePtr<int> TempData(MyFS::ReadIntFromFile("D:/Dev/Project/EmberEngine/EmberEngine/Resources/Text/IndexData.txt", IndicesCnt));
 	for (int i = 0; i < IndicesCnt; i++)
 		Indices.push_back(TempData.Get()[i]);
-	FMesh* Mesh = new FMesh(Vertices, Indices);
+	
+	FMesh* NewMesh = new FMesh(FMesh::CreateCube(1.0f));
 
 	// 点光源Shader
 	int LightShaderIndex = MShaderManager::GetInstance().LoadShader("LightBall", "LightBall/LightBallVert.vert", "LightBall/LightBallFrag.frag");
 	auto LightShaderPtr = MShaderManager::GetInstance().GetShader(LightShaderIndex);
 
 	// 光源Actor
-	PointLightActor_ = MySTL::TSharedPtr<APointLightActor>(new APointLightActor(MySTL::TSharedPtr<FMesh>(Mesh), LightShaderPtr));
+	PointLightActor_ = MySTL::TSharedPtr<APointLightActor>(new APointLightActor(MySTL::TSharedPtr<FMesh>(NewMesh), LightShaderPtr));
 	PointLightActor_->SetActorWorldLocation(MyMath::FVector3(1, 1, 1));
 	PointLightActor_->SetActorWorldScale(MyMath::FVector3(0.2, 0.2, 0.2));
 	PointLightActor_->SetAmbientColor(MyMath::FVector3(0.05f, 0.05f, 0.05f));
@@ -74,45 +78,60 @@ void FScene::Load()
 	auto ToonShader = MShaderManager::GetInstance().GetShader(ShaderIndex);
 
 	// 莱娜
-	int LennaModelIndex = MModelManager::GetInstance().LoadModel("Lenna/Lenna.obj");
+	int LennaModelIndex = MModelManager::GetInstance().LoadModel("LennaFBX/Test.fbx", 1.0f);
 	auto LennaPtr = MModelManager::GetInstance().GetModel(LennaModelIndex);
 	ModelActor_ = MySTL::TSharedPtr<AModelActor>(new AModelActor(LennaPtr, ToonShader));
-	ModelActor_->SetActorWorldLocation(MyMath::FVector3(0, -2, 0));
-
+	ModelActor_->SetActorWorldLocation(MyMath::FVector3(0, -1.8f, 0));
+	ModelActor_->Rotate(MyMath::Quaternion(MyMath::PI, MyMath::FVector3(0, 1, 0)));
+	ModelActor_->SetActorWorldScale(MyMath::FVector3(0.1f, 0.1f, 0.1f));
 	ModelActor_->SetDrawOutline(true);
+	auto SkeletonPtr = MAnimationManager::GetInstance().GetSkeleton("Test.fbx");
+	SkeletonPtr->APose();
+	ModelActor_->SetSkeleton(SkeletonPtr);
+	// ModelActor_->SetDrawBone(true);
 
+	// 加载动画
+	MModelManager::GetInstance().LoadModel("LennaFBX/Walking.fbx");
+
+	//// 播放动画
+	MAnimationManager::GetInstance().PlayAnimation("Walking.fbx", SkeletonPtr);
 	ForwardRenderer_->AddModel(ModelActor_);
 
 	// 墙
+	int WallShaderIndex = MShaderManager::GetInstance().LoadShader("BlinnPhong", "BlinnPhong/BlinnPhong.vert", "BlinnPhong/BlinnPhong.frag");
+	auto BlinnPhongShader = MShaderManager::GetInstance().GetShader("BlinnPhong");
 	MyMath::Quaternion InitialQuat(MyMath::PI * (0.5), MyMath::FVector3(1, 0, 0));
 	InitialQuat = MyMath::Quaternion(MyMath::PI / 2, MyMath::FVector3(0, 1, 0)) * InitialQuat;;
 	for (int i = 0; i < 3; i++)
 	{
 		int WallModelIndex = MModelManager::GetInstance().LoadModel("wall/wall.obj");
 		auto WallPtr = MModelManager::GetInstance().GetModel(WallModelIndex);
-		WallActors_.emplace_back(new AModelActor(WallPtr, ToonShader));
+		WallActors_.emplace_back(new AModelActor(WallPtr, BlinnPhongShader));
 		WallActors_[WallActors_.Size() - 1]->SetActorWorldRotation(InitialQuat);
 		InitialQuat = MyMath::Quaternion(-MyMath::PI / 2, MyMath::FVector3(0, 1, 0)) * InitialQuat;
 	}
 	int WallModelIndex = MModelManager::GetInstance().LoadModel("wall/wall.obj");
 	auto WallPtr = MModelManager::GetInstance().GetModel(WallModelIndex);
-	WallActors_.emplace_back(new AModelActor(WallPtr, ToonShader));
+	WallActors_.emplace_back(new AModelActor(WallPtr, BlinnPhongShader));
 	WallActors_[WallActors_.Size() - 1]->Rotate(MyMath::Quaternion(MyMath::PI, MyMath::FVector3(1, 0, 0)));
-	WallActors_.emplace_back(new AModelActor(WallPtr, ToonShader));
+	WallActors_.emplace_back(new AModelActor(WallPtr, BlinnPhongShader));
 
 	WallActors_[0]->SetActorWorldLocation(MyMath::FVector3(-4, 2, 0));
-	WallActors_[0]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[0]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
 	WallActors_[1]->SetActorWorldLocation(MyMath::FVector3(0, 2, -4));
-	WallActors_[1]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[1]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
 	WallActors_[2]->SetActorWorldLocation(MyMath::FVector3(4, 2, 0));
-	WallActors_[2]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[2]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
 	WallActors_[3]->SetActorWorldLocation(MyMath::FVector3(0, 6, 0));
-	WallActors_[3]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[3]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
 	WallActors_[4]->SetActorWorldLocation(MyMath::FVector3(0, -2, 0));
-	WallActors_[4]->SetActorWorldScale(MyMath::FVector3(4.1, 4.1, 4.1));
+	WallActors_[4]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
 
 	for (int i = 0; i < WallActors_.Size(); i++)
-		ForwardRenderer_->AddModel(WallActors_[i]);
+	{
+		 ForwardRenderer_->AddModel(WallActors_[i]);
+	}
+	// ForwardRenderer_->AddModel(WallActors_[4]);
 
 	//////// END TEST ////////
 }

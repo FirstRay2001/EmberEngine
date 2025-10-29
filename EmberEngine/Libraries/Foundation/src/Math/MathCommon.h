@@ -245,8 +245,12 @@ public:
 		printf("[ %f, %f, %f ]", Data_[0], Data_[1], Data_[2]);
 	}
 
-private:
-	float Data_[3];
+public:
+	union 
+	{
+		float Data_[3];
+		struct { float X, Y, Z; };
+	};
 };
 
 // 四维向量
@@ -298,8 +302,14 @@ public:
 		printf("[ %f, %f, %f, %f ]", Data_[0], Data_[1], Data_[2], Data_[3]);
 	}
 
-private:
-	float Data_[4];
+public:
+	union {
+		float Data_[4];
+		struct
+		{
+			float X, Y, Z, W;
+		};
+	};
 };
 
 // 四维矩阵
@@ -309,6 +319,30 @@ public:
 	FMatrix()
 	{
 		Identity();
+	}
+
+	FMatrix(float a1, float a2, float a3, float a4,
+		float b1, float b2, float b3, float b4,
+		float c1, float c2, float c3, float c4,
+		float d1, float d2, float d3, float d4) :
+		Data_()
+	{
+		Data_[0] = a1;
+		Data_[1] = a2;
+		Data_[2] = a3;
+		Data_[3] = a4;
+		Data_[4] = b1;
+		Data_[5] = b2;
+		Data_[6] = b3;
+		Data_[7] = b4;
+		Data_[8] = c1;
+		Data_[9] = c2;
+		Data_[10] = c3;
+		Data_[11] = c4;
+		Data_[12] = d1;
+		Data_[13] = d2;
+		Data_[14] = d3;
+		Data_[15] = d4;
 	}
 
 	// 赋值运算
@@ -408,6 +442,34 @@ public:
 		return *this;
 	}
 
+	// 矩阵乘四维向量
+	FVector4 operator*(const FVector4& Vec) const
+	{
+		FVector4 Ret;
+		for (size_t i = 0; i < 4; i++)
+		{
+			float Sum = 0.0f;
+			for (size_t j = 0; j < 4; j++)
+				Sum += At(i, j) * Vec[j];
+			Ret[i] = Sum;
+		}
+		return Ret;
+	}
+
+	// 矩阵乘三维向量
+	FVector3 operator*(const FVector3& Vec) const
+	{
+		FVector3 Ret;
+		for (size_t i = 0; i < 3; i++)
+		{
+			float Sum = 0.0f;
+			for (size_t j = 0; j < 3; j++)
+				Sum += At(i, j) * Vec[j];
+			Ret[i] = Sum;
+		}
+		return Ret;
+	}
+
 	// 矩阵加法
 	FMatrix operator+(const FMatrix& Other)
 	{
@@ -438,7 +500,7 @@ public:
 	// 三阶余子式
 	float Determinant3x3(size_t row, size_t col) const
 	{
-		float SubMat[9];
+		double SubMat[9];
 		size_t Index = 0;
 
 		// 获取子矩阵
@@ -454,7 +516,7 @@ public:
 			}
 		}
 
-		float a = SubMat[0], b = SubMat[1], c = SubMat[2],
+		double a = SubMat[0], b = SubMat[1], c = SubMat[2],
 			d = SubMat[3], e = SubMat[4], f = SubMat[5],
 			g = SubMat[6], h = SubMat[7], i = SubMat[8];
 
@@ -506,6 +568,11 @@ public:
 		return InverseMat;
 	}
 
+	FVector3 GetTranslation() const
+	{
+		return FVector3(At(0, 3), At(1, 3), At(2, 3));
+	}
+
 	void Debug()
 	{
 		for (size_t i = 0; i < 4; i++)
@@ -534,7 +601,7 @@ inline FMatrix ToTranslationMatrix(const FVector3& Translation)
 }
 
 // 获取缩放矩阵
-inline FMatrix ToScaleMatirx(const FVector3& Scale)
+inline FMatrix ToScaleMatrix(const FVector3& Scale)
 {
 	FMatrix Ret;
 	Ret(0, 0) = Scale[0];
@@ -631,6 +698,12 @@ inline FMatrix GetPerspectiveProjection(float FovDegree, float Aspect, float Nea
 	ProjectionMatrix(3, 2) = -1.0f;
 	ProjectionMatrix(3, 3) = 0;
 	return ProjectionMatrix;
+}
+
+// 三维向量插值
+inline FVector3 Lerp(const FVector3& A, const FVector3& B, float T)
+{
+	return A * (1.0f - T) + B * T;
 }
 
 } // namespace MyMath

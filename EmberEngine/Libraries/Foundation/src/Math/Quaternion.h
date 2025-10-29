@@ -194,7 +194,7 @@ namespace MyMath
 			WXYZ_.Debug();
 		}
 
-	private:
+	public:
 		union {
 			FVector4 WXYZ_;
 			struct
@@ -211,4 +211,48 @@ namespace MyMath
 			};
 		};
 	};
+
+	// 四元数插值
+	inline Quaternion Slerp(const Quaternion& A, const Quaternion& B, float T)
+	{
+		// 计算点积
+		float DotProduct = A.W_ * B.W_ + A.X_ * B.X_ + A.Y_ * B.Y_ + A.Z_ * B.Z_;
+
+		// 如果点积为负，则反转B以确保最短路径插值
+		Quaternion BAdjusted = B;
+		if (DotProduct < 0.0f)
+		{
+			BAdjusted = Quaternion(-B.W_, -B.X_, -B.Y_, -B.Z_);
+			DotProduct = -DotProduct;
+		}
+
+		// 如果点积接近1，使用线性插值以避免数值不稳定
+		if (DotProduct > 0.9995f)
+		{
+			Quaternion Result = Quaternion(
+				A.W_ + T * (BAdjusted.W_ - A.W_),
+				A.X_ + T * (BAdjusted.X_ - A.X_),
+				A.Y_ + T * (BAdjusted.Y_ - A.Y_),
+				A.Z_ + T * (BAdjusted.Z_ - A.Z_)
+			);
+			return Result.Normalized();
+		}
+
+		// 计算角度和插值因子
+		float Theta0 = acos(DotProduct);
+		float SinTheta0 = sin(Theta0);
+		float Theta = Theta0 * T;
+		float SinTheta = sin(Theta);
+		float S0 = cos(Theta) - DotProduct * SinTheta / SinTheta0;
+		float S1 = SinTheta / SinTheta0;
+
+		// 计算插值结果
+		Quaternion Result = Quaternion(
+			S0 * A.W_ + S1 * BAdjusted.W_,
+			S0 * A.X_ + S1 * BAdjusted.X_,
+			S0 * A.Y_ + S1 * BAdjusted.Y_,
+			S0 * A.Z_ + S1 * BAdjusted.Z_
+		);
+		return Result;
+	}
 }
