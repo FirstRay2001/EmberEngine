@@ -24,6 +24,17 @@ void FSkeleton::AddBone(const MySTL::TSharedPtr<FBone>& Bone)
 	Bones_.push_back(Bone);
 }
 
+void FSkeleton::AddRootBone(MySTL::TSharedPtr<FBone>& Bone)
+{
+	if (RootIndex_ != -1)
+	{
+		Bone->AddChild(Bones_[RootIndex_]);
+		Bones_[RootIndex_]->SetParent(Bone);
+	}
+	Bones_.push_back(Bone);
+	RootIndex_ = Bones_.Size() - 1;
+}
+
 int FSkeleton::GetRootIndex() const
 {
 	return RootIndex_;

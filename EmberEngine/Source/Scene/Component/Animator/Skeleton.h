@@ -18,6 +18,8 @@ public:
 public:
 	void AddBone(const MySTL::TSharedPtr<FBone>& Bone);
 
+	void AddRootBone(MySTL::TSharedPtr<FBone>& Bone);
+
 	// 获取根骨骼索引
 	int GetRootIndex() const;
 

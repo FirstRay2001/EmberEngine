@@ -57,9 +57,9 @@ void FBone::CalculateFinalTransformRecursively()
 	}
 	else
 	{
-		// GlobalTransform_ = MyMath::FMatrix();
-		GlobalTransform_ = OffsetMatrix_.Inverse();
-		// GlobalTransform_ = LocalTransform_.Inverse();
+		MyMath::FMatrix XZYToXYZ;
+		XZYToXYZ = MyMath::Quaternion(-MyMath::PI / 2, MyMath::FVector3(1, 0, 0)).ToMatrix();
+		GlobalTransform_ = LocalTransform_ * XZYToXYZ.Inverse();
 	}
 	for (int i = 0; i < Children_.Size(); i++)
 	{

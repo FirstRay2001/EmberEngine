@@ -78,23 +78,27 @@ void FScene::Load()
 	auto ToonShader = MShaderManager::GetInstance().GetShader(ShaderIndex);
 
 	// À³ÄÈ
-	int LennaModelIndex = MModelManager::GetInstance().LoadModel("LennaFBX/Test.fbx", 1.0f);
+	int LennaModelIndex = MModelManager::GetInstance().LoadModel("LennaFBX/Test2.fbx", 1.0f);
 	auto LennaPtr = MModelManager::GetInstance().GetModel(LennaModelIndex);
 	ModelActor_ = MySTL::TSharedPtr<AModelActor>(new AModelActor(LennaPtr, ToonShader));
 	ModelActor_->SetActorWorldLocation(MyMath::FVector3(0, -1.8f, 0));
 	ModelActor_->Rotate(MyMath::Quaternion(MyMath::PI, MyMath::FVector3(0, 1, 0)));
 	ModelActor_->SetActorWorldScale(MyMath::FVector3(0.1f, 0.1f, 0.1f));
 	ModelActor_->SetDrawOutline(true);
-	auto SkeletonPtr = MAnimationManager::GetInstance().GetSkeleton("Test.fbx");
+	auto SkeletonPtr = MAnimationManager::GetInstance().GetSkeleton("Test2.fbx");
+	FBone* RootBone = new FBone();
+	RootBone->SetBoneName("Armature");
+	MySTL::TSharedPtr<FBone> NewBonePtr(RootBone);
+	SkeletonPtr->AddRootBone(NewBonePtr);
 	SkeletonPtr->APose();
 	ModelActor_->SetSkeleton(SkeletonPtr);
 	// ModelActor_->SetDrawBone(true);
 
 	// ¼ÓÔØ¶¯»­
-	MModelManager::GetInstance().LoadModel("LennaFBX/Walking.fbx");
+	MModelManager::GetInstance().LoadModel("LennaFBX/Animation/Dance.fbx");
 
 	//// ²¥·Å¶¯»­
-	MAnimationManager::GetInstance().PlayAnimation("Walking.fbx", SkeletonPtr);
+	MAnimationManager::GetInstance().PlayAnimation("Dance.fbx", SkeletonPtr);
 	ForwardRenderer_->AddModel(ModelActor_);
 
 	// Ç½

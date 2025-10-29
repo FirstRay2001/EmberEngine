@@ -185,6 +185,8 @@ FModel* MModelManager::LoadModelFBXInternal(const char* ModelPath, float ScaleFa
 		FAnimation* NewAnimation = new FAnimation();
 		NewAnimation->SetDuration(Duration);
 
+		LOG_INFO("Animation has %d channels and duration %f", ChannelSize, Duration);
+
 		// 每根骨骼的动画数据
 		for (int i = 0; i < ChannelSize; i++)
 		{
@@ -195,7 +197,11 @@ FModel* MModelManager::LoadModelFBXInternal(const char* ModelPath, float ScaleFa
 			if (Info.BoneMap.Find(BoneName) == nullptr)
 			{
 				LOG_WARN("Animation channel bone not found in skeleton: %s", BoneName.c_str());
-				continue;
+				FBone* NewBone = new FBone();
+				NewBone->SetBoneName(BoneName);
+				Info.BoneMap[BoneName] = Info.Bones.Size();
+				Info.Bones.push_back(NewBone);
+				NewSkeleton->AddBone(MySTL::TSharedPtr<FBone>(NewBone));
 			}
 
 			// 读取骨骼动画数据
