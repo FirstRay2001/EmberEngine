@@ -176,8 +176,7 @@ private:
 		T* NewData = new T[NewCapacity];
 
 		// 复制数据
-		for (size_t i = 0; i < Size_ && i < NewCapacity; i++)
-			NewData[i] = Data_[i];
+		std::copy(Data_, Data_ + (Size_ < NewCapacity ? Size_ : NewCapacity), NewData);
 
 		// 释放旧内存
 		delete[] Data_;

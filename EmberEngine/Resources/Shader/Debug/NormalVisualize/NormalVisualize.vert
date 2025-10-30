@@ -21,6 +21,11 @@ void main()
 {
     // 蒙皮网格动画
     mat4 boneTransform = mat4(0.0);
+
+    // 无骨骼的网格
+    if(aBoneIds[0] == -1)
+        boneTransform = mat4(1.0);
+
     for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
     {
         if(aBoneIds[i] != -1)

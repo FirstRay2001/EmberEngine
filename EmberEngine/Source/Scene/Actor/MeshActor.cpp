@@ -145,7 +145,7 @@ void AMeshActor::SetTextureSampler(const char* PictureName, const char* UniformN
 	Shader_->Use();
 
 	// 绑定纹理采样器
-	MTextureManager::GetInstance().BindSampler2D(PictureName, *Shader_, UniformName);
+	MTextureManager::GetInstance().BindSampler(PictureName, *Shader_, UniformName);
 }
 
 void AMeshActor::SetMaterial(const FMaterial& Material)

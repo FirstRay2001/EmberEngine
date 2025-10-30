@@ -257,7 +257,7 @@ void FForwardRenderer::RenderSkybox()
 	SkyboxShader->SetMatrix("projection", ProjectionMatrix.TransposeConst());
 
 	// 设置天空盒纹理
-	MTextureManager::GetInstance().BindSamplerCube("Skybox", *SkyboxShader.Get(), "skybox");
+	MTextureManager::GetInstance().BindSampler("Skybox", *SkyboxShader.Get(), "skybox");
 
 	// 绘制天空盒
 	SkyboxMesh_->Draw();
@@ -292,8 +292,8 @@ void FForwardRenderer::RenderModels()
 		}
 
 		// 使用阴影贴图
-		MTextureManager::GetInstance().BindSampler2D("DirectionalLightShadowMap", *ModelActor->GetShader(), "dirShadowMap");
-		MTextureManager::GetInstance().BindSamplerCube("PointLightShadowMap", *ModelActor->GetShader(), "pointShadowMap");
+		MTextureManager::GetInstance().BindSampler("DirectionalLightShadowMap", *ModelActor->GetShader(), "dirShadowMap");
+		MTextureManager::GetInstance().BindSampler("PointLightShadowMap", *ModelActor->GetShader(), "pointShadowMap");
 
 		// 设置光源空间矩阵
 		ModelActor->SetLightSpaceMatrix(DirectionalLightSpaceMatrix_);
@@ -404,7 +404,7 @@ void FForwardRenderer::PostProcess()
 	PostProcessShader->Use();
 
 	// 绑定场景颜色纹理
-	MTextureManager::GetInstance().BindSampler2D("SceneColor", *PostProcessShader.Get(), "screenTexture");
+	MTextureManager::GetInstance().BindSampler("SceneColor", *PostProcessShader.Get(), "screenTexture");
 
 	// 绘制屏幕四边形
 	ScreenQuadMesh_->Draw();
@@ -497,7 +497,7 @@ void FForwardRenderer::InitialzeShadowMap()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// 储存纹理
-	MTextureManager::GetInstance().StoreTexture("PointLightShadowMap", PointLightShadowMapTex);
+	MTextureManager::GetInstance().StoreTexture("PointLightShadowMap", PointLightShadowMapTex, GL_TEXTURE_CUBE_MAP);
 }
 
 void FForwardRenderer::InitializeOutline()

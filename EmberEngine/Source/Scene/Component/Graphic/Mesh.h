@@ -24,7 +24,7 @@ class FMesh
 public:
 	FMesh();
 	FMesh(const MySTL::TVector<FVertex>& Vertices, const MySTL::TVector<unsigned int> Indices);
-	~FMesh() {};
+	~FMesh();
 
 public:
 	void Draw() const;

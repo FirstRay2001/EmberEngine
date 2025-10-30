@@ -14,12 +14,12 @@ FModel::FModel()
 
 FModel::FModel(FMesh* Mesh, FMaterial* Material)
 {
-	Meshs_.push_back(*Mesh);
+	Meshs_.emplace_back(Mesh);
 	Materials_.push_back(*Material);
 	MeshMaterialIndices_.push_back(0);
 }
 
-FModel::FModel(const MySTL::TVector<FMesh>& Meshs, const MySTL::TVector<FMaterial>& Materials, const MySTL::TVector<unsigned int>& Indices) :
+FModel::FModel(MySTL::TVector<MySTL::TSharedPtr<FMesh>>& Meshs, const MySTL::TVector<FMaterial>& Materials, const MySTL::TVector<unsigned int>& Indices) :
 	Meshs_(Meshs),
 	Materials_(Materials),
 	MeshMaterialIndices_(Indices)
@@ -30,19 +30,13 @@ void FModel::Draw(const FShader& Shader) const
 {
 	for (int i = 0; i < Meshs_.Size(); i++)
 	{
-		// Ó¦ÓÃ¹Ç÷À¶¯»­
-		if (Skeleton_.IsValid())
-		{
-
-		}
-
-		FMesh Mesh = Meshs_[i];
+		auto Mesh = Meshs_[i];
 		if (Materials_.Size() > 0)
 		{
 			FMaterial Material = Materials_[MeshMaterialIndices_[i]];
 			Material.ApplyTo(Shader);
 		}
-		Mesh.Draw();
+		Mesh->Draw();
 	}
 }
 
@@ -50,7 +44,7 @@ void FModel::RawDraw() const
 {
 	for (int i = 0; i < Meshs_.Size(); i++)
 	{
-		FMesh Mesh = Meshs_[i];
-		Mesh.Draw();
+		auto Mesh = Meshs_[i];
+		Mesh->Draw();
 	}
 }

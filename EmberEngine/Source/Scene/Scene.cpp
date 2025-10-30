@@ -84,18 +84,20 @@ void FScene::Load()
 	ModelActor_->SetActorWorldLocation(MyMath::FVector3(0, -1.8f, 0));
 	ModelActor_->Rotate(MyMath::Quaternion(MyMath::PI, MyMath::FVector3(0, 1, 0)));
 	ModelActor_->SetActorWorldScale(MyMath::FVector3(0.1f, 0.1f, 0.1f));
-	ModelActor_->SetDrawOutline(true);
 	auto SkeletonPtr = MAnimationManager::GetInstance().GetSkeleton("Test2.fbx");
+
 	FBone* RootBone = new FBone();
 	RootBone->SetBoneName("Armature");
 	MySTL::TSharedPtr<FBone> NewBonePtr(RootBone);
 	SkeletonPtr->AddRootBone(NewBonePtr);
 	SkeletonPtr->APose();
 	ModelActor_->SetSkeleton(SkeletonPtr);
-	// ModelActor_->SetDrawBone(true);
 
 	// 加载动画
 	MModelManager::GetInstance().LoadModel("LennaFBX/Animation/Dance.fbx");
+
+	// ModelActor_->SetDrawOutline(true);
+	// ModelActor_->SetDrawBone(true);
 
 	//// 播放动画
 	MAnimationManager::GetInstance().PlayAnimation("Dance.fbx", SkeletonPtr);
@@ -117,16 +119,16 @@ void FScene::Load()
 	int WallModelIndex = MModelManager::GetInstance().LoadModel("wall/wall.obj");
 	auto WallPtr = MModelManager::GetInstance().GetModel(WallModelIndex);
 	WallActors_.emplace_back(new AModelActor(WallPtr, BlinnPhongShader));
-	WallActors_[WallActors_.Size() - 1]->Rotate(MyMath::Quaternion(MyMath::PI, MyMath::FVector3(1, 0, 0)));
+	WallActors_[WallActors_.Size() - 1]->Rotate(MyMath::Quaternion(MyMath::PI/2, MyMath::FVector3(1, 0, 0)));
 	WallActors_.emplace_back(new AModelActor(WallPtr, BlinnPhongShader));
 
-	WallActors_[0]->SetActorWorldLocation(MyMath::FVector3(-4, 2, 0));
+	WallActors_[0]->SetActorWorldLocation(MyMath::FVector3(-4, -4, 0));
 	WallActors_[0]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
-	WallActors_[1]->SetActorWorldLocation(MyMath::FVector3(0, 2, -4));
+	WallActors_[1]->SetActorWorldLocation(MyMath::FVector3(0, -4, -4));
 	WallActors_[1]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
-	WallActors_[2]->SetActorWorldLocation(MyMath::FVector3(4, 2, 0));
+	WallActors_[2]->SetActorWorldLocation(MyMath::FVector3(4, -4, 0));
 	WallActors_[2]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
-	WallActors_[3]->SetActorWorldLocation(MyMath::FVector3(0, 6, 0));
+	WallActors_[3]->SetActorWorldLocation(MyMath::FVector3(0, -6, 4));
 	WallActors_[3]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));
 	WallActors_[4]->SetActorWorldLocation(MyMath::FVector3(0, -2, 0));
 	WallActors_[4]->SetActorWorldScale(MyMath::FVector3(4.1, 1, 4.1));

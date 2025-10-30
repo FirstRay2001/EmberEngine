@@ -21,6 +21,12 @@ FShader::FShader(const char* VertexPath, const char* GeometryPath, const char* F
 	LoadShader(VertexPath, GeometryPath, FragmentPath);
 }
 
+FShader::~FShader()
+{
+	// 释放着色器程序
+	glDeleteProgram(ID_);
+}
+
 void FShader::Use() const
 {
 	glUseProgram(ID_);

@@ -122,7 +122,7 @@ FModel* MModelManager::LoadModelOBJInternal(const char* ModelPath, float ScaleFa
 	std::string ModelDirectory = std::string(ModelPath).substr(0, std::string(ModelPath).find_last_of('/') + 1);
 
 	// 处理节点
-	MySTL::TVector<FMesh> Meshs;
+	MySTL::TVector<MySTL::TSharedPtr<FMesh>> Meshs;
 	MySTL::TVector<FMaterial> Materials;
 	MySTL::TVector<unsigned int> MeshMaterialIndices;
 	FProcessNodeInfo Info({ Meshs, Materials, MeshMaterialIndices, ModelDirectory, ScaleFactor });
@@ -152,7 +152,7 @@ FModel* MModelManager::LoadModelFBXInternal(const char* ModelPath, float ScaleFa
 	ProcessEmbededTextures(Scene, ModelDirectory);
 
 	// 处理节点
-	MySTL::TVector<FMesh> Meshs;
+	MySTL::TVector<MySTL::TSharedPtr<FMesh>> Meshs;
 	MySTL::TVector<FMaterial> Materials;
 	MySTL::TVector<unsigned int> MeshMaterialIndices;
 	FProcessNodeInfo Info({ Meshs, Materials, MeshMaterialIndices, ModelDirectory, ScaleFactor });
@@ -336,8 +336,8 @@ void MModelManager::ProcessMeshOBJ(aiMesh* AMesh, const aiScene* AScene, FProces
 	}
 
 	// 创建网格
-	FMesh NewMesh(Vertices, Indices);
-	Info.Meshs.push_back(NewMesh);
+	FMesh* NewMesh = new FMesh(Vertices, Indices);
+	Info.Meshs.emplace_back(NewMesh);
 
 	// 获取材质
 	aiMaterial* AMaterial = AScene->mMaterials[AMesh->mMaterialIndex];
@@ -487,8 +487,8 @@ void MModelManager::ProcessMeshFBX(aiMesh* AMesh, const aiScene* AScene, FProces
 	}
 
 	// 创建网格
-	FMesh NewMesh(Vertices, Indices);
-	Info.Meshs.push_back(NewMesh);
+	FMesh* NewMesh = new FMesh(Vertices, Indices);
+	Info.Meshs.emplace_back(NewMesh);
 
 	// 获取材质
 	aiMaterial* AMaterial = AScene->mMaterials[AMesh->mMaterialIndex];

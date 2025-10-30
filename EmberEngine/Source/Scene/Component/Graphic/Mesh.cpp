@@ -67,6 +67,14 @@ FMesh::FMesh(const MySTL::TVector<FVertex>& Vertices, const MySTL::TVector<unsig
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices_.Size() * sizeof(unsigned int), Indices_.GetRawData(), GL_STATIC_DRAW);
 }
 
+FMesh::~FMesh()
+{
+	// ÊÍ·ÅOpenGL×ÊÔ´
+	glDeleteBuffers(1, &VBO_);
+	glDeleteBuffers(1, &EBO_);
+	glDeleteVertexArrays(1, &VAO_);
+}
+
 void FMesh::Draw() const
 {
 	glBindVertexArray(VAO_);

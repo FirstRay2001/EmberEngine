@@ -11,7 +11,7 @@ class FModel
 public:
 	FModel();
 	FModel(FMesh* Mesh, FMaterial* Material);
-	FModel(const MySTL::TVector<FMesh>& Meshs, const MySTL::TVector<FMaterial>& Materials, const MySTL::TVector<unsigned int>& Indices);
+	FModel(MySTL::TVector<MySTL::TSharedPtr<FMesh>>& Meshs, const MySTL::TVector<FMaterial>& Materials, const MySTL::TVector<unsigned int>& Indices);
 	virtual ~FModel() {};
 
 	// »æÖÆ
@@ -20,8 +20,7 @@ public:
 	void RawDraw() const;
 
 private:
-	MySTL::TVector<FMesh>						Meshs_;
+	MySTL::TVector<MySTL::TSharedPtr<FMesh>>	Meshs_;
 	MySTL::TVector<FMaterial>					Materials_;
 	MySTL::TVector<unsigned int>				MeshMaterialIndices_;
-	MySTL::TSharedPtr<FSkeleton>				Skeleton_;
 };

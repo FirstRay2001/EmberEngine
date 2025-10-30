@@ -51,7 +51,7 @@ private:
 
 	struct FProcessNodeInfo
 	{
-		MySTL::TVector<FMesh> Meshs;
+		MySTL::TVector<MySTL::TSharedPtr<FMesh>> Meshs;
 		MySTL::TVector<FMaterial> Materials;
 		MySTL::TVector<unsigned int> MeshMaterialIndices;
 		std::string ModelDirectory;

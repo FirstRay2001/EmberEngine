@@ -63,13 +63,13 @@ void FMaterial::SetShininess(float NewShininess)
 void FMaterial::ApplyTo(const FShader& Shader) const
 {
 	// 设置漫反射贴图
-	MTextureManager::GetInstance().BindSampler2D(DiffuseTextureName_, Shader, "material.diffuse");
+	MTextureManager::GetInstance().BindSampler(DiffuseTextureName_, Shader, "material.diffuse");
 
 	// 设置镜面反射贴图
-	MTextureManager::GetInstance().BindSampler2D(SpecularTextureName_, Shader, "material.specular");
+	MTextureManager::GetInstance().BindSampler(SpecularTextureName_, Shader, "material.specular");
 
 	// 设置法线贴图
-	MTextureManager::GetInstance().BindSampler2D(NormalMapName_, Shader, "material.normalMap");
+	MTextureManager::GetInstance().BindSampler(NormalMapName_, Shader, "material.normalMap");
 
 	// 设置高光系数
 	Shader.Use();

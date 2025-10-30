@@ -10,16 +10,13 @@ class FTexture
 {
 public:
 	// 从文件读取图片
-	FTexture(const char* PicturePath);
+	FTexture(GLuint ID, GLint TextureType);
 	virtual ~FTexture();
 
 	// 绑定纹理
-	void Bind(unsigned int Sampler) const;
+	void Bind(unsigned int TextureUnit) const;
 
 private:
 	unsigned int	ID_;
-	unsigned char*	Data_;
-	int				TextureWidth_;
-	int				TextureHeight_;
-	int				TextureChannelNum_;
+	int				TextureType_;
 };

@@ -187,6 +187,16 @@ public:
 		}
 	}
 
+	// 从派生类转换构造
+	template<typename U>
+	TSharedPtr(const TSharedPtr<U>& Other, typename std::enable_if<std::is_convertible<U*, T*>::value>::type* = nullptr) :
+		Ptr_(Other.Ptr_),
+		CntBlk_(Other.CntBlk_)
+	{
+		if (CntBlk_ != nullptr)
+			++CntBlk_->SharedCount;
+	}
+
 	// 析构
 	~TSharedPtr()
 	{

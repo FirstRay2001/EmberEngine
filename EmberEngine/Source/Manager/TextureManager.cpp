@@ -4,6 +4,7 @@
 
 #include "TextureManager.h"
 #include "Source/Scene/Component/Graphic/Shader.h"
+#include "Source/Scene/Component/Graphic/Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -83,8 +84,8 @@ bool MTextureManager::LoadTexture(std::string TextureName)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// 存储纹理单元索引
-	TextureMap_.Insert(TextureName, TextureID);
-	TextureCount_++;
+	TextureMap_.Insert(TextureName, Textures_.Size());
+	Textures_.emplace_back(new FTexture(TextureID, GL_TEXTURE_2D));
 
 	// 释放图片内存
 	stbi_image_free(Data);
@@ -123,8 +124,8 @@ bool MTextureManager::LoadTextureFromMemory(std::string TextureName, const unsig
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// 存储纹理单元索引
-	TextureMap_.Insert(TextureName, TextureID);
-	TextureCount_++;
+	TextureMap_.Insert(TextureName, Textures_.Size());
+	Textures_.emplace_back(new FTexture(TextureID, GL_TEXTURE_2D));
 
 	// 释放图片内存
 	stbi_image_free(Data);
@@ -132,9 +133,12 @@ bool MTextureManager::LoadTextureFromMemory(std::string TextureName, const unsig
 	return true;
 }
 
-bool MTextureManager::StoreTexture(std::string TextureName, GLuint TextureID)
+bool MTextureManager::StoreTexture(std::string TextureName, GLuint TextureID, GLint TextureType)
 {
-	TextureMap_[TextureName] = TextureID;
+	// 存储纹理单元索引
+	TextureMap_.Insert(TextureName, Textures_.Size());
+	Textures_.emplace_back(new FTexture(TextureID, TextureType));
+
 	return true;
 }
 
@@ -195,19 +199,19 @@ bool MTextureManager::LoadCubeTexture(const MySTL::TVector<std::string>& Texture
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	// 存储纹理单元索引
-	TextureMap_.Insert(CubeMapName, TextureID);
-	TextureCount_++;
+	TextureMap_.Insert(CubeMapName, Textures_.Size());
+	Textures_.emplace_back(new FTexture(TextureID, GL_TEXTURE_CUBE_MAP));
 
 	return true;
 }
 
-void MTextureManager::BindSampler2D(std::string TextureName, const FShader& Shader, const char* UniformName)
+void MTextureManager::BindSampler(std::string TextureName, const FShader& Shader, const char* UniformName)
 {
 	// 空纹理
 	if (TextureName.empty())
 	{
 		// LOG_WARN("empty texture, use default to %s", UniformName);
-		BindSampler2D(TextureDirectory + FullyBlackTexture, Shader, UniformName);
+		BindSampler(TextureDirectory + FullyBlackTexture, Shader, UniformName);
 		return;
 	}
 
@@ -220,46 +224,11 @@ void MTextureManager::BindSampler2D(std::string TextureName, const FShader& Shad
 		return;
 	}
 
-	GLuint TextureID = *It;
-
-	// 激活纹理单元
-	glActiveTexture(GL_TEXTURE0 + UsedTextureUnitCount_);
-
-	// 绑定纹理
-	glBindTexture(GL_TEXTURE_2D, TextureID);
+	// 绑定纹理到纹理单元
+	Textures_[*It]->Bind(UsedTextureUnitCount_);
 
 	// 设置采样器
 	Shader.SetInt(UniformName, UsedTextureUnitCount_);
 
 	UsedTextureUnitCount_++;
-}
-
-void MTextureManager::BindSamplerCube(std::string CubeMapName, const FShader& Shader, const char* UniformName)
-{
-	auto It = TextureMap_.Find(CubeMapName);
-
-	// 纹理不存在
-	if (It == nullptr)
-	{
-		LOG_ERROR("CubeMap texture not found: %s", CubeMapName.c_str());
-		return;
-	}
-
-	GLuint TextureID = *It;
-
-	// 激活纹理单元
-	glActiveTexture(GL_TEXTURE0 + UsedTextureUnitCount_);
-	
-	// 绑定纹理
-	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
-
-	// 设置采样器
-	Shader.SetInt(UniformName, UsedTextureUnitCount_);
-
-	UsedTextureUnitCount_++;
-}
-
-GLuint MTextureManager::FindTextureID(std::string TextureName)
-{
-	return *TextureMap_.Find(TextureName);
 }

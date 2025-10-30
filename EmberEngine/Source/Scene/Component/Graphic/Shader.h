@@ -12,6 +12,7 @@ public:
 	FShader();
 	FShader(const char* VertexPath, const char* FragmentPath);
 	FShader(const char* VertexPath, const char* GeometryPath, const char* FragmentPath);
+	~FShader();
 
 public:
 	// 使用着色器程序
