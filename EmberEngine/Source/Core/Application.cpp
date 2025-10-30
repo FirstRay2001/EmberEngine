@@ -1,3 +1,4 @@
+#include "Application.h"
 // Application.cpp
 // 应用程序主类
 // created by FirstRay2001, Sep/15/2025

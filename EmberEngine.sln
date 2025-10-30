@@ -1,26 +1,32 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EmberEngine", "EmberEngine\EmberEngine.vcxproj", "{24304379-ED06-4921-BE66-CCCCD05041DF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{31ACD880-4BEA-40DA-8253-FBE7A65531BD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LegacyApp", "EmberEngine\EmberEngine.vcxproj", "{24304379-ED06-4921-BE66-CCCCD05041DF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EmberEngine", "Ember\Ember.vcxproj", "{F5700895-3648-4403-B3CB-846619D68A25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{24304379-ED06-4921-BE66-CCCCD05041DF}.Debug|x64.ActiveCfg = Debug|x64
 		{24304379-ED06-4921-BE66-CCCCD05041DF}.Debug|x64.Build.0 = Debug|x64
-		{24304379-ED06-4921-BE66-CCCCD05041DF}.Debug|x86.ActiveCfg = Debug|Win32
-		{24304379-ED06-4921-BE66-CCCCD05041DF}.Debug|x86.Build.0 = Debug|Win32
 		{24304379-ED06-4921-BE66-CCCCD05041DF}.Release|x64.ActiveCfg = Release|x64
 		{24304379-ED06-4921-BE66-CCCCD05041DF}.Release|x64.Build.0 = Release|x64
-		{24304379-ED06-4921-BE66-CCCCD05041DF}.Release|x86.ActiveCfg = Release|Win32
-		{24304379-ED06-4921-BE66-CCCCD05041DF}.Release|x86.Build.0 = Release|Win32
+		{F5700895-3648-4403-B3CB-846619D68A25}.Debug|x64.ActiveCfg = Debug|x64
+		{F5700895-3648-4403-B3CB-846619D68A25}.Debug|x64.Build.0 = Debug|x64
+		{F5700895-3648-4403-B3CB-846619D68A25}.Release|x64.ActiveCfg = Release|x64
+		{F5700895-3648-4403-B3CB-846619D68A25}.Release|x64.Build.0 = Release|x64
+		{31ACD880-4BEA-40DA-8253-FBE7A65531BD}.Debug|x64.ActiveCfg = Debug|x64
+		{31ACD880-4BEA-40DA-8253-FBE7A65531BD}.Debug|x64.Build.0 = Debug|x64
+		{31ACD880-4BEA-40DA-8253-FBE7A65531BD}.Release|x64.ActiveCfg = Release|x64
+		{31ACD880-4BEA-40DA-8253-FBE7A65531BD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
