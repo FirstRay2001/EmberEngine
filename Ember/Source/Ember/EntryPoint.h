@@ -12,6 +12,11 @@ extern Ember::Application* Ember::CreateApplication();
 
 int main(int argc, char** argv)
 {
+	// 初始化日志系统
+	Ember::Log::Init();
+
+	EMBER_CORE_INFO("Ember Engine started!");
+
 	// 创建应用实例
 	Ember::Application* app = Ember::CreateApplication();
 

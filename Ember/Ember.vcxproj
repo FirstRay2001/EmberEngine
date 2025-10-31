@@ -11,12 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Ember\Log.h" />
     <ClInclude Include="Source\Ember\Application.h" />
     <ClInclude Include="Source\Ember\Core.h" />
     <ClInclude Include="Source\Ember.h" />
     <ClInclude Include="Source\Ember\EntryPoint.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Ember\Log.cpp" />
     <ClCompile Include="Source\Ember\Application.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -63,6 +65,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Ember\Vendor\spdlog\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

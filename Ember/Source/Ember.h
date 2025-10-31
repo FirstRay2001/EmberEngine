@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Ember/Application.h"
+#include "Ember/Log.h"
 
 // -------------Èë¿Úµã------------------------------------
 #include "Ember/EntryPoint.h"

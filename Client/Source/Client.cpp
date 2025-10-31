@@ -10,7 +10,7 @@ class GameClient : public Ember::Application
 public:
 	GameClient() 
 	{
-		printf("GameClient Created!\n");
+		EMBER_INFO("GameClient initialized!");
 	}
 
 	~GameClient() {}
