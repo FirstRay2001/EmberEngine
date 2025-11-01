@@ -1,12 +1,12 @@
-// Core.h
-// ºËĞÄÍ·ÎÄ¼ş
+ï»¿// Core.h
+// æ ¸å¿ƒå¤´æ–‡ä»¶
 // created by FirstRay2001, Oct/30/2025
 
 #pragma once
 
-// Æ½Ì¨¼ì²â
+// å¹³å°æ£€æµ‹
 #ifdef EMBER_PLATFORM_WINDOWS
-	// DLLµ¼Èë¡¢µ¼³ö
+	// DLLå¯¼å…¥ã€å¯¼å‡º
 	#ifdef EMEBR_BUILD_DLL
 		#define EMBER_API __declspec(dllexport)
 	#else
@@ -15,3 +15,6 @@
 #else
 	#error Ember only supports Windows!
 #endif
+
+// ä½æ“ä½œ
+#define BIT(x) (1 << x)

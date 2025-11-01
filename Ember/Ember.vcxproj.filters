@@ -19,6 +19,10 @@
     <ClInclude Include="Source\Ember\Log.h">
       <Filter>Ember</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Events\Event.h" />
+    <ClInclude Include="Source\Ember\Events\ApplicationEvent.h" />
+    <ClInclude Include="Source\Ember\Events\KeyEvent.h" />
+    <ClInclude Include="Source\Ember\Events\MouseEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Application.cpp">

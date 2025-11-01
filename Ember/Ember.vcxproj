@@ -80,7 +80,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -103,7 +103,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -130,7 +130,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -156,6 +156,10 @@
     <ClInclude Include="Source\Ember\Application.h" />
     <ClInclude Include="Source\Ember\Core.h" />
     <ClInclude Include="Source\Ember\EntryPoint.h" />
+    <ClInclude Include="Source\Ember\Events\ApplicationEvent.h" />
+    <ClInclude Include="Source\Ember\Events\Event.h" />
+    <ClInclude Include="Source\Ember\Events\KeyEvent.h" />
+    <ClInclude Include="Source\Ember\Events\MouseEvent.h" />
     <ClInclude Include="Source\Ember\Log.h" />
   </ItemGroup>
   <ItemGroup>
