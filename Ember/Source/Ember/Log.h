@@ -1,5 +1,5 @@
-// Log.h
-// ��־ϵͳ
+﻿// Log.h
+// 日志系统
 // created by FirstRay2001, Oct/31/2025
 
 #pragma once

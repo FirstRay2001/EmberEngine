@@ -1,5 +1,5 @@
-// Ember.h
-// ¿Í»§¶ËÓÃÒıÇæÍ·
+ï»¿// Ember.h
+// å®¢æˆ·ç«¯ç”¨å¼•æ“å¤´
 // created by FirstRay2001, Oct/30/2025
 
 #pragma once
@@ -7,7 +7,7 @@
 #include "Ember/Application.h"
 #include "Ember/Log.h"
 
-// -------------Èë¿Úµã------------------------------------
+// -------------å…¥å£ç‚¹------------------------------------
 #include "Ember/EntryPoint.h"
 #define EMBER_IMPL_ENTRY_POINT(ApplicationClass)		\
 	Ember::Application* Ember::CreateApplication()		\
