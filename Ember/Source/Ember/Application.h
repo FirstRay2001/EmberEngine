@@ -1,10 +1,11 @@
-// Application.h
-// Ó¦ÓÃÀà
+ï»¿// Application.h
+// åº”ç”¨ç±»
 // created by FirstRay2001, Oct/30/2025
 
 #pragma once
 
 #include "Core.h"
+#include "Window.h"
 
 namespace Ember
 {
@@ -14,8 +15,12 @@ namespace Ember
 		Application();
 		virtual ~Application();
 		void Run();
+
+	private:
+		std::unique_ptr<Window> m_Window;
+		bool m_Running = true;
 	};
 
-	// ÔÚ¿Í»§¶ËÊµÏÖ´Ëº¯ÊýÒÔ´´½¨Ó¦ÓÃÊµÀý
+	// åœ¨å®¢æˆ·ç«¯å®žçŽ°æ­¤å‡½æ•°ä»¥åˆ›å»ºåº”ç”¨å®žä¾‹
 	Application* CreateApplication();
 }

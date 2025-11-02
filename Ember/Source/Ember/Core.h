@@ -16,5 +16,15 @@
 	#error Ember only supports Windows!
 #endif
 
+// 断言宏
+#ifdef EMBER_ENABLE_ASSERTS
+	#define EMBER_ASSERT(x, ...) { if(!(x)) { EMBER_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define EMBER_CORE_ASSERT(x, ...) { if(!(x)) { EMBER_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#else
+	#define EMBER_ASSERT(x, ...)
+	#define EMBER_CORE_ASSERT(x, ...)
+#endif
+
+
 // 位操作
 #define BIT(x) (1 << x)

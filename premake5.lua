@@ -10,6 +10,11 @@ workspace "Ember"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Ember/Vendor/glfw/include"
+
+include "Ember/Vendor/glfw"
+
 project "Ember"
     location "Ember"
     kind "SharedLib"
@@ -30,7 +35,14 @@ project "Ember"
     includedirs
     {
         "%{prj.name}/Source",
-        "%{prj.name}/Vendor/spdlog/include"
+        "%{prj.name}/Vendor/spdlog/include",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
+        "opengl32.lib",
     }
 
     filter "configurations:*"
@@ -58,7 +70,11 @@ project "Ember"
         }
 
     filter "configurations:Debug"
-        defines "EMBER_DEBUG"
+        defines 
+        {
+            "EMBER_DEBUG",
+            "EMBER_ENABLE_ASSERTS"
+        }
         symbols "On"
 
     filter "configurations:Release"
@@ -99,6 +115,8 @@ project "Client"
         {
             "/utf-8"
         }
+
+        disablewarnings { "4828" }
 
     filter "system:windows"
         cppdialect "C++17"

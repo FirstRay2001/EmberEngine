@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "emberpch.h"
 #include "Ember/Core.h"
 
 namespace Ember
@@ -68,7 +69,7 @@ namespace Ember
 	class EventDispatcher
 	{
 		template<typename T>
-		using FuncType = std::function<bool(T&)>;
+		using Fn = std::function<bool(T&)>;
 	public:
 		EventDispatcher(Event& event)
 			: m_Event(event)
@@ -77,7 +78,7 @@ namespace Ember
 
 		// 分发事件
 		template<typename T>
-		bool Dispatch(FuncType<T>& func)
+		bool Dispatch(Fn<T>& func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{

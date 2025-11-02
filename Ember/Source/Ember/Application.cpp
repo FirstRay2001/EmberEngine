@@ -4,12 +4,13 @@
 
 #include "emberpch.h"
 #include "Application.h"
-#include "Log.h"
-#include "Ember/Events/ApplicationEvent.h"
+
+#include <GLFW/glfw3.h>
 
 using namespace Ember;
 Application::Application()
 {
+	m_Window = std::unique_ptr<Window>(Window::Create());
 }
 
 Application::~Application()
@@ -18,19 +19,17 @@ Application::~Application()
 
 void Application::Run()
 {
-	WindowResizeEvent event(1280, 720);
-	if (event.IsInCategory(EventCategotyApplication))
+	while (m_Running)
 	{
-		EMBER_CORE_INFO("WindowResizeEvent is in Application Category");
-	}
-	if (event.IsInCategory(EventCategoryInput))
-	{
-		EMBER_CORE_INFO("WindowResizeEvent is in Input Category");
-	}
+		// 设置清屏颜色
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	while (true)
-	{
+		// 清除屏幕
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		// 游戏主循环
-		break;
+
+		// 更新窗口
+		m_Window->OnUpdate();
 	}
 }

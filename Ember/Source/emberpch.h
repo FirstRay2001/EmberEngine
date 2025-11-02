@@ -4,6 +4,7 @@
 
 #pragma once
 
+// 标准库
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -14,6 +15,9 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+
+// 引擎库
+#include "Ember/Log.h"
 
 #ifdef EMBER_PLATFORM_WINDOWS
 #include <Windows.h>

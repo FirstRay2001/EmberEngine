@@ -1,29 +1,28 @@
-// EntryPoint.h
-// Èë¿Úµã
+ï»¿// EntryPoint.h
+// å…¥å£ç‚¹
 // created by FirstRay2001, Oct/30/2025
 
 #pragma once
 
-
 #ifdef EMBER_PLATFORM_WINDOWS
 
-// ÔÚ¿Í»§¶ËÊµÏÖ´Ëº¯ÊıÒÔ´´½¨Ó¦ÓÃÊµÀı
+// åœ¨å®¢æˆ·ç«¯å®ç°æ­¤å‡½æ•°ä»¥åˆ›å»ºåº”ç”¨å®ä¾‹
 extern Ember::Application* Ember::CreateApplication();
 
 int main(int argc, char** argv)
 {
-	// ³õÊ¼»¯ÈÕÖ¾ÏµÍ³
+	// åˆå§‹åŒ–æ—¥å¿—ç³»ç»Ÿ
 	Ember::Log::Init();
 
-	EMBER_CORE_INFO("Ember Engine started!");
+	EMBER_CORE_TRACE("Ember Engine started!");
 
-	// ´´½¨Ó¦ÓÃÊµÀı
+	// åˆ›å»ºåº”ç”¨å®ä¾‹
 	Ember::Application* app = Ember::CreateApplication();
 
-	// ÔËĞĞÓ¦ÓÃ
+	// è¿è¡Œåº”ç”¨
 	app->Run();
 
-	// ÊÍ·Å
+	// é‡Šæ”¾
 	delete app;
 
 	return 0;

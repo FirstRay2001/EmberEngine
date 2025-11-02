@@ -78,6 +78,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMBER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Ember\Vendor\spdlog\include;..\Ember\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -96,6 +97,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMBER_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Ember\Vendor\spdlog\include;..\Ember\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -118,6 +120,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMBER_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Ember\Vendor\spdlog\include;..\Ember\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>

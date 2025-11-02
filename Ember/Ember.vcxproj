@@ -80,8 +80,8 @@
       <PrecompiledHeaderFile>emberpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DEBUG;EMBER_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -92,6 +92,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Debug-windows-x86_64\Ember\Ember.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -105,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -120,6 +121,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Release-windows-x86_64\Ember\Ember.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -133,7 +135,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -148,6 +150,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Dist-windows-x86_64\Ember\Ember.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -164,14 +167,22 @@
     <ClInclude Include="Source\Ember\Events\KeyEvent.h" />
     <ClInclude Include="Source\Ember\Events\MouseEvent.h" />
     <ClInclude Include="Source\Ember\Log.h" />
+    <ClInclude Include="Source\Ember\Window.h" />
+    <ClInclude Include="Source\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Source\emberpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Application.cpp" />
     <ClCompile Include="Source\Ember\Log.cpp" />
+    <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\emberpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Vendor\glfw\GLFW.vcxproj">
+      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
