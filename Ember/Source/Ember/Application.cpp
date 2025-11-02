@@ -32,6 +32,8 @@ void Application::Run()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// 游戏主循环
+		for (Layer* layer : m_LayerStack)
+			layer->OnUpdate();
 
 		// 更新窗口
 		m_Window->OnUpdate();
@@ -42,12 +44,28 @@ void Ember::Application::OnEvent(Event& e)
 {
 	EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-
-	// EMBER_CORE_TRACE("{0}", e);
+	
+	// 自顶向下遍历图层堆栈
+	for (auto It = m_LayerStack.end(); It != m_LayerStack.begin(); )
+	{
+		(*--It)->OnEvent(e);
+		if (e.Handled)
+			break;
+	}
 }
 
 bool Ember::Application::OnWindowClose(WindowCloseEvent& e)
 {
 	m_Running = false;
 	return true;
+}
+
+void Ember::Application::PushLayer(Layer* layer)
+{
+	m_LayerStack.PushLayer(layer);
+}
+
+void Ember::Application::PushOverlay(Layer* overlay)
+{
+	m_LayerStack.PushOverlay(overlay);
 }

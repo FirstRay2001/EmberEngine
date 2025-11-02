@@ -6,6 +6,7 @@
 
 #include "Core.h"
 #include "Window.h"
+#include "LayerStack.h"
 
 namespace Ember
 {
@@ -20,8 +21,12 @@ namespace Ember
 
 		bool OnWindowClose(class WindowCloseEvent& e);
 
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* overlay);
+
 	private:
 		std::unique_ptr<Window> m_Window;
+		LayerStack m_LayerStack;
 		bool m_Running = true;
 	};
 

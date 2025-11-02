@@ -40,8 +40,10 @@ namespace Ember
 	// 事件基类
 	class EMBER_API Event
 	{
-		friend class EventDispatcher;
 	public:
+		// 已处理标记
+		bool Handled = false;
+
 		// 获取事件类型
 		virtual EventType GetEventType() const = 0;
 
@@ -61,8 +63,7 @@ namespace Ember
 		}
 
 	protected:
-		// 已处理标记
-		bool m_Handled = false; 
+		
 	};
 
 	// 事件分发器
@@ -82,7 +83,7 @@ namespace Ember
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_Handled = func(static_cast<T&>(m_Event));
+				m_Event.Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

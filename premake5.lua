@@ -75,14 +75,17 @@ project "Ember"
             "EMBER_DEBUG",
             "EMBER_ENABLE_ASSERTS"
         }
+        buildoptions "/MDd"
         symbols "On"
 
     filter "configurations:Release"
         defines "EMBER_RELEASE"
+        buildoptions "/MD"
         optimize "On"
 
     filter "configurations:Dist"
         defines "EMBER_DIST"
+        buildoptions "/MD"
         optimize "On"
 
 project "Client"
@@ -130,12 +133,15 @@ project "Client"
 
     filter "configurations:Debug"
         defines "EMBER_DEBUG"
+        buildoptions "/MDd"
         symbols "On"
 
     filter "configurations:Release"
         defines "EMBER_RELEASE"
+        buildoptions "/MD"
         optimize "On"
 
     filter "configurations:Dist"
         defines "EMBER_DIST"
+        buildoptions "/MD"
         optimize "On"
