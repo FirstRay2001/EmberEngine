@@ -6,9 +6,6 @@
 
 #include "Ember/Core.h"
 
-#include <string>
-#include <functional>
-
 namespace Ember
 {
 	// 事件类型

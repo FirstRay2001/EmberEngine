@@ -4,6 +4,9 @@
     <Filter Include="Ember">
       <UniqueIdentifier>{900E1D0D-FC22-45BE-C5A4-E81D317841EF}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ember\Events">
+      <UniqueIdentifier>{74B89ED4-601B-2E79-09A1-662FF5E2F9FB}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Ember.h" />
@@ -16,13 +19,22 @@
     <ClInclude Include="Source\Ember\EntryPoint.h">
       <Filter>Ember</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Events\ApplicationEvent.h">
+      <Filter>Ember\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Events\Event.h">
+      <Filter>Ember\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Events\KeyEvent.h">
+      <Filter>Ember\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Events\MouseEvent.h">
+      <Filter>Ember\Events</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Log.h">
       <Filter>Ember</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Events\Event.h" />
-    <ClInclude Include="Source\Ember\Events\ApplicationEvent.h" />
-    <ClInclude Include="Source\Ember\Events\KeyEvent.h" />
-    <ClInclude Include="Source\Ember\Events\MouseEvent.h" />
+    <ClInclude Include="Source\emberpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Application.cpp">
@@ -31,5 +43,6 @@
     <ClCompile Include="Source\Ember\Log.cpp">
       <Filter>Ember</Filter>
     </ClCompile>
+    <ClCompile Include="Source\emberpch.cpp" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 // 应用类
 // created by FirstRay2001, Oct/30/2025
 
+#include "emberpch.h"
 #include "Application.h"
 #include "Log.h"
 #include "Ember/Events/ApplicationEvent.h"
