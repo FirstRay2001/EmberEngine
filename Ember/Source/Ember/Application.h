@@ -16,6 +16,10 @@ namespace Ember
 		virtual ~Application();
 		void Run();
 
+		void OnEvent(class Event& e);
+
+		bool OnWindowClose(class WindowCloseEvent& e);
+
 	private:
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;

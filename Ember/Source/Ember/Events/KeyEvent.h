@@ -58,13 +58,6 @@ namespace Ember
 		{
 		}
 
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_KeyCode;
-			return ss.str();
-		}
-
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
