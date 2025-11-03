@@ -3,6 +3,10 @@
 // created by FirstRay2001, Nov/2/2025
 
 #include "emberpch.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "WindowsWindow.h"
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/Events/KeyEvent.h"
@@ -92,6 +96,10 @@ namespace Ember
 
 		// 设置窗口上下文
 		glfwMakeContextCurrent(m_Window);
+
+		// 初始化GLAD
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		EMBER_CORE_ASSERT(status, "Failed to initialize Glad!");
 
 		// 设置用户指针
 		glfwSetWindowUserPointer(m_Window, &m_Data);

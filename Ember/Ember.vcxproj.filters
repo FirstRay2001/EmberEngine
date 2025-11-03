@@ -37,6 +37,12 @@
     <ClInclude Include="Source\Ember\Events\MouseEvent.h">
       <Filter>Ember\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Layer.h">
+      <Filter>Ember</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\LayerStack.h">
+      <Filter>Ember</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Log.h">
       <Filter>Ember</Filter>
     </ClInclude>
@@ -47,15 +53,15 @@
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Source\emberpch.h" />
-    <ClInclude Include="Source\Ember\Layer.h">
-      <Filter>Ember</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ember\LayerStack.h">
-      <Filter>Ember</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Application.cpp">
+      <Filter>Ember</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Layer.cpp">
+      <Filter>Ember</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\LayerStack.cpp">
       <Filter>Ember</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Log.cpp">
@@ -65,11 +71,5 @@
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Source\emberpch.cpp" />
-    <ClCompile Include="Source\Ember\Layer.cpp">
-      <Filter>Ember</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Ember\LayerStack.cpp">
-      <Filter>Ember</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,7 +5,8 @@
 #pragma once
 
 #include "Ember/Window.h"
-#include <GLFW/glfw3.h>
+
+struct GLFWwindow;
 
 namespace Ember
 {

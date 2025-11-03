@@ -21,6 +21,7 @@ namespace Ember
 
 	void LayerStack::PushLayer(Layer* layer)
 	{
+		// TODO: m_LayerInsert++;
 		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
 	}
 
@@ -37,7 +38,9 @@ namespace Ember
 		if (It != m_Layers.end())
 		{
 			m_Layers.erase(It);
-			m_LayerInsert--;
+
+			// 暂时存疑
+			// m_LayerInsert--;
 		}
 	}
 

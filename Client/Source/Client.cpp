@@ -12,7 +12,7 @@ public:
 
 	void OnEvent(Ember::Event& e) override
 	{
-		EMBER_INFO("Event received in TestLayer: {0}", e.ToString());
+		// EMBER_INFO("Event received in TestLayer: {0}", e.ToString());
 	}
 };
 

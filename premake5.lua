@@ -12,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Ember/Vendor/glfw/include"
+IncludeDir["Glad"] = "Ember/Vendor/glad/include"
 
 include "Ember/Vendor/glfw"
+include "Ember/Vendor/glad"
 
 project "Ember"
     location "Ember"
@@ -36,12 +38,14 @@ project "Ember"
     {
         "%{prj.name}/Source",
         "%{prj.name}/Vendor/spdlog/include",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}"
     }
 
     links
     {
         "GLFW",
+        "Glad",
         "opengl32.lib",
     }
 
