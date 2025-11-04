@@ -1,5 +1,6 @@
 workspace "Ember"
     architecture "x64"
+    startproject "Client"
 
     configurations
     {
@@ -14,8 +15,6 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Ember/Vendor/glfw/include"
 IncludeDir["Glad"] = "Ember/Vendor/glad/include"
 IncludeDir["ImGui"] = "Ember/Vendor/imgui"
-
-startproject "Client"
 
 include "Ember/Vendor/glfw"
 include "Ember/Vendor/glad"

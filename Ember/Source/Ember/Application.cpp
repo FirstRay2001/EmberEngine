@@ -67,11 +67,9 @@ bool Ember::Application::OnWindowClose(WindowCloseEvent& e)
 void Ember::Application::PushLayer(Layer* layer)
 {
 	m_LayerStack.PushLayer(layer);
-	layer->OnAttach();
 }
 
 void Ember::Application::PushOverlay(Layer* overlay)
 {
 	m_LayerStack.PushOverlay(overlay);
-	overlay->OnAttach();
 }

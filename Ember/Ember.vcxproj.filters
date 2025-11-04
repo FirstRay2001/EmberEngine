@@ -46,6 +46,12 @@
     <ClInclude Include="Source\Ember\ImGui\ImGuiLayer.h">
       <Filter>Ember\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Input.h">
+      <Filter>Ember</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\KeyCode.h">
+      <Filter>Ember</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Layer.h">
       <Filter>Ember</Filter>
     </ClInclude>
@@ -60,6 +66,9 @@
     </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderer.h">
       <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\WindowsInput.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
@@ -84,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderer.cpp">
       <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>

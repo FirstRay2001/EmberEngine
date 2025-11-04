@@ -22,12 +22,14 @@ namespace Ember
 	void LayerStack::PushLayer(Layer* layer)
 	{
 		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
-		m_LayerInsert++; // 存疑
+		layer->OnAttach();
+		m_LayerInsert++;
 	}
 
 	void LayerStack::PushOverlay(Layer* overlay)
 	{
 		m_Layers.emplace_back(overlay);
+		overlay->OnAttach();
 	}
 
 	void LayerStack::PopLayer(Layer* layer)
@@ -37,6 +39,7 @@ namespace Ember
 		// 暂时弹出图层，不进行销毁
 		if (It != m_Layers.end())
 		{
+			(*It)->OnDetach();
 			m_Layers.erase(It);
 			m_LayerInsert--;
 		}
@@ -49,6 +52,7 @@ namespace Ember
 		// 暂时弹出图层，不进行销毁
 		if (It != m_Layers.end())
 		{
+			(*It)->OnDetach();
 			m_Layers.erase(It);
 		}
 	}

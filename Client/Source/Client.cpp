@@ -12,7 +12,11 @@ public:
 
 	void OnEvent(Ember::Event& e) override
 	{
-		// EMBER_INFO("Event received in TestLayer: {0}", e.ToString());
+		if (e.GetEventType() == Ember::EventType::KeyPressed)
+		{
+			Ember::KeyPressedEvent& event = (Ember::KeyPressedEvent&)e;
+			EMBER_TRACE("Key typed: {0}", (char)event.GetKeyCode());
+		}
 	}
 };
 

@@ -44,5 +44,8 @@ namespace Ember
 		virtual bool IsVSync() const = 0;
 
 		static Window* Create(const WindowProps& props = WindowProps());
+
+		// 获取平台窗口句柄
+		virtual void* GetNativeWindow() const = 0;
 	};
 }
