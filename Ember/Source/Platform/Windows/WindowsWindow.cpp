@@ -155,6 +155,15 @@ namespace Ember
 			}
 		});
 
+		// 设置键盘输入回调
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int key)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			KeyTypedEvent event(key);
+			data.EventCallback(event);
+		});
+
+
 		// 设置鼠标位置回调
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
 		{

@@ -8,8 +8,6 @@
 
 #include <glad/glad.h>
 
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
-
 using namespace Ember;
 
 Application* Application::s_Instance = nullptr;
@@ -20,7 +18,7 @@ Application::Application()
 	s_Instance = this;
 
 	m_Window = std::unique_ptr<Window>(Window::Create());
-	m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 }
 
 Application::~Application()
@@ -49,7 +47,7 @@ void Application::Run()
 void Ember::Application::OnEvent(Event& e)
 {
 	EventDispatcher dispatcher(e);
-	dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+	dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 	
 	// 自顶向下遍历图层堆栈
 	for (auto It = m_LayerStack.end(); It != m_LayerStack.begin(); )

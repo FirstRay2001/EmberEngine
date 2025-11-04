@@ -15,14 +15,18 @@ IncludeDir["GLFW"] = "Ember/Vendor/glfw/include"
 IncludeDir["Glad"] = "Ember/Vendor/glad/include"
 IncludeDir["ImGui"] = "Ember/Vendor/imgui"
 
+startproject "Client"
+
 include "Ember/Vendor/glfw"
 include "Ember/Vendor/glad"
 include "Ember/Vendor/imgui"
+
 
 project "Ember"
     location "Ember"
     kind "SharedLib"
     language "C++"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -63,7 +67,6 @@ project "Ember"
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime "On"
         systemversion "latest"
 
         defines
@@ -80,26 +83,26 @@ project "Ember"
     filter "configurations:Debug"
         defines 
         {
-            "EMBER_DEBUG",
-            "EMBER_ENABLE_ASSERTS"
+            "EMBER_DEBUG"
         }
-        buildoptions "/MDd"
+        runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"
         defines "EMBER_RELEASE"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
 
     filter "configurations:Dist"
         defines "EMBER_DIST"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
 
 project "Client"
     location "Client"
     kind "ConsoleApp"
     language "C++"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -131,7 +134,6 @@ project "Client"
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime "On"
         systemversion "latest"
 
         defines
@@ -141,15 +143,15 @@ project "Client"
 
     filter "configurations:Debug"
         defines "EMBER_DEBUG"
-        buildoptions "/MDd"
+        runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"
         defines "EMBER_RELEASE"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
 
     filter "configurations:Dist"
         defines "EMBER_DIST"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
