@@ -21,8 +21,8 @@ namespace Ember
 
 	void LayerStack::PushLayer(Layer* layer)
 	{
-		// TODO: m_LayerInsert++;
 		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
+		m_LayerInsert++; // 存疑
 	}
 
 	void LayerStack::PushOverlay(Layer* overlay)
@@ -38,9 +38,7 @@ namespace Ember
 		if (It != m_Layers.end())
 		{
 			m_Layers.erase(It);
-
-			// 暂时存疑
-			// m_LayerInsert--;
+			m_LayerInsert--;
 		}
 	}
 
@@ -50,6 +48,8 @@ namespace Ember
 
 		// 暂时弹出图层，不进行销毁
 		if (It != m_Layers.end())
+		{
 			m_Layers.erase(It);
+		}
 	}
 }

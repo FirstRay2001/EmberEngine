@@ -22,6 +22,7 @@ public:
 	GameClient() 
 	{
 		PushLayer(new TestLayer());
+		PushLayer(new Ember::ImGuiLayer());
 	}
 
 	~GameClient() {}

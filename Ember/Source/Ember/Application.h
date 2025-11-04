@@ -13,6 +13,10 @@ namespace Ember
 	class EMBER_API Application
 	{
 	public:
+		inline static Application& Get() { return *s_Instance; }
+		inline Window& GetWindow() { return *m_Window; }
+		
+	public:
 		Application();
 		virtual ~Application();
 		void Run();
@@ -28,6 +32,8 @@ namespace Ember
 		std::unique_ptr<Window> m_Window;
 		LayerStack m_LayerStack;
 		bool m_Running = true;
+
+		static Application* s_Instance;
 	};
 
 	// 在客户端实现此函数以创建应用实例

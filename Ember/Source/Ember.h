@@ -7,6 +7,8 @@
 #include "Ember/Application.h"
 #include "Ember/Log.h"
 
+#include "Ember/ImGui/ImGuiLayer.h"
+
 // -------------入口点------------------------------------
 #include "Ember/EntryPoint.h"
 #define EMBER_IMPL_ENTRY_POINT(ApplicationClass)		\
