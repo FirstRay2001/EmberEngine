@@ -24,9 +24,10 @@ include "Ember/Vendor/imgui"
 
 project "Ember"
     location "Ember"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
-    staticruntime "off"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -61,6 +62,11 @@ project "Ember"
         "opengl32.lib",
     }
 
+    defines
+    {
+        "_CRT_SECURE_NO_WARNINGS"
+    }
+
     filter "configurations:*"
         buildoptions
         {
@@ -70,7 +76,6 @@ project "Ember"
         disablewarnings { "4828" }
 
     filter "system:windows"
-        cppdialect "C++17"
         systemversion "latest"
 
         defines
@@ -79,34 +84,30 @@ project "Ember"
             "EMEBR_BUILD_DLL"
         }
 
-        postbuildcommands
-        {
-            ("{COPYDIR} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Client/")
-        }
-
     filter "configurations:Debug"
         defines 
         {
             "EMBER_DEBUG"
         }
         runtime "Debug"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "EMBER_RELEASE"
         runtime "Release"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "EMBER_DIST"
         runtime "Release"
-        optimize "On"
+        optimize "on"
 
 project "Client"
     location "Client"
     kind "ConsoleApp"
     language "C++"
-    staticruntime "off"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -120,6 +121,7 @@ project "Client"
     includedirs
     {
         "Ember/Vendor/spdlog/include",
+        "Ember/Vendor",
         "Ember/Source",
         "%{IncludeDir.glm}"
     }
@@ -138,7 +140,6 @@ project "Client"
         disablewarnings { "4828" }
 
     filter "system:windows"
-        cppdialect "C++17"
         systemversion "latest"
 
         defines
@@ -149,14 +150,14 @@ project "Client"
     filter "configurations:Debug"
         defines "EMBER_DEBUG"
         runtime "Debug"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "EMBER_RELEASE"
         runtime "Release"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "EMBER_DIST"
         runtime "Release"
-        optimize "On"
+        optimize "on"

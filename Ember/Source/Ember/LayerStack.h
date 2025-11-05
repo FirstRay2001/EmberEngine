@@ -24,7 +24,7 @@ namespace Ember
 
 	private:
 		std::vector<Layer*>				m_Layers;
-		std::vector<Layer*>::iterator	m_LayerInsert;	// 非覆盖图层插入位置
+		unsigned int					m_LayerInsertIndex = 0;	// 非覆盖图层插入位置
 	};
 }
 

@@ -30,6 +30,7 @@ namespace Ember
 
 	private:
 		std::unique_ptr<Window> m_Window;
+		class ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		bool m_Running = true;
 

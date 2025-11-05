@@ -15,19 +15,12 @@ namespace Ember
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnAttach() override;
-		void OnDetach() override;
-		void OnUpdate() override;
-		void OnEvent(Event& e) override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+		virtual void OnImGuiRender() override;
 
-		bool OnMouseButtonPressedEvent(class MouseButtonPressedEvent& e);
-		bool OnMouseButtonReleasedEvent(class MouseButtonReleasedEvent& e);
-		bool OnMouseMovedEvent(class MouseMovedEvent& e);
-		bool OnMouseScrolledEvent(class MouseScrolledEvent& e);
-		bool OnKeyPressedEvent(class KeyPressedEvent& e);
-		bool OnKeyReleasedEvent(class KeyReleasedEvent& e);
-		bool OnKeyTypedEvent(class KeyTypedEvent& e);
-		bool OnWindowResizeEvent(class WindowResizeEvent& e);
+		void Begin();
+		void End();
 
 	private:
 		float m_Time = 0.0f;

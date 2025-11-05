@@ -5,6 +5,7 @@
 #include "emberpch.h"
 #include "Application.h"
 #include "Ember/Events/ApplicationEvent.h"
+#include "Ember/ImGui/ImGuiLayer.h"
 
 #include <glad/glad.h>
 
@@ -19,6 +20,9 @@ Application::Application()
 
 	m_Window = std::unique_ptr<Window>(Window::Create());
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+
+	m_ImGuiLayer = new ImGuiLayer();
+	PushOverlay(m_ImGuiLayer);
 }
 
 Application::~Application()
@@ -35,9 +39,17 @@ void Application::Run()
 		// 清除屏幕
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// 游戏主循环
+		// 逻辑更新
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate();
+
+		// ImGui更新
+		m_ImGuiLayer->Begin();
+		for (Layer* layer : m_LayerStack)
+		{
+			layer->OnImGuiRender();
+		}
+		m_ImGuiLayer->End();
 
 		// 更新窗口
 		m_Window->OnUpdate();

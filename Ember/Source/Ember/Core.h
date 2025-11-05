@@ -6,12 +6,16 @@
 
 // 平台检测
 #ifdef EMBER_PLATFORM_WINDOWS
+#ifdef EMBER_BUILD_DYNAMIC_LINK
 	// DLL导入、导出
 	#ifdef EMEBR_BUILD_DLL
 		#define EMBER_API __declspec(dllexport)
 	#else
 		#define EMBER_API __declspec(dllimport)
 	#endif
+#else
+	#define EMBER_API
+#endif
 #else
 	#error Ember only supports Windows!
 #endif
