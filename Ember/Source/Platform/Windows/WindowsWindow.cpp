@@ -11,6 +11,7 @@
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/Events/KeyEvent.h"
 #include "Ember/Events/MouseEvent.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Ember
 {
@@ -42,7 +43,7 @@ namespace Ember
 		glfwPollEvents();
 
 		// 交换缓冲区
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 
 	unsigned int WindowsWindow::GetWidth() const
@@ -94,12 +95,9 @@ namespace Ember
 		// 创建GLFW窗口
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 
-		// 设置窗口上下文
-		glfwMakeContextCurrent(m_Window);
-
-		// 初始化GLAD
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		EMBER_CORE_ASSERT(status, "Failed to initialize Glad!");
+		// 窗口上下文
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
 
 		// 设置用户指针
 		glfwSetWindowUserPointer(m_Window, &m_Data);

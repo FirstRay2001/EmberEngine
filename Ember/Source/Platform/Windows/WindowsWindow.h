@@ -10,6 +10,8 @@ struct GLFWwindow;
 
 namespace Ember
 {
+	struct OpenGLContext;
+
 	class WindowsWindow : public Ember::Window
 	{
 	public:
@@ -33,6 +35,7 @@ namespace Ember
 
 	private:
 		GLFWwindow* m_Window;
+		OpenGLContext* m_Context;
 		
 		struct WindowData
 		{

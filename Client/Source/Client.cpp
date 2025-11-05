@@ -23,9 +23,9 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
-		//ImGui::Begin("TestLayer");
-		//ImGui::Text("Hello from TestLayer!");
-		//ImGui::End();
+		ImGui::Begin("TestLayer");
+		ImGui::Text("Hello from TestLayer!");
+		ImGui::End();
 	}
 };
 
