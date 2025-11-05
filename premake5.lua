@@ -15,6 +15,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Ember/Vendor/glfw/include"
 IncludeDir["Glad"] = "Ember/Vendor/glad/include"
 IncludeDir["ImGui"] = "Ember/Vendor/imgui"
+IncludeDir["glm"] = "Ember/Vendor/glm"
 
 include "Ember/Vendor/glfw"
 include "Ember/Vendor/glad"
@@ -37,6 +38,9 @@ project "Ember"
     {
         "%{prj.name}/Source/**.h",
         "%{prj.name}/Source/**.cpp",
+        "%{prj.name}/Vendor/glm/glm/**.hpp",
+        "%{prj.name}/Vendor/glm/glm/**.inl"
+
     }
 
     includedirs
@@ -45,7 +49,8 @@ project "Ember"
         "%{prj.name}/Vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.glm}"
     }
 
     links
@@ -115,7 +120,8 @@ project "Client"
     includedirs
     {
         "Ember/Vendor/spdlog/include",
-        "Ember/Source"
+        "Ember/Source",
+        "%{IncludeDir.glm}"
     }
 
     links
