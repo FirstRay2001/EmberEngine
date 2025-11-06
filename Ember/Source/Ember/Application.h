@@ -33,6 +33,7 @@ namespace Ember
 		class ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		bool m_Running = true;
+		float m_LastFrameTime = 0.0f;
 
 		static Application* s_Instance;
 	};

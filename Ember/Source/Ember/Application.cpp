@@ -7,8 +7,10 @@
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/ImGui/ImGuiLayer.h"
 
-// test
 #include "Ember/Renderer/Renderer.h"
+#include "Ember/Core/Timestep.h"
+
+#include <GLFW/glfw3.h>
 
 using namespace Ember;
 
@@ -24,9 +26,6 @@ Application::Application()
 
 	m_ImGuiLayer = new ImGuiLayer();
 	PushOverlay(m_ImGuiLayer);
-
-
-	
 }
 
 void Application::Run()
@@ -36,9 +35,14 @@ void Application::Run()
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 
+		// 更新帧时间
+		float time = (float)glfwGetTime(); // 获取当前时间
+		Timestep timestep = time - m_LastFrameTime;
+		m_LastFrameTime = time;
+
 		// 逻辑更新
 		for (Layer* layer : m_LayerStack)
-			layer->OnUpdate();
+			layer->OnUpdate(timestep);
 
 		// ImGui更新
 		m_ImGuiLayer->Begin();

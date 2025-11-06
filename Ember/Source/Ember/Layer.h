@@ -6,6 +6,7 @@
 
 #include "Ember/Core.h"
 #include "Ember/Events/Event.h"
+#include "Ember/Core/Timestep.h"
 
 namespace Ember
 {
@@ -17,7 +18,7 @@ namespace Ember
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(const Timestep& timestep) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& e) {}
 

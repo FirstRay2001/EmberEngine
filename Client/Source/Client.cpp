@@ -54,23 +54,27 @@ public:
 	}
 
 
-	virtual void OnUpdate() override
+	virtual void OnUpdate(const Ember::Timestep& timestep) override
 	{
+		float deltaSeconds = timestep.GetSeconds();
+		float moveAmount = m_MoveSpeed * deltaSeconds;
+		float rotateAmount = m_RotateSpeed * deltaSeconds;
+
 		// 相机移动逻辑
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_A))
-			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(-0.05f, 0.0f, 0.0f));
+			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(-1.0f, 0.0f, 0.0f) * moveAmount);
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_D))
-			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.05f, 0.0f, 0.0f));
+			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(1.0f, 0.0f, 0.0f) * moveAmount);
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_W))
-			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, 0.05f, 0.0f));
+			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, 1.0f, 0.0f) * moveAmount);
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_S))
-			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, -0.05f, 0.0f));
+			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f) * moveAmount);
 
 		// 相机旋转逻辑
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_Q))
-			m_Camera->SetRotation(m_Camera->GetRotation() + 1.0f);
+			m_Camera->SetRotation(m_Camera->GetRotation() + rotateAmount);
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_E))
-			m_Camera->SetRotation(m_Camera->GetRotation() - 1.0f);
+			m_Camera->SetRotation(m_Camera->GetRotation() - rotateAmount);
 
 		// 渲染场景
 		Ember::Renderer::BeginScene(*m_Camera.get());
@@ -93,10 +97,14 @@ public:
 	virtual void OnImGuiRender() override
 	{
 	}
+
 private:
 	Ember::Ref<Ember::VertexArray> m_VertexArray;
 	Ember::Ref<Ember::Shader> m_Shader;
 	Ember::Scope<Ember::Camera> m_Camera;
+
+	float m_MoveSpeed = 1.0f;
+	float m_RotateSpeed = 200.0f;
 };
 
 class GameClient : public Ember::Application
