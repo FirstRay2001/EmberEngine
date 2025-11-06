@@ -8,7 +8,6 @@
 #include "Ember/ImGui/ImGuiLayer.h"
 
 // test
-#include "Ember/Renderer/Shader.h"
 #include "Ember/Renderer/Renderer.h"
 
 using namespace Ember;
@@ -51,10 +50,11 @@ Application::Application()
 		"layout(location = 0) in vec3 a_Position;\n"
 		"layout(location = 1) in vec4 a_Color;\n"
 		"out vec4 v_Color;\n"
+		"uniform mat4 u_ViewProjection;\n"
 		"void main()\n"
 		"{\n"
 		"	v_Color = a_Color;\n"
-		"	gl_Position = vec4(a_Position, 1.0);\n"
+		"	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);\n"
 		"}\n",
 		"#version 330 core\n"
 		"in vec4 v_Color;\n"
@@ -74,10 +74,12 @@ void Application::Run()
 		RenderCommand::Clear();
 
 		// test
-		Renderer::BeginScene();
+		Camera cam(float(GetWindow().GetWidth())/float(GetWindow().GetHeight()));
+		cam.SetPosition({ 0.0f, 0.0f, 3.0f });
+		cam.SetRotation(30.0f);
+		Renderer::BeginScene(cam);
 		{
-			m_Shader->Bind();
-			Renderer::Submit(m_VertexArray);
+			Renderer::Submit(m_Shader, m_VertexArray);
 		}
 		Renderer::EndScene();
 

@@ -7,16 +7,21 @@
 
 namespace Ember
 {
-	void Renderer::BeginScene()
+	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
+
+	void Renderer::BeginScene(Camera& camera)
 	{
+		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
 	{
 	}
 
-	void Renderer::Submit(const Ref<VertexArray>& vertexArray)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
 	{
+		shader->Bind();
+		shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}

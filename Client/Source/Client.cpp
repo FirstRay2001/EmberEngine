@@ -24,7 +24,9 @@ public:
 	virtual void OnImGuiRender() override
 	{
 		ImGui::Begin("TestLayer");
-		ImGui::Text("Hello from TestLayer!");
+		uint32_t count = 2;
+		std::string str = "Hello from TestLayer! Count = " + std::to_string(count);
+		ImGui::Text(str.c_str());
 		ImGui::End();
 	}
 };
