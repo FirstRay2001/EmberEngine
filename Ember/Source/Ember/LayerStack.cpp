@@ -33,10 +33,10 @@ namespace Ember
 
 	void LayerStack::PopLayer(Layer* layer)
 	{
-		auto It = std::find(m_Layers.begin(), m_Layers.end(), layer);
+		auto It = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, layer);
 
 		// 暂时弹出图层，不进行销毁
-		if (It != m_Layers.end())
+		if (It != m_Layers.begin() + m_LayerInsertIndex)
 		{
 			(*It)->OnDetach();
 			m_Layers.erase(It);
@@ -46,7 +46,7 @@ namespace Ember
 
 	void LayerStack::PopOverlay(Layer* overlay)
 	{
-		auto It = std::find(m_Layers.begin(), m_Layers.end(), overlay);
+		auto It = std::find(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(), overlay);
 
 		// 暂时弹出图层，不进行销毁
 		if (It != m_Layers.end())

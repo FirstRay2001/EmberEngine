@@ -7,7 +7,9 @@
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/ImGui/ImGuiLayer.h"
 
-#include <glad/glad.h>
+// test
+#include "Ember/Renderer/Shader.h"
+#include "Ember/Renderer/Renderer.h"
 
 using namespace Ember;
 
@@ -18,26 +20,66 @@ Application::Application()
 	EMBER_CORE_ASSERT(!s_Instance, "Application already exists!");
 	s_Instance = this;
 
-	m_Window = std::unique_ptr<Window>(Window::Create());
+	m_Window = Scope<Window>(Window::Create());
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	m_ImGuiLayer = new ImGuiLayer();
 	PushOverlay(m_ImGuiLayer);
-}
 
-Application::~Application()
-{
+
+	// Graphics Test
+	m_VertexArray = Ref<VertexArray>(VertexArray::Create());
+	float vertices[3 * 7] = {
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
+	};
+	Ref<VertexBuffer> vertexBuffer(VertexBuffer::Create(vertices, sizeof(vertices)));
+	BufferLayout layout = {
+		{ ShaderDataType::Float3, "a_Position" },
+		{ ShaderDataType::Float4, "a_Color" }
+	};
+	vertexBuffer->SetLayout(layout);
+	m_VertexArray->AddVertexBuffer(vertexBuffer);
+
+	uint32_t indices[3] = { 0, 1, 2 };
+	Ref<IndexBuffer> indexBuffer(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+	m_VertexArray->SetIndexBuffer(indexBuffer);
+
+	m_Shader = Ref<Shader>(Shader::Create(
+		"#version 330 core\n"
+		"layout(location = 0) in vec3 a_Position;\n"
+		"layout(location = 1) in vec4 a_Color;\n"
+		"out vec4 v_Color;\n"
+		"void main()\n"
+		"{\n"
+		"	v_Color = a_Color;\n"
+		"	gl_Position = vec4(a_Position, 1.0);\n"
+		"}\n",
+		"#version 330 core\n"
+		"in vec4 v_Color;\n"
+		"out vec4 color;\n"
+		"void main()\n"
+		"{\n"
+		"	color = v_Color;\n"
+		"}\n"
+	));
 }
 
 void Application::Run()
 {
 	while (m_Running)
 	{
-		// 设置清屏颜色
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		RenderCommand::Clear();
 
-		// 清除屏幕
-		glClear(GL_COLOR_BUFFER_BIT);
+		// test
+		Renderer::BeginScene();
+		{
+			m_Shader->Bind();
+			Renderer::Submit(m_VertexArray);
+		}
+		Renderer::EndScene();
 
 		// 逻辑更新
 		for (Layer* layer : m_LayerStack)

@@ -31,7 +31,7 @@ namespace Ember
 		// 事件回调函数类型
 		using EventCallbackFn = std::function<void(class Event&)>;
 
-		virtual ~Window() {}
+		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
 

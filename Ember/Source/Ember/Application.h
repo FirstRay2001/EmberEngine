@@ -18,7 +18,7 @@ namespace Ember
 		
 	public:
 		Application();
-		virtual ~Application();
+		virtual ~Application() = default;
 		void Run();
 
 		void OnEvent(class Event& e);
@@ -29,12 +29,15 @@ namespace Ember
 		void PushOverlay(Layer* overlay);
 
 	private:
-		std::unique_ptr<Window> m_Window;
+		Scope<Window> m_Window;
 		class ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		bool m_Running = true;
 
 		static Application* s_Instance;
+
+		Ref<class VertexArray> m_VertexArray;
+		Ref<class Shader> m_Shader;
 	};
 
 	// 在客户端实现此函数以创建应用实例
