@@ -29,6 +29,11 @@ namespace Ember
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
 
+		inline static void SetViewPort(const uint32_t& width, const uint32_t height)
+		{
+			s_RendererAPI->SetViewport(width, height);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

@@ -89,7 +89,8 @@ public:
 		Ember::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Ember::WindowResizeEvent>([this](Ember::WindowResizeEvent& e)
 			{
-				m_Camera->SetAspectRatio((float)e.GetWidth() / (float)e.GetHeight());
+				Ember::RenderCommand::SetViewPort(e.GetWidth(), e.GetHeight());
+				m_Camera->SetScreentSize(e.GetWidth(), e.GetHeight());
 				return false;
 			});
 	}

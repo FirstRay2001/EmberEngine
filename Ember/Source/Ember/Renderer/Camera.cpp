@@ -18,6 +18,24 @@ namespace Ember
 		RecalculateViewMatrix();
 	}
 
+	void Camera::SetScreentSize(uint32_t width, uint32_t height)
+	{
+		if (!bInitialized)
+		{
+			bInitialized = true;
+		}
+		else
+		{
+			// 是否根据新的宽高比调整FOV
+			// m_Fov = glm::degrees(2.0f * atan(tan(glm::radians(m_Fov) / 2.0f) * ((float)height / (float)m_ScreenHeight)));
+		}
+
+		m_ScreenWidth = width;
+		m_ScreenHeight = height;
+		m_Aspect = (float)width / (float)height;
+		RecalculateProjectionMatrix();
+	}
+
 	void Camera::SetAspectRatio(float aspect)
 	{
 		m_Aspect = aspect;
