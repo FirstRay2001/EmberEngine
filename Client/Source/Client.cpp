@@ -3,6 +3,7 @@
 // created by FirstRay2001, Oct/30/2025
 
 #include <Ember.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 class ExampleLayer : public Ember::Layer
 {
@@ -36,10 +37,11 @@ public:
 			"layout(location = 1) in vec4 a_Color;\n"
 			"out vec4 v_Color;\n"
 			"uniform mat4 u_ViewProjection;\n"
+			"uniform mat4 u_Transform;\n"
 			"void main()\n"
 			"{\n"
 			"	v_Color = a_Color;\n"
-			"	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);\n"
+			"	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);\n"
 			"}\n",
 			"#version 330 core\n"
 			"in vec4 v_Color;\n"
@@ -79,7 +81,15 @@ public:
 		// 渲染场景
 		Ember::Renderer::BeginScene(*m_Camera.get());
 		{
-			Ember::Renderer::Submit(m_Shader, m_VertexArray);
+			for (int y = 0; y < 20; y++)
+			{
+				for (int x = 0; x < 20; x++)
+				{
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(x * 0.11f, y * 0.11f, 0.0f)) *
+						glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 1.0f));
+					Ember::Renderer::Submit(m_Shader, m_VertexArray, transform);
+				}
+			}
 		}
 		Ember::Renderer::EndScene();
 	}
