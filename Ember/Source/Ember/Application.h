@@ -35,9 +35,6 @@ namespace Ember
 		bool m_Running = true;
 
 		static Application* s_Instance;
-
-		Ref<class VertexArray> m_VertexArray;
-		Ref<class Shader> m_Shader;
 	};
 
 	// 在客户端实现此函数以创建应用实例

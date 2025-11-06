@@ -26,44 +26,7 @@ Application::Application()
 	PushOverlay(m_ImGuiLayer);
 
 
-	// Graphics Test
-	m_VertexArray = Ref<VertexArray>(VertexArray::Create());
-	float vertices[3 * 7] = {
-			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
-	};
-	Ref<VertexBuffer> vertexBuffer(VertexBuffer::Create(vertices, sizeof(vertices)));
-	BufferLayout layout = {
-		{ ShaderDataType::Float3, "a_Position" },
-		{ ShaderDataType::Float4, "a_Color" }
-	};
-	vertexBuffer->SetLayout(layout);
-	m_VertexArray->AddVertexBuffer(vertexBuffer);
-
-	uint32_t indices[3] = { 0, 1, 2 };
-	Ref<IndexBuffer> indexBuffer(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-	m_VertexArray->SetIndexBuffer(indexBuffer);
-
-	m_Shader = Ref<Shader>(Shader::Create(
-		"#version 330 core\n"
-		"layout(location = 0) in vec3 a_Position;\n"
-		"layout(location = 1) in vec4 a_Color;\n"
-		"out vec4 v_Color;\n"
-		"uniform mat4 u_ViewProjection;\n"
-		"void main()\n"
-		"{\n"
-		"	v_Color = a_Color;\n"
-		"	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);\n"
-		"}\n",
-		"#version 330 core\n"
-		"in vec4 v_Color;\n"
-		"out vec4 color;\n"
-		"void main()\n"
-		"{\n"
-		"	color = v_Color;\n"
-		"}\n"
-	));
+	
 }
 
 void Application::Run()
@@ -72,16 +35,6 @@ void Application::Run()
 	{
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
-
-		// test
-		Camera cam(float(GetWindow().GetWidth())/float(GetWindow().GetHeight()));
-		cam.SetPosition({ 0.0f, 0.0f, 3.0f });
-		cam.SetRotation(30.0f);
-		Renderer::BeginScene(cam);
-		{
-			Renderer::Submit(m_Shader, m_VertexArray);
-		}
-		Renderer::EndScene();
 
 		// 逻辑更新
 		for (Layer* layer : m_LayerStack)
@@ -123,6 +76,10 @@ bool Ember::Application::OnWindowClose(WindowCloseEvent& e)
 void Ember::Application::PushLayer(Layer* layer)
 {
 	m_LayerStack.PushLayer(layer);
+
+	// 同步窗口大小
+	WindowResizeEvent e(m_Window->GetWidth(), m_Window->GetHeight());
+	layer->OnEvent(e);
 }
 
 void Ember::Application::PushOverlay(Layer* overlay)
