@@ -62,7 +62,7 @@ public:
 		Ember::Ref<Ember::VertexBuffer> vertexBuffer(Ember::VertexBuffer::Create(vertices, sizeof(vertices)));
 		Ember::BufferLayout layout = {
 			{ Ember::ShaderDataType::Float3, "a_Position" },
-			{ Ember::ShaderDataType::Float2, "a_UV" }
+			{ Ember::ShaderDataType::Float2, "a_TexCoord" }
 		};
 		vertexBuffer->SetLayout(layout);
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
@@ -83,29 +83,7 @@ public:
 		Ember::Ref<Ember::IndexBuffer> indexBuffer(Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
-		m_Shader = Ember::Ref<Ember::Shader>(Ember::Shader::Create(
-			"#version 330 core\n"
-			"layout(location = 0) in vec3 a_Position;\n"
-			"layout(location = 1) in vec2 a_UV;\n"
-			"out vec2 TexCoord;\n"
-			"uniform mat4 u_ViewProjection;\n"
-			"uniform mat4 u_Transform;\n"
-			"void main()\n"
-			"{\n"
-			"	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);\n"
-			"	TexCoord = a_UV;\n"
-			"}\n",
-			"#version 330 core\n"
-			"in vec2 TexCoord;"
-			"out vec4 color;\n"
-			"uniform sampler2D u_Texture;\n"
-			"uniform vec3 u_Color;\n"
-			"void main()\n"
-			"{\n"
-			"	vec4 sampleColor = texture(u_Texture, TexCoord).rgba;\n"
-			"	color = vec4(sampleColor.rgb, sampleColor.r);\n"
-			"}\n"
-		));
+		m_Shader = Ember::Ref<Ember::Shader>(Ember::Shader::Create("Asset/Shader/TestTextureShader.glsl"));
 
 		m_Texture = Ember::Texture2D::Create("Asset/Texture/Checkerboard.png");
 

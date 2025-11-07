@@ -9,6 +9,21 @@
 
 namespace Ember
 {
+	Shader* Shader::Create(const std::string& filepath)
+	{
+		// 根据当前渲染API创建着色器
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return new OpenGLShader(filepath);
+		}
+
+		EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
 	Shader* Shader::Create(const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		// 根据当前渲染API创建着色器

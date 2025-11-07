@@ -19,6 +19,10 @@ namespace Ember
 		// 解绑着色器程序
 		virtual void Unbind() const = 0;
 
+		// 从文件创建着色器
+		static Shader* Create(const std::string& filepath);
+
+		// 从字符串创建着色器
 		static Shader* Create(const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
 }
