@@ -102,8 +102,8 @@ public:
 			"uniform vec3 u_Color;\n"
 			"void main()\n"
 			"{\n"
-			"	vec3 sampleColor = texture(u_Texture, TexCoord).rgb;\n"
-			"	color = vec4(sampleColor, 1.0);\n"
+			"	vec4 sampleColor = texture(u_Texture, TexCoord).rgba;\n"
+			"	color = vec4(sampleColor.rgb, sampleColor.r);\n"
 			"}\n"
 		));
 

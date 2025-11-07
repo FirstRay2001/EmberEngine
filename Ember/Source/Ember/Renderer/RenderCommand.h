@@ -11,6 +11,11 @@ namespace Ember
 	class RenderCommand
 	{
 	public:
+		inline static void Init()
+		{
+			s_RendererAPI->Init();
+		}
+
 		// 清除屏幕
 		inline static void Clear()
 		{
