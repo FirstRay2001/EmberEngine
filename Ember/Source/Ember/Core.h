@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <memory>
+
 // 平台检测
 #ifdef EMBER_PLATFORM_WINDOWS
 #ifdef EMBER_BUILD_DYNAMIC_LINK
@@ -40,7 +42,6 @@
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
 // 智能指针封装
-#include <memory>
 namespace Ember
 {
 	template<typename T>
@@ -62,3 +63,5 @@ namespace Ember
 	}
 }
 
+// 临时宏
+#define OPENGLSHADER(x) std::dynamic_pointer_cast<Ember::OpenGLShader>(x)

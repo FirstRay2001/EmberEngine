@@ -129,7 +129,43 @@ namespace Ember
 		glUseProgram(0);
 	}
 
-	void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& matrix)
+	void OpenGLShader::SetUniformInt(const std::string& name, int value) const
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform1i(location, value);
+	}
+
+	void OpenGLShader::SetUniformFloat(const std::string& name, float value) const
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform1f(location, value);
+	}
+
+	void OpenGLShader::SetUniformFloat2(const std::string& name, const glm::vec2& value) const
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform2f(location, value.x, value.y);
+	}
+
+	void OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& vector) const
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform3f(location, vector.x, vector.y, vector.z);
+	}
+
+	void OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& vector) const
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+	}
+
+	void OpenGLShader::SetUniformMat3(const std::string& name, const glm::mat3& matrix) const
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
+	void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& matrix) const
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));

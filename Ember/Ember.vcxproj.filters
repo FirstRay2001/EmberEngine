@@ -7,6 +7,9 @@
     <Filter Include="Source\Ember">
       <UniqueIdentifier>{D017EBF1-BC7A-7A96-6500-B34C51424619}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Ember\Core">
+      <UniqueIdentifier>{289E1B6C-94B4-1902-DD2B-A5234981EA89}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Ember\Events">
       <UniqueIdentifier>{B4D99DE6-203B-7BF4-A9A8-C1A61509B2B3}</UniqueIdentifier>
     </Filter>
@@ -46,6 +49,9 @@
     <Filter Include="Vendor\glm\glm\gtx">
       <UniqueIdentifier>{9362E3A8-7F46-A4FE-E8A6-9E51D4A98E80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Vendor\stb_image">
+      <UniqueIdentifier>{EDE315D3-D9DC-3425-020F-1AAAEE661431}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Ember.h">
@@ -56,6 +62,9 @@
     </ClInclude>
     <ClInclude Include="Source\Ember\Core.h">
       <Filter>Source\Ember</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\Timestep.h">
+      <Filter>Source\Ember\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\EntryPoint.h">
       <Filter>Source\Ember</Filter>
@@ -90,13 +99,52 @@
     <ClInclude Include="Source\Ember\Log.h">
       <Filter>Source\Ember</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Buffer.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Camera.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\GraphicsContext.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\RenderCommand.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Renderer.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\RendererAPI.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Shader.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Texture.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\VertexArray.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Window.h">
       <Filter>Source\Ember</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h">
@@ -1359,18 +1407,9 @@
     <ClInclude Include="Vendor\glm\glm\vector_relational.hpp">
       <Filter>Vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Renderer\Shader.h" />
-    <ClInclude Include="Source\Ember\Renderer\Buffer.h" />
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h" />
-    <ClInclude Include="Source\Ember\Renderer\Renderer.h" />
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h" />
-    <ClInclude Include="Source\Ember\Renderer\VertexArray.h" />
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="Source\Ember\Renderer\RenderCommand.h" />
-    <ClInclude Include="Source\Ember\Renderer\RendererAPI.h" />
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="Source\Ember\Renderer\Camera.h" />
-    <ClInclude Include="Source\Ember\Core\Timestep.h" />
+    <ClInclude Include="Vendor\stb_image\stb_image.h">
+      <Filter>Vendor\stb_image</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Application.cpp">
@@ -1391,7 +1430,46 @@
     <ClCompile Include="Source\Ember\Log.cpp">
       <Filter>Source\Ember</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Buffer.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Camera.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\RenderCommand.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Renderer.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\RendererAPI.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Shader.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Texture.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\VertexArray.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>Source\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp">
@@ -1403,16 +1481,8 @@
     <ClCompile Include="Source\emberpch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Ember\Renderer\Shader.cpp" />
-    <ClCompile Include="Source\Ember\Renderer\Buffer.cpp" />
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp" />
-    <ClCompile Include="Source\Ember\Renderer\Renderer.cpp" />
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
-    <ClCompile Include="Source\Ember\Renderer\VertexArray.cpp" />
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLVertexArray.cpp" />
-    <ClCompile Include="Source\Ember\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="Source\Ember\Renderer\RenderCommand.cpp" />
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="Source\Ember\Renderer\Camera.cpp" />
+    <ClCompile Include="Vendor\stb_image\stb_image.cpp">
+      <Filter>Vendor\stb_image</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
