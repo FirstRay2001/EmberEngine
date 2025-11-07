@@ -83,12 +83,13 @@ public:
 		Ember::Ref<Ember::IndexBuffer> indexBuffer(Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
-		m_Shader = Ember::Ref<Ember::Shader>(Ember::Shader::Create("Asset/Shader/TestTextureShader.glsl"));
+		m_ShaderLibrary = Ember::CreateRef<Ember::ShaderLibrary>();
+		auto shader = m_ShaderLibrary->Load("Asset/Shader/TestTextureShader.glsl");
 
 		m_Texture = Ember::Texture2D::Create("Asset/Texture/Checkerboard.png");
 
-		OPENGLSHADER(m_Shader)->Bind();
-		OPENGLSHADER(m_Shader)->SetUniformInt("u_Texture", 0);
+		OPENGLSHADER(shader)->Bind();
+		OPENGLSHADER(shader)->SetUniformInt("u_Texture", 0);
 
 		m_Camera->SetPosition({ 0.0f, 0.0f, 3.0f });
 	}
@@ -117,8 +118,9 @@ public:
 			m_Camera->SetRotation(m_Camera->GetRotation() - rotateAmount);
 
 		// 设置Shader颜色Uniform
-		m_Shader->Bind();
-		OPENGLSHADER(m_Shader)->SetUniformFloat3("u_Color", m_BoxColor);
+		auto shader = m_ShaderLibrary->Get("TestTextureShader");
+		shader->Bind();
+		OPENGLSHADER(shader)->SetUniformFloat3("u_Color", m_BoxColor);
 
 		// 渲染场景
 		Ember::Renderer::BeginScene(*m_Camera.get());
@@ -134,7 +136,7 @@ public:
 			}*/
 
 			m_Texture->Bind();
-			Ember::Renderer::Submit(m_Shader, m_VertexArray, glm::mat4(1.0f));
+			Ember::Renderer::Submit(shader, m_VertexArray, glm::mat4(1.0f));
 
 		}
 		Ember::Renderer::EndScene();
@@ -160,7 +162,7 @@ public:
 
 private:
 	Ember::Ref<Ember::VertexArray> m_VertexArray;
-	Ember::Ref<Ember::Shader> m_Shader;
+	Ember::Ref<Ember::ShaderLibrary> m_ShaderLibrary;
 	Ember::Scope<Ember::Camera> m_Camera;
 	Ember::Ref<Ember::Texture2D> m_Texture;
 	glm::vec3 m_BoxColor = { 0.2f, 0.32f, 0.8f };
