@@ -38,6 +38,9 @@ namespace Ember
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
 
+		// 多线程上下文初始化
+		virtual void InitMutiThreadContext() const = 0;
+
 		// 设置事件回调函数
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;

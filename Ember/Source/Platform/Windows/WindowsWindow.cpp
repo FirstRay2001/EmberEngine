@@ -56,6 +56,11 @@ namespace Ember
 		return m_Data.Height;
 	}
 
+	void WindowsWindow::InitMutiThreadContext() const
+	{
+		glfwMakeContextCurrent(m_Window);
+	}
+
 	void WindowsWindow::SetEventCallback(const EventCallbackFn& callback)
 	{
 		m_Data.EventCallback = callback;
@@ -91,6 +96,11 @@ namespace Ember
 			EMBER_CORE_ASSERT(success, "Could not initialize GLFW!");
 			s_GLFWInitialized = true;
 		}
+
+		// 设置OpenGL版本
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		// 创建GLFW窗口
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);

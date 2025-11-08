@@ -7,6 +7,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Platform/OpenGL/OpenGLShader.h"
 
+#include <GLFW/glfw3.h>
+
 class ExampleLayer : public Ember::Layer
 {
 public:
@@ -117,27 +119,18 @@ public:
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_E))
 			m_Camera->SetRotation(m_Camera->GetRotation() - rotateAmount);
 
-		// 设置Shader颜色Uniform
-		auto shader = m_ShaderLibrary->Get("TestTextureShader");
-		shader->Bind();
-		OPENGLSHADER(shader)->SetUniformFloat3("u_Color", m_BoxColor);
-
 		// 渲染场景
 		Ember::Renderer::BeginScene(*m_Camera.get());
 		{
-			/*for (int y = 0; y < 20; y++)
-			{
-				for (int x = 0; x < 20; x++)
-				{
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(x * 0.11f, y * 0.11f, 0.0f)) *
-						glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 1.0f));
-					Ember::Renderer::Submit(m_Shader, m_VertexArray, transform);
-				}
-			}*/
+			// TODO: 多线程材质系统
 
-			m_Texture->Bind();
+			// 设置Shader颜色Uniform
+			auto shader = m_ShaderLibrary->Get("TestTextureShader");
+			auto texture = m_Texture;
+			shader->Bind();
+			OPENGLSHADER(shader)->SetUniformFloat3("u_Color", m_BoxColor);
+			texture->Bind();
 			Ember::Renderer::Submit(shader, m_VertexArray, glm::mat4(1.0f));
-
 		}
 		Ember::Renderer::EndScene();
 	}
@@ -146,11 +139,10 @@ public:
 	{
 		Ember::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Ember::WindowResizeEvent>([this](Ember::WindowResizeEvent& e)
-			{
-				Ember::RenderCommand::SetViewPort(e.GetWidth(), e.GetHeight());
-				m_Camera->SetScreentSize(e.GetWidth(), e.GetHeight());
-				return false;
-			});
+		{
+			m_Camera->SetScreentSize(e.GetWidth(), e.GetHeight());
+			return false;
+		});
 	}
 
 	virtual void OnImGuiRender() override

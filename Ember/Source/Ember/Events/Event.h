@@ -5,7 +5,7 @@
 #pragma once
 
 #include "emberpch.h"
-#include "Ember/Core.h"
+#include "Ember/Core/Core.h"
 
 namespace Ember
 {

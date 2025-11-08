@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include "Ember/Core.h"
+#include "Ember/Core/Core.h"
 
-#include "Ember/Application.h"
-#include "Ember/Log.h"
+#include "Ember/Core/Application.h"
+#include "Ember/Core/Log.h"
 
 #include "Ember/ImGui/ImGuiLayer.h"
 #include "imgui/imgui.h"
 
 // ----输入----------------------------------------------
-#include "Ember/Input.h"
-#include "Ember/KeyCode.h"
+#include "Ember/Core/Input.h"
+#include "Ember/Core/KeyCode.h"
 #include "Ember/Events/KeyEvent.h"
 #include "Ember/Events/MouseEvent.h"
 #include "Ember/Events/ApplicationEvent.h"
@@ -31,7 +31,7 @@
 //-------------------------------------------------------
 
 // -------------入口点------------------------------------
-#include "Ember/EntryPoint.h"
+#include "Ember/Core/EntryPoint.h"
 #define EMBER_IMPL_ENTRY_POINT(ApplicationClass)		\
 	Ember::Application* Ember::CreateApplication()		\
 	{													\

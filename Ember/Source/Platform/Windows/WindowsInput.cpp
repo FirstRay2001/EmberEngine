@@ -4,9 +4,9 @@
 
 #include "emberpch.h"
 #include "WindowsInput.h"
-#include "Ember/Application.h"
+#include "Ember/Core/Application.h"
 #include "GLFW/glfw3.h"
-#include "Ember/KeyCode.h"
+#include "Ember/Core/KeyCode.h"
 
 Ember::Input* Ember::Input::s_Instance = new Ember::WindowsInput();;
 

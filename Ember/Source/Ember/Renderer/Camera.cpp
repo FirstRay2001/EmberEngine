@@ -36,12 +36,6 @@ namespace Ember
 		RecalculateProjectionMatrix();
 	}
 
-	void Camera::SetAspectRatio(float aspect)
-	{
-		m_Aspect = aspect;
-		RecalculateProjectionMatrix();
-	}
-
 	void Camera::RecalculateViewMatrix()
 	{
 		// 计算视图矩阵

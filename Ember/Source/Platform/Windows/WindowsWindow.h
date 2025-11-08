@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Ember/Window.h"
+#include "Ember/Core/Window.h"
 
 struct GLFWwindow;
 
@@ -21,6 +21,9 @@ namespace Ember
 		void OnUpdate() override;
 		unsigned int GetWidth() const override;
 		unsigned int GetHeight() const override;
+
+		// 多线程窗口初始化
+		virtual void InitMutiThreadContext() const override;
 
 		// 设置事件回调函数
 		void SetEventCallback(const EventCallbackFn& callback) override;

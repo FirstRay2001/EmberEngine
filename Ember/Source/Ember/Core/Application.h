@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Core.h"
+#include "Ember/Core/Core.h"
 #include "Window.h"
 #include "LayerStack.h"
 
@@ -24,6 +24,7 @@ namespace Ember
 		void OnEvent(class Event& e);
 
 		bool OnWindowClose(class WindowCloseEvent& e);
+		bool OnWindowResize(class WindowResizeEvent& e);
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);

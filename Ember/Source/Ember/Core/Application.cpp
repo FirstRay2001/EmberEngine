@@ -3,7 +3,7 @@
 // created by FirstRay2001, Oct/30/2025
 
 #include "emberpch.h"
-#include "Application.h"
+#include "Ember/Core/Application.h"
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/ImGui/ImGuiLayer.h"
 
@@ -35,7 +35,7 @@ void Application::Run()
 {
 	while (m_Running)
 	{
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.2f, 1.0f });
 		RenderCommand::Clear();
 
 		// 更新帧时间
@@ -43,7 +43,7 @@ void Application::Run()
 		Timestep timestep = time - m_LastFrameTime;
 		m_LastFrameTime = time;
 
-		// 逻辑更新
+		// 逻辑更新(各层提交渲染命令)
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate(timestep);
 
@@ -54,7 +54,7 @@ void Application::Run()
 			layer->OnImGuiRender();
 		}
 		m_ImGuiLayer->End();
-
+		
 		// 更新窗口
 		m_Window->OnUpdate();
 	}
@@ -64,6 +64,7 @@ void Ember::Application::OnEvent(Event& e)
 {
 	EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+	dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 	
 	// 自顶向下遍历图层堆栈
 	for (auto It = m_LayerStack.end(); It != m_LayerStack.begin(); )
@@ -78,6 +79,12 @@ bool Ember::Application::OnWindowClose(WindowCloseEvent& e)
 {
 	m_Running = false;
 	return true;
+}
+
+bool Ember::Application::OnWindowResize(WindowResizeEvent& e)
+{
+	Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+	return false;
 }
 
 void Ember::Application::PushLayer(Layer* layer)

@@ -127,12 +127,14 @@ project "Client"
         "Ember/Vendor/spdlog/include",
         "Ember/Vendor",
         "Ember/Source",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.GLFW}"
     }
 
     links
     {
-        "Ember"
+        "Ember",
+        "GLFW"
     }
 
     filter "configurations:*"

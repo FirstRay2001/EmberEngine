@@ -17,8 +17,12 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <mutex>
+#include <condition_variable>
+#include <thread>
+
 // 引擎库
-#include "Ember/Log.h"
+#include "Ember/Core/Log.h"
 
 #ifdef EMBER_PLATFORM_WINDOWS
 #include <Windows.h>

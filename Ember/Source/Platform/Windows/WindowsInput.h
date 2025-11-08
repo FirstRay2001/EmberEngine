@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Ember/Input.h"
+#include "Ember/Core/Input.h"
 
 
 namespace Ember

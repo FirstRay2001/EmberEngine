@@ -3,7 +3,7 @@
 // created by FirstRay2001, Nov/6/2025
 
 #pragma once
-#include "Ember/Core.h"
+#include "Ember/Core/Core.h"
 #include "Buffer.h"
 
 namespace Ember

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Ember/Core.h"
-#include "Ember/Layer.h"
+#include "Ember/Core/Core.h"
+#include "Ember/Core/Layer.h"
 
 namespace Ember
 {

@@ -150,20 +150,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\Ember.h" />
-    <ClInclude Include="Source\Ember\Application.h" />
-    <ClInclude Include="Source\Ember\Core.h" />
+    <ClInclude Include="Source\Ember\Core\Application.h" />
+    <ClInclude Include="Source\Ember\Core\Concurrent\CommandQueue.h" />
+    <ClInclude Include="Source\Ember\Core\Core.h" />
+    <ClInclude Include="Source\Ember\Core\EntryPoint.h" />
+    <ClInclude Include="Source\Ember\Core\Input.h" />
+    <ClInclude Include="Source\Ember\Core\KeyCode.h" />
+    <ClInclude Include="Source\Ember\Core\Layer.h" />
+    <ClInclude Include="Source\Ember\Core\LayerStack.h" />
+    <ClInclude Include="Source\Ember\Core\Log.h" />
     <ClInclude Include="Source\Ember\Core\Timestep.h" />
-    <ClInclude Include="Source\Ember\EntryPoint.h" />
+    <ClInclude Include="Source\Ember\Core\Window.h" />
     <ClInclude Include="Source\Ember\Events\ApplicationEvent.h" />
     <ClInclude Include="Source\Ember\Events\Event.h" />
     <ClInclude Include="Source\Ember\Events\KeyEvent.h" />
     <ClInclude Include="Source\Ember\Events\MouseEvent.h" />
     <ClInclude Include="Source\Ember\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="Source\Ember\Input.h" />
-    <ClInclude Include="Source\Ember\KeyCode.h" />
-    <ClInclude Include="Source\Ember\Layer.h" />
-    <ClInclude Include="Source\Ember\LayerStack.h" />
-    <ClInclude Include="Source\Ember\Log.h" />
     <ClInclude Include="Source\Ember\Renderer\Buffer.h" />
     <ClInclude Include="Source\Ember\Renderer\Camera.h" />
     <ClInclude Include="Source\Ember\Renderer\GraphicsContext.h" />
@@ -173,7 +175,6 @@
     <ClInclude Include="Source\Ember\Renderer\Shader.h" />
     <ClInclude Include="Source\Ember\Renderer\Texture.h" />
     <ClInclude Include="Source\Ember\Renderer\VertexArray.h" />
-    <ClInclude Include="Source\Ember\Window.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -603,12 +604,12 @@
     <ClInclude Include="Vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Ember\Application.cpp" />
+    <ClCompile Include="Source\Ember\Core\Application.cpp" />
+    <ClCompile Include="Source\Ember\Core\Layer.cpp" />
+    <ClCompile Include="Source\Ember\Core\LayerStack.cpp" />
+    <ClCompile Include="Source\Ember\Core\Log.cpp" />
     <ClCompile Include="Source\Ember\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Ember\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="Source\Ember\Layer.cpp" />
-    <ClCompile Include="Source\Ember\LayerStack.cpp" />
-    <ClCompile Include="Source\Ember\Log.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Buffer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Camera.cpp" />
     <ClCompile Include="Source\Ember\Renderer\RenderCommand.cpp" />

@@ -10,6 +10,9 @@
     <Filter Include="Source\Ember\Core">
       <UniqueIdentifier>{289E1B6C-94B4-1902-DD2B-A5234981EA89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Ember\Core\Concurrent">
+      <UniqueIdentifier>{FA68EB0D-E623-DBB9-8FDB-53047B75254A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Ember\Events">
       <UniqueIdentifier>{B4D99DE6-203B-7BF4-A9A8-C1A61509B2B3}</UniqueIdentifier>
     </Filter>
@@ -57,17 +60,38 @@
     <ClInclude Include="Source\Ember.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Application.h">
-      <Filter>Source\Ember</Filter>
+    <ClInclude Include="Source\Ember\Core\Application.h">
+      <Filter>Source\Ember\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Core.h">
-      <Filter>Source\Ember</Filter>
+    <ClInclude Include="Source\Ember\Core\Concurrent\CommandQueue.h">
+      <Filter>Source\Ember\Core\Concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\Core.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\EntryPoint.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\Input.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\KeyCode.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\Layer.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\LayerStack.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Core\Log.h">
+      <Filter>Source\Ember\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Core\Timestep.h">
       <Filter>Source\Ember\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\EntryPoint.h">
-      <Filter>Source\Ember</Filter>
+    <ClInclude Include="Source\Ember\Core\Window.h">
+      <Filter>Source\Ember\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Events\ApplicationEvent.h">
       <Filter>Source\Ember\Events</Filter>
@@ -83,21 +107,6 @@
     </ClInclude>
     <ClInclude Include="Source\Ember\ImGui\ImGuiLayer.h">
       <Filter>Source\Ember\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ember\Input.h">
-      <Filter>Source\Ember</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ember\KeyCode.h">
-      <Filter>Source\Ember</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ember\Layer.h">
-      <Filter>Source\Ember</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ember\LayerStack.h">
-      <Filter>Source\Ember</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ember\Log.h">
-      <Filter>Source\Ember</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\Buffer.h">
       <Filter>Source\Ember\Renderer</Filter>
@@ -125,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\VertexArray.h">
       <Filter>Source\Ember\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ember\Window.h">
-      <Filter>Source\Ember</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>Source\Platform\OpenGL</Filter>
@@ -1412,23 +1418,23 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Ember\Application.cpp">
-      <Filter>Source\Ember</Filter>
+    <ClCompile Include="Source\Ember\Core\Application.cpp">
+      <Filter>Source\Ember\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Core\Layer.cpp">
+      <Filter>Source\Ember\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Core\LayerStack.cpp">
+      <Filter>Source\Ember\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Core\Log.cpp">
+      <Filter>Source\Ember\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\ImGui\ImGuiBuild.cpp">
       <Filter>Source\Ember\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\ImGui\ImGuiLayer.cpp">
       <Filter>Source\Ember\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Ember\Layer.cpp">
-      <Filter>Source\Ember</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Ember\LayerStack.cpp">
-      <Filter>Source\Ember</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Ember\Log.cpp">
-      <Filter>Source\Ember</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Renderer\Buffer.cpp">
       <Filter>Source\Ember\Renderer</Filter>
