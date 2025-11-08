@@ -5,6 +5,7 @@
 #include <Ember.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp> 
 #include "Platform/OpenGL/OpenGLShader.h"
 
 #include <GLFW/glfw3.h>
@@ -114,16 +115,25 @@ public:
 			m_Camera->SetPosition(m_Camera->GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f) * moveAmount);
 
 		// 相机旋转逻辑
+		glm::quat NewQuat = m_Camera->GetRotation();
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_Q))
-			m_Camera->SetRotation(m_Camera->GetRotation() + rotateAmount);
+		{
+			glm::vec3 eulers = glm::eulerAngles(NewQuat);
+			eulers.z += glm::radians(rotateAmount);
+			NewQuat = glm::quat(eulers);
+		}
 		if (Ember::Input::IsKeyPressed(EMBER_KEY_E))
-			m_Camera->SetRotation(m_Camera->GetRotation() - rotateAmount);
+		{
+			glm::vec3 eulers = glm::eulerAngles(NewQuat);
+			eulers.z -= glm::radians(rotateAmount);
+			NewQuat = glm::quat(eulers);
+		}
+		m_Camera->SetRotation(NewQuat);
+
 
 		// 渲染场景
 		Ember::Renderer::BeginScene(*m_Camera.get());
 		{
-			// TODO: 多线程材质系统
-
 			// 设置Shader颜色Uniform
 			auto shader = m_ShaderLibrary->Get("TestTextureShader");
 			auto texture = m_Texture;

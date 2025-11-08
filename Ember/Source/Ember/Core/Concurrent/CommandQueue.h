@@ -45,7 +45,7 @@ namespace Ember
 	public:
 		virtual ~CommandQueue() = default;
 
-		void Init()
+		void Start()
 		{
 			// 启动消费者线程
 			m_ConsumerThread = std::thread(&CommandQueue::MainLoop, this);
@@ -73,10 +73,10 @@ namespace Ember
 		}
 
 		// 生产者 - 推入命令到写入缓冲区
-		void PushCommand(const CommandType& command)
+		void PushCommand(Ref<CommandType>& command)
 		{
 			std::unique_lock<std::mutex> lock(m_SwapMutex);				// 写入期间不允许交换
-			m_CommandBuffers[m_WriteIndex].emplace_back(command);
+			m_CommandBuffers[m_WriteIndex].emplace_back(std::move(command));
 
 #if EMBER_ENABLE_COMMAND_QUEUE_LOG
 			EMBER_CORE_TRACE("Command pushed.");
@@ -88,7 +88,7 @@ namespace Ember
 		void EmplaceCommand(Args&&... args)
 		{
 			std::unique_lock<std::mutex> lock(m_SwapMutex);				// 写入期间不允许交换
-			m_CommandBuffers[m_WriteIndex].emplace_back(std::forward<Args>(args)...);
+			m_CommandBuffers[m_WriteIndex].emplace_back(CreateRef<CommandType>(std::forward<Args>(args)...));
 
 #if EMBER_ENABLE_COMMAND_QUEUE_LOG
 			EMBER_CORE_TRACE("Command emplaced.");
@@ -129,7 +129,7 @@ namespace Ember
 			EMBER_CORE_TRACE("Wait for command compelete.");
 #endif // EMBER_ENABLE_COMMAND_QUEUE_LOG
 
-			m_CommandCompeletedCV.wait(lock, [this]() {
+			m_CommandCompletedCV.wait(lock, [this]() {
 				return m_CommandBuffers[m_ReadIndex].empty();
 				});
 		}
@@ -137,6 +137,8 @@ namespace Ember
 		// 消费者 - 线程主循环
 		void MainLoop()
 		{
+			InitThread();
+
 			while (true)
 			{
 				std::unique_lock<std::mutex> lock(m_SwapMutex);
@@ -149,26 +151,35 @@ namespace Ember
 				for (auto& command : commandBuffer)
 				{
 					// 执行命令
-					command.Execute();
+					command->Execute();
 				}
 				commandBuffer.clear();
 
 				// 通知生产者命令已完成
-				m_CommandCompeletedCV.notify_all();
+				m_CommandCompletedCV.notify_all();
 
 #if EMBER_ENABLE_COMMAND_QUEUE_LOG
 				EMBER_CORE_TRACE("All command compeleted.");
 #endif // EMBER_ENABLE_COMMAND_QUEUE_LOG
 			}
+
+			CleanupThread();
 		}
 
 	protected:
+		// 线程内初始化
+		virtual void InitThread() {};
+
+		// 线程内清理
+		virtual void CleanupThread() {};
+
+	protected:
 		std::thread					m_ConsumerThread;
-		std::vector<CommandType>	m_CommandBuffers[2];
+		std::vector<Ref<CommandType>>	m_CommandBuffers[2];
 		std::atomic<int>			m_ReadIndex{ 0 };
 		std::atomic<int>			m_WriteIndex{ 1 };
 		std::mutex					m_SwapMutex;
 		std::condition_variable		m_DataReadyCV;
-		std::condition_variable		m_CommandCompeletedCV;
+		std::condition_variable		m_CommandCompletedCV;
 	};
 }
