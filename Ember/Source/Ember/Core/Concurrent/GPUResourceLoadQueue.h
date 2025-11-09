@@ -60,19 +60,20 @@ namespace Ember
 		// 异步加载Shader
 		std::future<Ref<Shader>> LoadShaderAsync(const std::string& filepath, ShaderLoadCommand::CallbackFunc callback = nullptr);
 
+		void SetupWindow(void* window);
+
+	private:
 		// 清理已完成的加载命令
-		void CleanupCompletedCommands();
+		// void CleanupCompletedCommands();
 
 		// 等待所有加载命令完成
-		void WaitForAll();
+		// void WaitForAll();
 
 		// 获取待处理的加载命令数量
-		size_t GetPendingCount() const { return m_PendingCommands.size(); }
+		// size_t GetPendingCount() const { return m_PendingCommands.size(); }
 
 		// 是否有待处理的加载命令
-		bool HasPendiongLoads() const { return !m_PendingCommands.empty(); }
-
-		void SetupWindow(void* window);
+		// bool HasPendiongLoads() const { return !m_PendingCommands.empty(); }
 
 	protected:
 		virtual void InitThread() override;

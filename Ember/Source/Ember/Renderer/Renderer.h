@@ -7,6 +7,7 @@
 #include "Ember/Renderer/RenderCommand.h"
 #include "Ember/Renderer/Camera.h"
 #include "Ember/Renderer/Shader.h"
+#include "Ember/Renderer/Material.h"
 
 namespace Ember
 {
@@ -18,8 +19,11 @@ namespace Ember
 		static void BeginScene(Camera& camera);
 		static void EndScene();
 
-		// 提交Mesh渲染
+		// 提交Shader VAO
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0));
+
+		// 提交Shader 材质 VAO
+		static void Submit(const Ref<Shader>& shader, const Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0));
 
 		static void OnWindowResize(uint32_t width, uint32_t height);
 

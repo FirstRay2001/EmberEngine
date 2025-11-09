@@ -124,7 +124,7 @@ namespace Ember
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
 		// 创建顶点缓冲区
-		static VertexBuffer* Create(float* vertices, uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 	};
 
 	// 索引缓冲区
@@ -138,6 +138,6 @@ namespace Ember
 		virtual unsigned int GetCount() const = 0;
 
 		// 创建索引缓冲区
-		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	};
 }

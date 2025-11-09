@@ -10,7 +10,7 @@
 namespace Ember
 {
 	//////// 顶点缓冲区 ////////
-	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
 	{
 		// 根据当前渲染API创建顶点缓冲区
 		switch (Renderer::GetAPI())
@@ -19,7 +19,7 @@ namespace Ember
 			EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexBuffer(vertices, size);
+			return CreateRef<OpenGLVertexBuffer>(vertices, size);
 		}
 
 		EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -28,7 +28,7 @@ namespace Ember
 
 
 	//////// 索引缓冲区 ////////
-	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
 		// 根据当前渲染API创建索引缓冲区
 		switch (Renderer::GetAPI())
@@ -37,7 +37,7 @@ namespace Ember
 			EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLIndexBuffer(indices, count);
+			return CreateRef<OpenGLIndexBuffer>(indices, count);
 		}
 
 		EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");

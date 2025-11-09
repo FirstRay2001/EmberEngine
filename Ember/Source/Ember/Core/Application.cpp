@@ -12,40 +12,9 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Ember/Core/Concurrent/CommandQueue.h"
 #include "Ember/Core/Concurrent/GPUResourceLoadQueue.h"
 
 using namespace Ember;
-
-class RenderCommandQueue : public CommandQueue<FunctionCommand>
-{
-public:
-	void Init(GLFWwindow* window)
-	{
-		m_SharedWindow = glfwCreateWindow(1, 1, "", nullptr, window);
-	}
-protected:
-	
-
-	virtual void InitThread() override
-	{
-		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-		glfwMakeContextCurrent(m_SharedWindow);
-	}
-
-	virtual void CleanupThread() override
-	{
-		if (m_SharedWindow)
-		{
-			glfwDestroyWindow(m_SharedWindow);
-			m_SharedWindow = nullptr;
-		}
-	}
-
-private:
-	GLFWwindow* m_SharedWindow = nullptr;
-};
-
 
 Application* Application::s_Instance = nullptr;
 
@@ -66,36 +35,14 @@ Application::Application()
 
 void Application::Run()
 {
-	GPUResourceLoader gpuLoader;
-	gpuLoader.SetupWindow(m_Window.get()->GetNativeWindow());
-	gpuLoader.Start();
-	Ref<Shader> rs;
-
-	auto shaderfuture = gpuLoader.LoadShaderAsync("Asset/Shader/testshader.hlsl",
-		[&rs](Ref<Shader> shader)
-		{
-			rs = shader;
-		});
-
-	gpuLoader.SwapBuffers();
-	gpuLoader.WaitForCompletion();
-
-	if (rs.get())
-		EMBER_CORE_TRACE("Shader loaded from Render Command Queue: {0}", rs->GetName());
-	else
-		EMBER_CORE_ERROR("Failed to load shader from Render Command Queue.");
-
 	while (m_Running)
 	{
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.2f, 1.0f });
-		RenderCommand::Clear();
-
 		// 更新帧时间
 		float time = (float)glfwGetTime(); // 获取当前时间
 		Timestep timestep = time - m_LastFrameTime;
 		m_LastFrameTime = time;
 
-		// 逻辑更新(各层提交渲染命令)
+		// 逻辑更新
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate(timestep);
 

@@ -34,6 +34,21 @@ namespace Ember
 		RenderCommand::DrawIndexed(vertexArray);
 	}
 
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+	{
+		// 设置相机矩阵
+		shader->Bind();
+		OPENGLSHADER(shader)->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		OPENGLSHADER(shader)->SetUniformMat4("u_Transform", transform);
+		
+		// 应用材质
+		material->ApplyToShader(shader);
+
+		// Draw
+		vertexArray->Bind();
+		RenderCommand::DrawIndexed(vertexArray);
+	}
+
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{
 		RenderCommand::SetViewPort(width, height);

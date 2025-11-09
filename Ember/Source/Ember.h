@@ -27,14 +27,6 @@
 #include "Ember/Renderer/Shader.h"
 #include "Ember/Renderer/Buffer.h"
 #include "Ember/Renderer/Texture.h"
+#include "Ember/Renderer/Material.h"
 #include "Ember/Renderer/Camera.h"
 //-------------------------------------------------------
-
-// -------------入口点------------------------------------
-#include "Ember/Core/EntryPoint.h"
-#define EMBER_IMPL_ENTRY_POINT(ApplicationClass)		\
-	Ember::Application* Ember::CreateApplication()		\
-	{													\
-		return new ApplicationClass();					\
-	}													\
-// -------------------------------------------------------

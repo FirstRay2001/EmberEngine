@@ -5,7 +5,7 @@
 #include "Ember/Renderer/Shader.h"
 
 #include "GLFW/glfw3.h"
-#include "Ember/Core/Application.h"
+#include "Ember/Renderer/Renderer.h"
 
 namespace Ember
 {
@@ -56,7 +56,7 @@ namespace Ember
 		return command->GetFuture();
 	}
 
-	void GPUResourceLoader::CleanupCompletedCommands()
+	/*void GPUResourceLoader::CleanupCompletedCommands()
 	{
 		m_PendingCommands.erase(
 			std::remove_if(
@@ -66,37 +66,37 @@ namespace Ember
 			),
 			m_PendingCommands.end()
 		);
-	}
+	}*/
 
-	void GPUResourceLoader::WaitForAll()
+	/*void GPUResourceLoader::WaitForAll()
 	{
 		for (auto& command : m_PendingCommands)
 		{
 			command->Wait();
 		}
-	}
+	}*/
 
 	void GPUResourceLoader::SetupWindow(void* window)
 	{
-		m_SharedWindow = (void*)glfwCreateWindow(1, 1, "", nullptr, (GLFWwindow*)window);
+		// 创建共享上下文窗口
+		m_SharedWindow = RenderCommand::SetupMutithread(window);
 		m_Initilized = true;
 	}
 
 	void GPUResourceLoader::InitThread()
 	{
-		// TODO: 平台无关处理
 		if (!m_Initilized.load())
 		{
 			EMBER_CORE_ERROR("GPUResourceLoader not initialized with a shared window!");
 			EMBER_CORE_ASSERT(false, "GPUResourceLoader not initialized with a shared window!");
 		}
-		glfwMakeContextCurrent((GLFWwindow*)m_SharedWindow);
+
+		RenderCommand::InitMutiThread(m_SharedWindow);
 	}
 
 	void GPUResourceLoader::CleanupThread()
 	{
-		// TODO: 平台无关处理
-		glfwDestroyWindow((GLFWwindow*)m_SharedWindow);
+		RenderCommand::ShutdownMutiThread();
 		m_SharedWindow = nullptr;
 	}
 }

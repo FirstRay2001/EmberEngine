@@ -29,9 +29,19 @@ public:
 	const glm::mat4& GetProjectionMatrix() const		{ return m_ProjectionMatrix; }  
 	const glm::mat4& GetViewProjectionMatrix() const	{ return m_ViewProjectionMatrix; }  
 
-	const glm::vec3 GetDirectionVec() const
+	const glm::vec3 GetForwardDirection() const
 	{
 		return glm::normalize(m_Rotation * glm::vec3(0.0f, 0.0f, -1.0f));
+	}
+
+	const glm::vec3 GetRightDirection() const
+	{
+		return glm::normalize(m_Rotation * glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+
+	const glm::vec3 GetUpDirection() const
+	{
+		return glm::normalize(m_Rotation * glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 private:  

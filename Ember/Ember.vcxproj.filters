@@ -1419,6 +1419,9 @@
     <ClInclude Include="Vendor\stb_image\stb_image.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Gameplay\Controller\Controller.h" />
+    <ClInclude Include="Source\Ember\Renderer\Light.h" />
+    <ClInclude Include="Source\Ember\Renderer\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1496,5 +1499,7 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Light.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Material.cpp" />
   </ItemGroup>
 </Project>

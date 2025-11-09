@@ -134,6 +134,7 @@ namespace Ember
 				});
 		}
 
+	protected:
 		// 消费者 - 线程主循环
 		void MainLoop()
 		{

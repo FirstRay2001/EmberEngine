@@ -16,6 +16,21 @@ namespace Ember
 			s_RendererAPI->Init();
 		}
 
+		inline static void* SetupMutithread(void* window)
+		{
+			return s_RendererAPI->SetupMutiThread(window);
+		}
+
+		inline static void InitMutiThread(void* window)
+		{
+			s_RendererAPI->InitMutiThread(window);
+		}
+
+		inline static void ShutdownMutiThread()
+		{
+			s_RendererAPI->ShutdownMutiThread();
+		}
+
 		// 清除屏幕
 		inline static void Clear()
 		{

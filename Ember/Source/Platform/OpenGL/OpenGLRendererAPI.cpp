@@ -6,6 +6,7 @@
 #include "OpenGLRendererAPI.h"
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Ember
 {
@@ -18,6 +19,30 @@ namespace Ember
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
 	}
+	void* OpenGLRendererAPI::SetupMutiThread(void* window)
+	{
+		// 创建共享上下文窗口
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+		void* sharedWindow =  glfwCreateWindow(1, 1, "", nullptr, (GLFWwindow*)window);
+		if(sharedWindow == nullptr)
+			EMBER_CORE_ERROR("Failed to create shared OpenGL context for multithreading!");
+		return sharedWindow;
+	}
+
+	void OpenGLRendererAPI::InitMutiThread(void* window)
+	{
+		glfwMakeContextCurrent((GLFWwindow*)window);
+	}
+
+	void OpenGLRendererAPI::ShutdownMutiThread()
+	{
+		GLFWwindow* currentWindow = glfwGetCurrentContext();
+		if (currentWindow)
+		{
+			glfwDestroyWindow(currentWindow);
+		}
+	}
+
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);

@@ -9,6 +9,12 @@
 // 在客户端实现此函数以创建应用实例
 extern Ember::Application* Ember::CreateApplication();
 
+#define EMBER_IMPL_ENTRY_POINT(ApplicationClass)		\
+	Ember::Application* Ember::CreateApplication()		\
+	{													\
+		return new ApplicationClass();					\
+	}													\
+
 int main(int argc, char** argv)
 {
 	// 初始化日志系统

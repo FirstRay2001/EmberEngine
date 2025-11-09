@@ -12,6 +12,9 @@ namespace Ember
 	{
 	public:
 		virtual void Init() override;
+		virtual void* SetupMutiThread(void* window) override;
+		virtual void InitMutiThread(void* window) override;
+		virtual void ShutdownMutiThread() override;
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void Clear() override;
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
