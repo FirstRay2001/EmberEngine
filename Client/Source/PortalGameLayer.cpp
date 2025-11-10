@@ -91,13 +91,21 @@ PortalGameLayer::PortalGameLayer() :
 			m_Shader = std::dynamic_pointer_cast<Ember::ShaderResource>(res)->GetShader();
 		});
 
-	m_Texture = Ember::Texture2D::Create("Asset/Texture/GridBox_Default.png");
 
-	// TODO: 创建材质
 	m_Material = Ember::Material::Create("BoxMaterial");
 
+	//m_Texture = Ember::Texture2D::Create("Asset/Texture/GridBox_Default.png");
+	//m_Material->SetAlbedoTexture(m_Texture);
+
+	// 异步加载纹理
+	m_TextureLoadFuture = Ember::ResourceManager::Get().LoadTextureAsync("Asset/Texture/GridBox_Default.png", {});
+
+	/*auto textureFuture = Ember::ResourceManager::Get().LoadTextureAsync("Asset/Texture/GridBox_Default.png", {}).get();
+	auto res = Ember::ResourceManager::Get().GetResource(textureFuture);
+	m_Texture = std::dynamic_pointer_cast<Ember::TextureResource>(res)->GetTexture();
+	m_Material->SetAlbedoTexture(m_Texture);*/
+
 	// 设置材质参数
-	m_Material->SetAlbedoTexture(m_Texture);
 	m_Material->SetSpecularColor(glm::vec3(0.3f));
 
 	m_Camera->SetPosition({ 0.0f, 0.0f, 3.0f });
@@ -147,6 +155,21 @@ void PortalGameLayer::OnUpdate(const Ember::Timestep& timestep)
 		m_Camera->SetRotation(newRotation);
 	}
 
+	// 检查异步纹理加载是否完成
+	// Note - 不在子线程中创建GPU纹理, 仅在子线程中将数据加载到内存
+	//		- 在主线程中创建GPU纹理
+	//		- 如果不这样做，会出现奇怪的纹理创建异常
+	if (m_TextureLoadFuture.valid() &&
+		m_TextureLoadFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+	{
+		Ember::ResourceHandle handle = m_TextureLoadFuture.get();
+		Ember::Ref<Ember::IResource> res = Ember::ResourceManager::Get().GetResource(handle);
+		auto* data = std::dynamic_pointer_cast<Ember::TextureResource>(res)->GetTextureData();
+		auto prop = std::dynamic_pointer_cast<Ember::TextureResource>(res)->GetProperties();
+		m_Texture = Ember::Texture2D::Create(data, prop.m_Width, prop.m_Height, prop.m_Channels);
+		m_Material->SetAlbedoTexture(m_Texture);
+	}
+
 	//////////////// 渲染流程 ////////////////////
 	Ember::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
 	Ember::RenderCommand::Clear();
@@ -155,12 +178,11 @@ void PortalGameLayer::OnUpdate(const Ember::Timestep& timestep)
 	Ember::Renderer::BeginScene(*m_Camera.get());
 	{
 		// 判断异步资源有效性
-		if (m_Shader)
+		if (m_Shader && m_Texture)
 		{
 			glm::mat4 transform = glm::mat4(1.0f);
 			transform = glm::rotate(transform, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			transform = glm::translate(transform, glm::vec3(0.0f, -0.3f, 0.0f));
-
 			Ember::Renderer::Submit(m_Shader, m_Material, m_VertexArray, transform);
 		}
 	}

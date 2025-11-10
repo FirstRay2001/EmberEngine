@@ -19,4 +19,14 @@ namespace Ember
 			callback
 		);
 	}
+	std::future<ResourceHandle> ResourceManager::LoadTextureAsync(const std::string& path, const TextureProperties& properties, std::function<void(ResourceHandle)> callback)
+	{
+		return m_TaskSystem.Submit(
+			[this, path, properties]() -> ResourceHandle
+			{
+				return LoadResourceInternal<TextureResource>(path, properties);
+			},
+			callback
+		);
+	}
 }

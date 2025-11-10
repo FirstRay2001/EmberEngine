@@ -106,6 +106,6 @@ void main() {
 	vec3 specular = specularColor * pow(clamp(dot(N, H), 0, 1), u_Material.Shininess);
 
     vec3 result = ambient + diffuse + specular;
-    
+	
     FragColor = vec4(result, 1);
 }

@@ -28,5 +28,7 @@ private:
 
 	bool m_FirstMouseMovement = true;
 	glm::vec2 m_LastMousePosition = { 0.0f, 0.0f };
+
+	std::future<uint32_t> m_TextureLoadFuture;
 };
 

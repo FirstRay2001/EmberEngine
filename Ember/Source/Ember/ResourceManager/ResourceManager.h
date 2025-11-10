@@ -38,32 +38,14 @@ namespace Ember
 			return *s_Instance;
 		}
 
-	private:
-		ResourceManager(size_t threadCount, std::function<void()> injectInit, std::function<void()> injectCleanup) :
-			m_TaskSystem(threadCount, injectInit, injectCleanup)
-		{
-			if (s_Instance != nullptr)
-			{
-				EMBER_CORE_ERROR("ResourceManager already initialized!");
-				EMBER_CORE_ASSERT(false, "ResourceManager already initialized!");
-				delete this;
-			}
-			else
-			{
-				s_Instance = this;
-				EMBER_CORE_TRACE("ResourceManager initialized with {} threads.", threadCount);
-			}
-		}
-
-		~ResourceManager()
-		{
-			Cleanup();
-		}
-
 	public:
 		// 异步加载Shader
 		std::future<ResourceHandle> LoadShaderAsync(const std::string& path,
 			const ShaderProperties& properties, std::function<void(ResourceHandle)> callback = nullptr);
+
+		// 异步加载纹理
+		std::future<ResourceHandle> LoadTextureAsync(const std::string& path,
+			const TextureProperties& properties, std::function<void(ResourceHandle)> callback = nullptr);
 
 		// 获取资源
 		Ref<IResource> GetResource(ResourceHandle handle) const
@@ -114,6 +96,30 @@ namespace Ember
 			std::lock_guard<std::mutex> lock(m_ResourceMutex);
 			m_Resources.clear();
 			EMBER_CORE_TRACE("ResourceManager destroyed and all resources unloaded.");
+		}
+
+	private:
+		// 单例
+		ResourceManager(size_t threadCount, std::function<void()> injectInit, std::function<void()> injectCleanup) :
+			m_TaskSystem(threadCount, injectInit, injectCleanup)
+		{
+			if (s_Instance != nullptr)
+			{
+				EMBER_CORE_ERROR("ResourceManager already initialized!");
+				EMBER_CORE_ASSERT(false, "ResourceManager already initialized!");
+				delete this;
+			}
+			else
+			{
+				s_Instance = this;
+				EMBER_CORE_TRACE("ResourceManager initialized with {} threads.", threadCount);
+			}
+		}
+
+		// 单例
+		~ResourceManager()
+		{
+			Cleanup();
 		}
 
 	private:

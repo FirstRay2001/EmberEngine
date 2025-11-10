@@ -36,6 +36,14 @@ namespace Ember
 	{
 	};
 
+	// 纹理属性
+	struct TextureProperties
+	{
+		int m_Width = 0;
+		int m_Height = 0;
+		int m_Channels = 0;
+	};
+
 	// 资源接口
 	class IResource
 	{
@@ -87,5 +95,23 @@ namespace Ember
 	private:
 		ShaderProperties	m_Properties;
 		Ref<Shader>			m_Shader;
+	};
+
+	class Texture2D;
+
+	// 纹理资源
+	class TextureResource : public IResource
+	{
+	public:
+		TextureResource(const std::string& path, const TextureProperties& props);
+		virtual bool Load() override;
+		virtual void Unload() override;
+		unsigned char* GetTextureData() const { return m_TextureData; }
+
+		TextureProperties GetProperties() const { return m_Properties; }
+
+	private:
+		TextureProperties   m_Properties;
+		unsigned char*		m_TextureData;
 	};
 }

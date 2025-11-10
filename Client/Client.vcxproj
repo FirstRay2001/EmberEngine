@@ -140,8 +140,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\PortalGameLayer.cpp" />
+    <ClInclude Include="Source\PortalGameLayer.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Source\Client.cpp" />
+    <ClCompile Include="Source\PortalGameLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ember\Ember.vcxproj">
@@ -150,9 +153,6 @@
     <ProjectReference Include="..\Ember\Vendor\glfw\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Source\PortalGameLayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

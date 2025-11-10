@@ -17,11 +17,20 @@ namespace Ember
 
 		virtual int GetWidth() const = 0;
 		virtual int GetHeight() const = 0;
+
 	};
 
 	class Texture2D : public Texture
 	{
 	public:
 		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const unsigned char* data, int width, int height, int channel);
+
+		// 读取图像到内存
+		static unsigned char* ReadData(const std::string& path, int& width, int& height, int& channel);
+
+		// 释放图像内存
+		static void freeImageData(unsigned char* data);
+
 	};
 }

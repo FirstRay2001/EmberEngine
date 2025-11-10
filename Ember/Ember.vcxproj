@@ -149,7 +149,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Ember\ResourceManager\Resource.h" />
     <ClInclude Include="Source\Ember.h" />
     <ClInclude Include="Source\Ember\Core\Application.h" />
     <ClInclude Include="Source\Ember\Core\Concurrent\AsyncTask.h" />
@@ -181,6 +180,7 @@
     <ClInclude Include="Source\Ember\Renderer\Shader.h" />
     <ClInclude Include="Source\Ember\Renderer\Texture.h" />
     <ClInclude Include="Source\Ember\Renderer\VertexArray.h" />
+    <ClInclude Include="Source\Ember\ResourceManager\Resource.h" />
     <ClInclude Include="Source\Ember\ResourceManager\ResourceManager.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
@@ -609,9 +609,9 @@
     <ClInclude Include="Vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="Vendor\glm\glm\vector_relational.hpp" />
     <ClInclude Include="Vendor\stb_image\stb_image.h" />
+    <ClInclude Include="Vendor\stb_image\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Ember\ResourceManager\Resource.cpp" />
     <ClCompile Include="Source\Ember\Core\Application.cpp" />
     <ClCompile Include="Source\Ember\Core\Concurrent\GPUResourceLoadQueue.cpp" />
     <ClCompile Include="Source\Ember\Core\Layer.cpp" />
@@ -629,6 +629,7 @@
     <ClCompile Include="Source\Ember\Renderer\Shader.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Texture.cpp" />
     <ClCompile Include="Source\Ember\Renderer\VertexArray.cpp" />
+    <ClCompile Include="Source\Ember\ResourceManager\Resource.cpp" />
     <ClCompile Include="Source\Ember\ResourceManager\ResourceManager.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
