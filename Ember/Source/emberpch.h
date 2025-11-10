@@ -14,12 +14,14 @@
 #include <sstream>
 #include <vector>
 #include <array>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 
 #include <mutex>
 #include <condition_variable>
 #include <thread>
+#include <atomic>
 
 // 引擎库
 #include "Ember/Core/Log.h"

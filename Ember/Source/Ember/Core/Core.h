@@ -62,6 +62,3 @@ namespace Ember
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
 }
-
-// 临时宏
-#define OPENGLSHADER(x) std::dynamic_pointer_cast<Ember::OpenGLShader>(x)

@@ -83,8 +83,13 @@ PortalGameLayer::PortalGameLayer() :
 	Ember::Ref<Ember::IndexBuffer> indexBuffer(Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 	m_VertexArray->SetIndexBuffer(indexBuffer);
 
-	m_ShaderLibrary = Ember::CreateRef<Ember::ShaderLibrary>();
-	auto shader = m_ShaderLibrary->Load("Asset/Shader/BlinnPhong.glsl");
+	// 异步加载Shader
+	Ember::ResourceManager::Get().LoadShaderAsync("Asset/Shader/BlinnPhong.glsl", {},
+		[this](Ember::ResourceHandle handle)
+		{
+			Ember::Ref<Ember::IResource> res = Ember::ResourceManager::Get().GetResource(handle);
+			m_Shader = std::dynamic_pointer_cast<Ember::ShaderResource>(res)->GetShader();
+		});
 
 	m_Texture = Ember::Texture2D::Create("Asset/Texture/GridBox_Default.png");
 
@@ -93,6 +98,7 @@ PortalGameLayer::PortalGameLayer() :
 
 	// 设置材质参数
 	m_Material->SetAlbedoTexture(m_Texture);
+	m_Material->SetSpecularColor(glm::vec3(0.3f));
 
 	m_Camera->SetPosition({ 0.0f, 0.0f, 3.0f });
 }
@@ -116,39 +122,47 @@ void PortalGameLayer::OnUpdate(const Ember::Timestep& timestep)
 		m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
 
 	// 相机旋转逻辑
-	glm::quat NewQuat = m_Camera->GetRotation();
-	if (Ember::Input::IsKeyPressed(EMBER_KEY_Q))
+	if (m_FirstMouseMovement)
 	{
-		glm::quat deltaRotation = glm::angleAxis(glm::radians(rotateAmount), glm::vec3(0.0f, 1.0f, 0.0f));
-		NewQuat = deltaRotation * NewQuat;
-		NewQuat = glm::normalize(NewQuat);
-		m_Camera->SetRotation(NewQuat);
+		auto [x, y] = Ember::Input::GetMousePosition();
+		m_LastMousePosition = { x, y };
+		m_FirstMouseMovement = false;
 	}
-	if (Ember::Input::IsKeyPressed(EMBER_KEY_E))
+	else
 	{
-		glm::quat deltaRotation = glm::angleAxis(glm::radians(-rotateAmount), glm::vec3(0.0f, 1.0f, 0.0f));
-		NewQuat = deltaRotation * NewQuat;
-		NewQuat = glm::normalize(NewQuat);
-		m_Camera->SetRotation(NewQuat);
+		// 计算鼠标偏移
+		auto [x, y] = Ember::Input::GetMousePosition();
+		float xOffset = x - m_LastMousePosition.x;
+		float yOffset = y - m_LastMousePosition.y;
+		m_LastMousePosition = { x, y };
+
+		// 应用鼠标偏移到相机旋转
+		float sensitivity = 0.1f;
+		xOffset *= sensitivity;
+		yOffset *= sensitivity;
+		glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
+		glm::quat currentRotation = m_Camera->GetRotation();
+		glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
+		m_Camera->SetRotation(newRotation);
 	}
-	m_Camera->SetRotation(NewQuat);
 
 	//////////////// 渲染流程 ////////////////////
-	Ember::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.2f, 1.0f });
+	Ember::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
 	Ember::RenderCommand::Clear();
 
 	// 渲染场景
 	Ember::Renderer::BeginScene(*m_Camera.get());
 	{
-		// 设置Shader颜色Uniform
-		auto shader = m_ShaderLibrary->Get("BlinnPhong");
+		// 判断异步资源有效性
+		if (m_Shader)
+		{
+			glm::mat4 transform = glm::mat4(1.0f);
+			transform = glm::rotate(transform, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			transform = glm::translate(transform, glm::vec3(0.0f, -0.3f, 0.0f));
 
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform = glm::rotate(transform, glm::radians(30.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-		transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
-
-
-		Ember::Renderer::Submit(shader, m_Material, m_VertexArray, transform);
+			Ember::Renderer::Submit(m_Shader, m_Material, m_VertexArray, transform);
+		}
 	}
 	Ember::Renderer::EndScene();
 }
@@ -161,6 +175,7 @@ void PortalGameLayer::OnEvent(Ember::Event& e)
 			m_Camera->SetScreentSize(e.GetWidth(), e.GetHeight());
 			return false;
 		});
+	
 }
 
 void PortalGameLayer::OnImGuiRender()

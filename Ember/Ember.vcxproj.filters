@@ -1422,6 +1422,9 @@
     <ClInclude Include="Source\Ember\Gameplay\Controller\Controller.h" />
     <ClInclude Include="Source\Ember\Renderer\Light.h" />
     <ClInclude Include="Source\Ember\Renderer\Material.h" />
+    <ClInclude Include="Source\Ember\Core\Concurrent\AsyncTask.h" />
+    <ClInclude Include="Source\Ember\ResourceManager\ResourceManager.h" />
+    <ClInclude Include="Source\Ember\ResourceManager\Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1501,5 +1504,7 @@
     </ClCompile>
     <ClCompile Include="Source\Ember\Renderer\Light.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Material.cpp" />
+    <ClCompile Include="Source\Ember\ResourceManager\ResourceManager.cpp" />
+    <ClCompile Include="Source\Ember\ResourceManager\Resource.cpp" />
   </ItemGroup>
 </Project>

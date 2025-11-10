@@ -32,6 +32,8 @@ namespace Ember
 	private:
 		struct SceneData
 		{
+			glm::vec3 CameraPosition;
+			glm::vec3 CameraDirection;
 			glm::mat4 ViewProjectionMatrix;
 		};
 

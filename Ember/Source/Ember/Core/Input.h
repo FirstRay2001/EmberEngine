@@ -10,6 +10,11 @@ namespace Ember
 {
 	class EMBER_API Input
 	{
+	protected:
+		Input() = default;
+		Input(const Input&) = delete;
+		Input& operator=(const Input&) = delete;
+
 	public:
 		inline static bool IsKeyPressed(int keycode)
 		{

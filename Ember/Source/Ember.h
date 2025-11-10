@@ -12,6 +12,8 @@
 #include "Ember/ImGui/ImGuiLayer.h"
 #include "imgui/imgui.h"
 
+#include "Ember/ResourceManager/ResourceManager.h"
+
 // ----输入----------------------------------------------
 #include "Ember/Core/Input.h"
 #include "Ember/Core/KeyCode.h"

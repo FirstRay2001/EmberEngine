@@ -12,7 +12,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Ember/Core/Concurrent/GPUResourceLoadQueue.h"
+#include "Ember/ResourceManager/ResourceManager.h"
 
 using namespace Ember;
 
@@ -26,11 +26,29 @@ Application::Application()
 	m_Window = Scope<Window>(Window::Create());
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
+	void* nativeWindow = m_Window->GetNativeWindow();
+	void* sharedWindow = RenderCommand::SetupMutithread(nativeWindow);
+
+	// 初始化资源管理器
+	std::function injectInit = [sharedWindow]()
+	{
+		RenderCommand::InitMutiThread(sharedWindow);
+	};
+
+	std::function injectCleanup = []()
+	{
+		RenderCommand::ShutdownMutiThread();
+	};
+
+	ResourceManager::Init(injectInit, injectCleanup);
+
 	// 初始化Renderer
 	Renderer::Init();
 
+	// 初始化ImGui
 	m_ImGuiLayer = new ImGuiLayer();
 	PushOverlay(m_ImGuiLayer);
+
 }
 
 void Application::Run()
@@ -42,7 +60,7 @@ void Application::Run()
 		Timestep timestep = time - m_LastFrameTime;
 		m_LastFrameTime = time;
 
-		// 逻辑更新
+		// 逐层更新
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate(timestep);
 

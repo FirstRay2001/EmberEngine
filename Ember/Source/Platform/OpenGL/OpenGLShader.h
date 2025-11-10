@@ -20,15 +20,13 @@ namespace Ember
 		virtual void Unbind() const override;
 		virtual const std::string& GetName() const override { return m_Name; }
 
-		void SetUniformInt(const std::string& name, int value) const;
-
-		void SetUniformFloat(const std::string& name, float value) const;
-		void SetUniformFloat2(const std::string& name, const glm::vec2& value) const;
-		void SetUniformFloat3(const std::string& name, const glm::vec3& vector) const;
-		void SetUniformFloat4(const std::string& name, const glm::vec4& vector) const;
-
-		void SetUniformMat3(const std::string& name, const glm::mat3& matrix) const;
-		void SetUniformMat4(const std::string& name, const glm::mat4& matrix) const;
+		virtual void SetUniformInt(const std::string& name, int value) const override;
+		virtual void SetUniformFloat(const std::string& name, float value) const override;
+		virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) const override;
+		virtual void SetUniformFloat3(const std::string& name, const glm::vec3& vector) const override;
+		virtual void SetUniformFloat4(const std::string& name, const glm::vec4& vector) const override;
+		virtual void SetUniformMat3(const std::string& name, const glm::mat3& matrix) const override;
+		virtual void SetUniformMat4(const std::string& name, const glm::mat4& matrix) const override;
 	private:
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);

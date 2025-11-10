@@ -5,8 +5,6 @@
 #include "emberpch.h"
 #include "Renderer.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
-
 namespace Ember
 {
 	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
@@ -19,6 +17,8 @@ namespace Ember
 	void Renderer::BeginScene(Camera& camera)
 	{
 		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_SceneData->CameraPosition = camera.GetPosition();
+		s_SceneData->CameraDirection = camera.GetForwardDirection();
 	}
 
 	void Renderer::EndScene()
@@ -28,8 +28,8 @@ namespace Ember
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->Bind();
-		OPENGLSHADER(shader)->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-		OPENGLSHADER(shader)->SetUniformMat4("u_Transform", transform);
+		shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SetUniformMat4("u_Transform", transform);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
@@ -38,8 +38,13 @@ namespace Ember
 	{
 		// 设置相机矩阵
 		shader->Bind();
-		OPENGLSHADER(shader)->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-		OPENGLSHADER(shader)->SetUniformMat4("u_Transform", transform);
+		shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SetUniformMat4("u_Transform", transform);
+
+		// 设置相机位置方向
+		shader->Bind();
+		shader->SetUniformFloat3("u_Camera.Position", s_SceneData->CameraPosition);
+		shader->SetUniformFloat3("u_Camera.Direction", s_SceneData->CameraDirection);
 		
 		// 应用材质
 		material->ApplyToShader(shader);

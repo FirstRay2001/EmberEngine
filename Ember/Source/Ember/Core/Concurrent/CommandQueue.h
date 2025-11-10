@@ -164,7 +164,7 @@ namespace Ember
 #endif // EMBER_ENABLE_COMMAND_QUEUE_LOG
 			}
 
-			CleanupThread();
+			CleanupThread();	// TODO: 可能有问题,到不了这一步
 		}
 
 	protected:

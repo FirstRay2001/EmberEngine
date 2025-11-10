@@ -17,7 +17,7 @@ public:
 
 private:
 	Ember::Ref<Ember::VertexArray> m_VertexArray;
-	Ember::Ref<Ember::ShaderLibrary> m_ShaderLibrary;
+	Ember::Ref<Ember::Shader> m_Shader;
 	Ember::Scope<Ember::Camera> m_Camera;
 	Ember::Ref<Ember::Texture2D> m_Texture;
 	Ember::Ref<Ember::Material> m_Material;
@@ -25,5 +25,8 @@ private:
 
 	float m_MoveSpeed = 1.0f;
 	float m_RotateSpeed = 100.0f;
+
+	bool m_FirstMouseMovement = true;
+	glm::vec2 m_LastMousePosition = { 0.0f, 0.0f };
 };
 

@@ -19,6 +19,7 @@ namespace Ember
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
 	}
+
 	void* OpenGLRendererAPI::SetupMutiThread(void* window)
 	{
 		// 创建共享上下文窗口
