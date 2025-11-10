@@ -153,7 +153,6 @@
     <ClInclude Include="Source\Ember\Core\Application.h" />
     <ClInclude Include="Source\Ember\Core\Concurrent\AsyncTask.h" />
     <ClInclude Include="Source\Ember\Core\Concurrent\CommandQueue.h" />
-    <ClInclude Include="Source\Ember\Core\Concurrent\GPUResourceLoadQueue.h" />
     <ClInclude Include="Source\Ember\Core\Core.h" />
     <ClInclude Include="Source\Ember\Core\EntryPoint.h" />
     <ClInclude Include="Source\Ember\Core\Input.h" />
@@ -613,7 +612,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp" />
-    <ClCompile Include="Source\Ember\Core\Concurrent\GPUResourceLoadQueue.cpp" />
+    <ClCompile Include="Source\Ember\Core\Concurrent\ConcurrentBuild.cpp" />
     <ClCompile Include="Source\Ember\Core\Layer.cpp" />
     <ClCompile Include="Source\Ember\Core\LayerStack.cpp" />
     <ClCompile Include="Source\Ember\Core\Log.cpp" />

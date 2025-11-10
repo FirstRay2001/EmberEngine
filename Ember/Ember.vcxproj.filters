@@ -78,9 +78,6 @@
     <ClInclude Include="Source\Ember\Core\Concurrent\CommandQueue.h">
       <Filter>Source\Ember\Core\Concurrent</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Core\Concurrent\GPUResourceLoadQueue.h">
-      <Filter>Source\Ember\Core\Concurrent</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Ember\Core\Core.h">
       <Filter>Source\Ember\Core</Filter>
     </ClInclude>
@@ -1454,9 +1451,6 @@
     <ClCompile Include="Source\Ember\Core\Application.cpp">
       <Filter>Source\Ember\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Ember\Core\Concurrent\GPUResourceLoadQueue.cpp">
-      <Filter>Source\Ember\Core\Concurrent</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Ember\Core\Layer.cpp">
       <Filter>Source\Ember\Core</Filter>
     </ClCompile>
@@ -1538,5 +1532,6 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Core\Concurrent\ConcurrentBuild.cpp" />
   </ItemGroup>
 </Project>

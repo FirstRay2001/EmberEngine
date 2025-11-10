@@ -91,19 +91,10 @@ PortalGameLayer::PortalGameLayer() :
 			m_Shader = std::dynamic_pointer_cast<Ember::ShaderResource>(res)->GetShader();
 		});
 
-
 	m_Material = Ember::Material::Create("BoxMaterial");
-
-	//m_Texture = Ember::Texture2D::Create("Asset/Texture/GridBox_Default.png");
-	//m_Material->SetAlbedoTexture(m_Texture);
 
 	// 异步加载纹理
 	m_TextureLoadFuture = Ember::ResourceManager::Get().LoadTextureAsync("Asset/Texture/GridBox_Default.png", {});
-
-	/*auto textureFuture = Ember::ResourceManager::Get().LoadTextureAsync("Asset/Texture/GridBox_Default.png", {}).get();
-	auto res = Ember::ResourceManager::Get().GetResource(textureFuture);
-	m_Texture = std::dynamic_pointer_cast<Ember::TextureResource>(res)->GetTexture();
-	m_Material->SetAlbedoTexture(m_Texture);*/
 
 	// 设置材质参数
 	m_Material->SetSpecularColor(glm::vec3(0.3f));
