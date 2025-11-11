@@ -28,6 +28,7 @@
 #include "Ember/Renderer/VertexArray.h"
 #include "Ember/Renderer/Shader.h"
 #include "Ember/Renderer/Buffer.h"
+#include "Ember/Renderer/Framebuffer.h"
 #include "Ember/Renderer/Texture.h"
 #include "Ember/Renderer/Material.h"
 #include "Ember/Renderer/Camera.h"

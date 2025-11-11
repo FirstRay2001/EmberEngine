@@ -44,7 +44,7 @@ namespace Ember
 
 	bool TextureResource::Load()
 	{
-		m_TextureData = Texture2D::ReadData(m_Path, m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Channels);
+		m_TextureData = Texture2D::ReadData(m_Path, m_Properties.Width, m_Properties.Height, m_Properties.Channels);
 		if (m_TextureData != nullptr)
 		{
 			EMBER_CORE_INFO("Texture resource loaded: {}", m_Path);

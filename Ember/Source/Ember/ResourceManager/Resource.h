@@ -39,9 +39,9 @@ namespace Ember
 	// 纹理属性
 	struct TextureProperties
 	{
-		int m_Width = 0;
-		int m_Height = 0;
-		int m_Channels = 0;
+		int Width = 0;
+		int Height = 0;
+		int Channels = 0;
 	};
 
 	// 资源接口

@@ -9,6 +9,9 @@ class PortalGameLayer : public Ember::Layer
 public:
 	PortalGameLayer();
 
+	virtual void OnAttach() override;
+	virtual void OnDetach() override;
+
 	virtual void OnUpdate(const Ember::Timestep& timestep) override;
 
 	virtual void OnEvent(Ember::Event& e) override;
@@ -21,6 +24,7 @@ private:
 	Ember::Scope<Ember::Camera> m_Camera;
 	Ember::Ref<Ember::Texture2D> m_Texture;
 	Ember::Ref<Ember::Material> m_Material;
+	Ember::Ref<Ember::Framebuffer> m_Framebuffer;
 	glm::vec3 m_BoxColor = { 0.2f, 0.32f, 0.8f };
 
 	float m_MoveSpeed = 1.0f;

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Event.h"
+#include "Ember/Core/KeyCode.h"
 
 namespace Ember
 {

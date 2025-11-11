@@ -14,8 +14,8 @@ class Camera
 public:  
 	Camera(float aspect_, float fov_ = 45.0f, float near_ = 0.1f, float far_ = 100.0f);  
 
-	const		glm::vec3& GetPosition() const			{ return m_Position; }  
-	void		SetPosition(const glm::vec3& position)	{ m_Position = position; RecalculateViewMatrix(); }  
+	const		glm::vec3& GetPosition() const			{ return Position; }  
+	void		SetPosition(const glm::vec3& position)	{ Position = position; RecalculateViewMatrix(); }  
 	glm::quat	GetRotation() const						{ return m_Rotation; }
 	void		SetRotation(glm::quat rotation)			{ m_Rotation = rotation; RecalculateViewMatrix(); }
 	float		GetAspectRatio() const					{ return m_Aspect; }  
@@ -65,7 +65,7 @@ private:
 	uint32_t m_ScreenWidth;  
 	uint32_t m_ScreenHeight;  
 
-	glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };  
+	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };  
 	glm::quat m_Rotation = glm::quat(glm::vec3(0, 0, 0));
 };  
 }

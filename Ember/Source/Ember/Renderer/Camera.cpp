@@ -39,7 +39,7 @@ namespace Ember
 	void Camera::RecalculateViewMatrix()
 	{
 		// 计算视图矩阵
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) * glm::mat4_cast(m_Rotation);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), Position) * glm::mat4_cast(m_Rotation);
 
 		m_ViewMatrix = glm::inverse(transform);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;

@@ -20,11 +20,13 @@ namespace Ember
 		Application();
 		virtual ~Application() = default;
 		void Run();
+		void Close();
 
 		void OnEvent(class Event& e);
 
 		bool OnWindowClose(class WindowCloseEvent& e);
 		bool OnWindowResize(class WindowResizeEvent& e);
+		bool OnKeyPressed(class KeyPressedEvent& e);
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);

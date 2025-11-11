@@ -20,17 +20,17 @@ namespace Ember
 		// 异步任务请求结构体
 		struct TaskRequest
 		{
-			TaskId								m_Id;		// 任务ID
-			Task								m_Task;		// 任务函数
-			std::promise<TaskResult>			m_Promise;	// 任务结果promise
-			std::function<void(TaskResult)>		m_Callback;	// 任务完成回调
+			TaskId								Id;		// 任务ID
+			Task								TargetTask;		// 任务函数
+			std::promise<TaskResult>			Promise;	// 任务结果promise
+			std::function<void(TaskResult)>		Callback;	// 任务完成回调
 
 			TaskRequest(Task&& task, std::function<void(TaskResult)> callback = nullptr) :
-				m_Task(std::move(task)),
-				m_Callback(callback)
+				TargetTask(std::move(task)),
+				Callback(callback)
 			{
 				static std::atomic<TaskId> s_NextId{ 1 };	// 全局静态自增ID
-				m_Id = s_NextId++;
+				Id = s_NextId++;
 			}
 		};
 
@@ -53,7 +53,7 @@ namespace Ember
 		std::future<TaskResult> Submit(Task&& task, std::function<void(TaskResult)> callback = nullptr)
 		{
 			auto request = CreateScope<TaskRequest>(std::move(task), callback);
-			auto future = request->m_Promise.get_future();
+			auto future = request->Promise.get_future();
 			
 			// 上锁并将任务请求添加到队列
 			{
@@ -61,7 +61,7 @@ namespace Ember
 				m_TaskQueue.push(std::move(request));
 			}
 
-			// 通知工作线程有新任务
+			// 唤醒一个工作线程
 			m_Condition.notify_one();
 			return future;
 		}
@@ -83,7 +83,6 @@ namespace Ember
 		// 停止任务系统
 		void Stop()
 		{
-			// 停止任务系统
 			m_Running = false;
 			m_Condition.notify_all();
 
@@ -135,13 +134,13 @@ namespace Ember
 				// 执行任务
 				try
 				{
-					TaskResult result = taskRequest->m_Task();	// 执行任务
-					taskRequest->m_Promise.set_value(result);	// 设置结果
+					TaskResult result = taskRequest->TargetTask();	// 执行任务
+					taskRequest->Promise.set_value(result);	// 设置结果
 
 					// 调用回调函数
-					if (taskRequest->m_Callback)
+					if (taskRequest->Callback)
 					{
-						taskRequest->m_Callback(result);		// 执行回调
+						taskRequest->Callback(result);		// 执行回调
 					}
 				}
 				catch (const std::exception& e)
@@ -149,7 +148,7 @@ namespace Ember
 					EMBER_CORE_ERROR("AsyncTask Exception: {0}", e.what());
 
 					// 设置异常到promise
-					taskRequest->m_Promise.set_exception(std::current_exception());
+					taskRequest->Promise.set_exception(std::current_exception());
 				}
 			}
 

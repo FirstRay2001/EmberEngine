@@ -5,6 +5,7 @@
 #include "emberpch.h"
 #include "Ember/Core/Application.h"
 #include "Ember/Events/ApplicationEvent.h"
+#include "Ember/Events/KeyEvent.h"
 #include "Ember/ImGui/ImGuiLayer.h"
 
 #include "Ember/Renderer/Renderer.h"
@@ -22,7 +23,7 @@ Application* Application::s_Instance = nullptr;
 
 Application::Application()
 {
-	//system("pause");
+	system("pause");
 
 	EMBER_CORE_ASSERT(!s_Instance, "Application already exists!");
 	s_Instance = this;
@@ -87,11 +88,17 @@ void Application::Run()
 	}
 }
 
+void Ember::Application::Close()
+{
+	m_Running = false;
+}
+
 void Ember::Application::OnEvent(Event& e)
 {
 	EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 	dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
+	dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(Application::OnKeyPressed));
 	
 	// 自顶向下遍历图层堆栈
 	for (auto It = m_LayerStack.end(); It != m_LayerStack.begin(); )
@@ -104,13 +111,35 @@ void Ember::Application::OnEvent(Event& e)
 
 bool Ember::Application::OnWindowClose(WindowCloseEvent& e)
 {
-	m_Running = false;
+	Close();
 	return true;
 }
 
 bool Ember::Application::OnWindowResize(WindowResizeEvent& e)
 {
 	Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+	return false;
+}
+
+bool Ember::Application::OnKeyPressed(KeyPressedEvent& e)
+{
+	if (e.GetKeyCode() == EMBER_KEY_ESCAPE)
+	{
+		Close();
+		return true;
+	}
+	if (e.GetKeyCode() == EMBER_KEY_M)
+	{
+		// 捕获鼠标
+		GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	if (e.GetKeyCode() == EMBER_KEY_N)
+	{
+		// 释放鼠标
+		GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 	return false;
 }
 

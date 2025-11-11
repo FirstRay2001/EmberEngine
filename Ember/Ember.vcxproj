@@ -149,6 +149,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLFramebuffer.h" />
+    <ClInclude Include="Source\Ember\Renderer\Framebuffer.h" />
     <ClInclude Include="Source\Ember.h" />
     <ClInclude Include="Source\Ember\Core\Application.h" />
     <ClInclude Include="Source\Ember\Core\Concurrent\AsyncTask.h" />
@@ -611,6 +613,8 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLFramebuffer.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Framebuffer.cpp" />
     <ClCompile Include="Source\Ember\Core\Application.cpp" />
     <ClCompile Include="Source\Ember\Core\Concurrent\ConcurrentBuild.cpp" />
     <ClCompile Include="Source\Ember\Core\Layer.cpp" />

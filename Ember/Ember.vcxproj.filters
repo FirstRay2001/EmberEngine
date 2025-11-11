@@ -1446,10 +1446,15 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Framebuffer.h" />
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLFramebuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
       <Filter>Source\Ember\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Core\Concurrent\ConcurrentBuild.cpp">
+      <Filter>Source\Ember\Core\Concurrent</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Core\Layer.cpp">
       <Filter>Source\Ember\Core</Filter>
@@ -1532,6 +1537,7 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Ember\Core\Concurrent\ConcurrentBuild.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Framebuffer.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLFramebuffer.cpp" />
   </ItemGroup>
 </Project>
