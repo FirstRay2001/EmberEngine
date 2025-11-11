@@ -23,6 +23,14 @@ namespace Ember
 
 	void OpenGlFrameBuffer::Invalidate()
 	{
+		// 删除旧的帧缓冲和附件
+		if (m_RendererID)
+		{
+			glDeleteFramebuffers(1, &m_RendererID);
+			glDeleteTextures(1, &m_ColorAttachment);
+			glDeleteTextures(1, &m_DepthAttachment);
+		}
+
 		// 创建帧缓冲
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
@@ -55,11 +63,25 @@ namespace Ember
 	void OpenGlFrameBuffer::Bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 	}
 
 	void OpenGlFrameBuffer::Unbind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void OpenGlFrameBuffer::Resize(uint32_t width, uint32_t height)
+	{
+		if (width == 0 || height == 0 || width > 8192 || height > 8192)
+		{
+			EMBER_CORE_WARN("Attempted to resize framebuffer to {0}, {1}", width, height);
+			return;
+		}
+
+		m_Specification.Width = width;
+		m_Specification.Height = height;
+		Invalidate();
 	}
 
 	

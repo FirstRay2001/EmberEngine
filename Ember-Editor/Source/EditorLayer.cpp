@@ -192,12 +192,13 @@ namespace Ember
 
 	void EditorLayer::OnEvent(Ember::Event& e)
 	{
+		/*
 		Ember::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Ember::WindowResizeEvent>([this](Ember::WindowResizeEvent& e)
 			{
 				m_Camera->SetScreentSize(e.GetWidth(), e.GetHeight());
 				return false;
-			});
+			});*/
 
 	}
 
@@ -264,13 +265,25 @@ namespace Ember
 		}
 
 		ImGui::Begin("Settings");
-
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_BoxColor));
-
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1 , 0 });
 		ImGui::End();
 
+		// 渲染Framebuffer内容
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+		ImGui::Begin("Viewport");
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
+		{
+			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_Camera->SetScreentSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
+		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		ImGui::Image((void*)(uintptr_t)textureID, 
+			ImVec2{ (float)m_Framebuffer->GetSpecification().Width, (float)m_Framebuffer->GetSpecification().Height }, 
+			ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		ImGui::End();
+		ImGui::PopStyleVar();
 		ImGui::End();
 	}
 }
