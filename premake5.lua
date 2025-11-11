@@ -106,8 +106,8 @@ project "Ember"
         runtime "Release"
         optimize "on"
 
-project "Client"
-    location "Client"
+project "Ember-Editor"
+    location "Ember-Editor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
@@ -127,14 +127,12 @@ project "Client"
         "Ember/Vendor/spdlog/include",
         "Ember/Vendor",
         "Ember/Source",
-        "%{IncludeDir.glm}",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.glm}"
     }
 
     links
     {
-        "Ember",
-        "GLFW"
+        "Ember"
     }
 
     filter "configurations:*"
@@ -167,3 +165,63 @@ project "Client"
         defines "EMBER_DIST"
         runtime "Release"
         optimize "on"
+
+    project "Client"
+        location "Client"
+        kind "ConsoleApp"
+        language "C++"
+        cppdialect "C++17"
+        staticruntime "on"
+    
+        targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+        objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    
+        files
+        {
+            "%{prj.name}/Source/**.h",
+            "%{prj.name}/Source/**.cpp",
+        }
+    
+        includedirs
+        {
+            "Ember/Vendor/spdlog/include",
+            "Ember/Vendor",
+            "Ember/Source",
+            "%{IncludeDir.glm}"
+        }
+    
+        links
+        {
+            "Ember"
+        }
+    
+        filter "configurations:*"
+            buildoptions 
+            {
+                "/utf-8"
+            }
+    
+            disablewarnings { "4828" }
+    
+        filter "system:windows"
+            systemversion "latest"
+    
+            defines
+            {
+                "EMBER_PLATFORM_WINDOWS"
+            }
+    
+        filter "configurations:Debug"
+            defines "EMBER_DEBUG"
+            runtime "Debug"
+            symbols "on"
+    
+        filter "configurations:Release"
+            defines "EMBER_RELEASE"
+            runtime "Release"
+            optimize "on"
+    
+        filter "configurations:Dist"
+            defines "EMBER_DIST"
+            runtime "Release"
+            optimize "on"
