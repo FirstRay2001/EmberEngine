@@ -156,3 +156,8 @@ void Ember::Application::PushOverlay(Layer* overlay)
 {
 	m_LayerStack.PushOverlay(overlay);
 }
+
+ImGuiLayer* Ember::Application::GetImGuiLayer()
+{
+	return m_ImGuiLayer;
+}

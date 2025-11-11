@@ -118,44 +118,47 @@ namespace Ember
 		float rotateAmount = m_RotateSpeed * deltaSeconds;
 
 		// 相机移动逻辑
-		glm::vec3 forward = m_Camera->GetForwardDirection();
-		glm::vec3 right = m_Camera->GetRightDirection();
-		if (Ember::Input::IsKeyPressed(EMBER_KEY_A))
-			m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * right * moveAmount);
-		if (Ember::Input::IsKeyPressed(EMBER_KEY_D))
-			m_Camera->SetPosition(m_Camera->GetPosition() + right * moveAmount);
-		if (Ember::Input::IsKeyPressed(EMBER_KEY_W))
-			m_Camera->SetPosition(m_Camera->GetPosition() + forward * moveAmount);
-		if (Ember::Input::IsKeyPressed(EMBER_KEY_S))
-			m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
-
-		// 相机旋转逻辑
-		if (m_FirstMouseMovement)
+		if(m_ViewportFocused)
 		{
-			auto [x, y] = Ember::Input::GetMousePosition();
-			m_LastMousePosition = { x, y };
-			m_FirstMouseMovement = false;
-		}
-		else
-		{
-			// 计算鼠标偏移
-			auto [x, y] = Ember::Input::GetMousePosition();
-			float xOffset = x - m_LastMousePosition.x;
-			float yOffset = y - m_LastMousePosition.y;
-			m_LastMousePosition = { x, y };
+			glm::vec3 forward = m_Camera->GetForwardDirection();
+			glm::vec3 right = m_Camera->GetRightDirection();
+			if (Ember::Input::IsKeyPressed(EMBER_KEY_A))
+				m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * right * moveAmount);
+			if (Ember::Input::IsKeyPressed(EMBER_KEY_D))
+				m_Camera->SetPosition(m_Camera->GetPosition() + right * moveAmount);
+			if (Ember::Input::IsKeyPressed(EMBER_KEY_W))
+				m_Camera->SetPosition(m_Camera->GetPosition() + forward * moveAmount);
+			if (Ember::Input::IsKeyPressed(EMBER_KEY_S))
+				m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
 
-			// 应用鼠标偏移到相机旋转
-			float sensitivity = 0.1f;
-			xOffset *= sensitivity;
-			yOffset *= sensitivity;
-			glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
-			glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
-			glm::quat currentRotation = m_Camera->GetRotation();
-			glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
-			// m_Camera->SetRotation(newRotation);
+			// 相机旋转逻辑
+			if (m_FirstMouseMovement)
+			{
+				auto [x, y] = Ember::Input::GetMousePosition();
+				m_LastMousePosition = { x, y };
+				m_FirstMouseMovement = false;
+			}
+			else
+			{
+				// 计算鼠标偏移
+				auto [x, y] = Ember::Input::GetMousePosition();
+				float xOffset = x - m_LastMousePosition.x;
+				float yOffset = y - m_LastMousePosition.y;
+				m_LastMousePosition = { x, y };
+
+				// 应用鼠标偏移到相机旋转
+				float sensitivity = 0.1f;
+				xOffset *= sensitivity;
+				yOffset *= sensitivity;
+				glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
+				glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
+				glm::quat currentRotation = m_Camera->GetRotation();
+				glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
+				// m_Camera->SetRotation(newRotation);
+			}
 		}
 
-		// 检查异步纹理加载是否完成
+		// 非阻塞获取纹理
 		if (m_Texture == nullptr)
 		{
 			m_Texture = TextureLibrary::Get().GetTextureAsync("GridBox_Default");
@@ -192,13 +195,6 @@ namespace Ember
 
 	void EditorLayer::OnEvent(Ember::Event& e)
 	{
-		/*
-		Ember::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Ember::WindowResizeEvent>([this](Ember::WindowResizeEvent& e)
-			{
-				m_Camera->SetScreentSize(e.GetWidth(), e.GetHeight());
-				return false;
-			});*/
 
 	}
 
@@ -271,6 +267,9 @@ namespace Ember
 		// 渲染Framebuffer内容
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
 		{

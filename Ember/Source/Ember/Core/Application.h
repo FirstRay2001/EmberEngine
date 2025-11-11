@@ -31,6 +31,8 @@ namespace Ember
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
+		class ImGuiLayer* GetImGuiLayer();
+
 	private:
 		Scope<Window> m_Window;
 		class ImGuiLayer* m_ImGuiLayer;
