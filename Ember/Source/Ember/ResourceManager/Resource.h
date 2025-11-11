@@ -66,7 +66,7 @@ namespace Ember
 		const std::string& GetPath() const { return m_Path; }
 
 		// 获取资源状态
-		ResourceState GetState() const { return m_State; }
+		// ResourceState GetState() const { return m_State; }
 
 		virtual bool Load() = 0;
 		virtual void Unload() = 0;
@@ -76,7 +76,7 @@ namespace Ember
 		ResourceType		m_Type;
 		std::string			m_Path;
 		ResourceHandle		m_Handle = NULL_RESOURCE;
-		ResourceState		m_State = ResourceState::Unloaded;
+		// ResourceState		m_State = ResourceState::Unloaded;
 	};
 
 	class Shader;

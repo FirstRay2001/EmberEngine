@@ -94,6 +94,11 @@ namespace Ember
 		void Cleanup()
 		{
 			std::lock_guard<std::mutex> lock(m_ResourceMutex);
+			for (auto res : m_Resources)
+			{
+				// 卸载资源
+				res.second->Unload();
+			}
 			m_Resources.clear();
 			EMBER_CORE_TRACE("ResourceManager destroyed and all resources unloaded.");
 		}

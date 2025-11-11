@@ -1452,6 +1452,8 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\ResourceManager\ShaderLibrary.h" />
+    <ClInclude Include="Source\Ember\ResourceManager\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1547,5 +1549,7 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\ResourceManager\ShaderLibrary.cpp" />
+    <ClCompile Include="Source\Ember\ResourceManager\TextureLibrary.cpp" />
   </ItemGroup>
 </Project>

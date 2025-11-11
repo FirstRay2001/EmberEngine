@@ -19,6 +19,8 @@ namespace Ember
 		virtual int GetHeight() const = 0;
 		virtual uint32_t GetRendererID() const = 0;
 
+		// 文件路径转换为名称
+		static std::string FilePathToName(const std::string& filepath);
 	};
 
 	class Texture2D : public Texture
@@ -32,6 +34,5 @@ namespace Ember
 
 		// 释放图像内存
 		static void freeImageData(unsigned char* data);
-
 	};
 }

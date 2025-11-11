@@ -89,17 +89,11 @@ namespace Ember
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
 		// 异步加载Shader
-		Ember::ResourceManager::Get().LoadShaderAsync("Asset/Shader/BlinnPhong.glsl", {},
-			[this](Ember::ResourceHandle handle)
-			{
-				Ember::Ref<Ember::IResource> res = Ember::ResourceManager::Get().GetResource(handle);
-				m_Shader = std::dynamic_pointer_cast<Ember::ShaderResource>(res)->GetShader();
-			});
-
+		ShaderLibrary::Get().LoadAsync("Asset/Shader/BlinnPhong.glsl");
 		m_Material = Ember::Material::Create("BoxMaterial");
 
 		// 异步加载纹理
-		m_TextureLoadFuture = Ember::ResourceManager::Get().LoadTextureAsync("Asset/Texture/GridBox_Default.png", {});
+		TextureLibrary::Get().LoadAsync("Asset/Texture/GridBox_Default.png");
 
 		// 设置材质参数
 		m_Material->SetSpecularColor(glm::vec3(0.3f));
@@ -162,19 +156,16 @@ namespace Ember
 		}
 
 		// 检查异步纹理加载是否完成
-		// Note - 不在子线程中创建GPU纹理, 仅在子线程中将数据加载到内存
-		//		- 在主线程中创建GPU纹理
-		//		- 如果不这样做，会出现奇怪的纹理创建异常
-		if (m_TextureLoadFuture.valid() &&
-			m_TextureLoadFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+		if (m_Texture == nullptr)
 		{
-			Ember::ResourceHandle handle = m_TextureLoadFuture.get();
-			Ember::Ref<Ember::IResource> res = Ember::ResourceManager::Get().GetResource(handle);
-			auto* data = std::dynamic_pointer_cast<Ember::TextureResource>(res)->GetTextureData();
-			auto prop = std::dynamic_pointer_cast<Ember::TextureResource>(res)->GetProperties();
-			m_Texture = Ember::Texture2D::Create(data, prop.Width, prop.Height, prop.Channels);
-			m_Material->SetAlbedoTexture(m_Texture);
+			m_Texture = TextureLibrary::Get().GetTextureAsync("GridBox_Default");
+			if (m_Texture != nullptr)
+				m_Material->SetAlbedoTexture(m_Texture);
 		}
+
+		// 非阻塞获取Shader
+		if (m_Shader == nullptr)
+			m_Shader = ShaderLibrary::Get().GetShaderAsync("BlinnPhong");
 
 		//////////////// 渲染流程 ////////////////////
 		m_Framebuffer->Bind();
@@ -212,87 +203,74 @@ namespace Ember
 
 	void EditorLayer::OnImGuiRender()
 	{
-		// Note: Switch this to true to enable dockspace
-		static bool dockingEnabled = true;
-		if (dockingEnabled)
+		static bool dockspaceOpen = true;
+		static bool opt_fullscreen_persistant = true;
+		bool opt_fullscreen = opt_fullscreen_persistant;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+		// because it would be confusing to have two docking targets within each others.
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (opt_fullscreen)
 		{
-			static bool dockspaceOpen = true;
-			static bool opt_fullscreen_persistant = true;
-			bool opt_fullscreen = opt_fullscreen_persistant;
-			static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-			// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-			// because it would be confusing to have two docking targets within each others.
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-			if (opt_fullscreen)
-			{
-				ImGuiViewport* viewport = ImGui::GetMainViewport();
-				ImGui::SetNextWindowPos(viewport->Pos);
-				ImGui::SetNextWindowSize(viewport->Size);
-				ImGui::SetNextWindowViewport(viewport->ID);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-				window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-				window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-			}
-
-			// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
-			if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-				window_flags |= ImGuiWindowFlags_NoBackground;
-
-			// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-			// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive, 
-			// all active windows docked into it will lose their parent and become undocked.
-			// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise 
-			// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-			ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
-			ImGui::PopStyleVar();
-
-			if (opt_fullscreen)
-				ImGui::PopStyleVar(2);
-
-			// DockSpace
-			ImGuiIO& io = ImGui::GetIO();
-			if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-			{
-				ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-			}
-
-			if (ImGui::BeginMenuBar())
-			{
-				if (ImGui::BeginMenu("File"))
-				{
-					// Disabling fullscreen would allow the window to be moved to the front of other windows, 
-					// which we can't undo at the moment without finer window depth/z control.
-					//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
-
-					if (ImGui::MenuItem("Exit")) Ember::Application::Get().Close();
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenuBar();
-			}
-
-			ImGui::Begin("Settings");
-
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(m_BoxColor));
-
-			uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-			ImGui::Image((void*)textureID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1 , 0 });
-			ImGui::End();
-
-			ImGui::End();
+			ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->Pos);
+			ImGui::SetNextWindowSize(viewport->Size);
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		}
-		else
+
+		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+
+		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive, 
+		// all active windows docked into it will lose their parent and become undocked.
+		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise 
+		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+		ImGui::PopStyleVar();
+
+		if (opt_fullscreen)
+			ImGui::PopStyleVar(2);
+
+		// DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
-			ImGui::Begin("Settings");
-
-			uint32_t textureID = m_Texture->GetRendererID();
-			ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
-			ImGui::End();
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
+				// which we can't undo at the moment without finer window depth/z control.
+				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+
+				if (ImGui::MenuItem("Exit")) Ember::Application::Get().Close();
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
+
+		ImGui::Begin("Settings");
+
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_BoxColor));
+
+		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		ImGui::Image((void*)textureID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1 , 0 });
+		ImGui::End();
+
+		ImGui::End();
 	}
 }

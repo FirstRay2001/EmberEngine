@@ -13,6 +13,8 @@
 #include "imgui/imgui.h"
 
 #include "Ember/ResourceManager/ResourceManager.h"
+#include "Ember/ResourceManager/ShaderLibrary.h"
+#include "Ember/ResourceManager/TextureLibrary.h"
 
 // ----输入----------------------------------------------
 #include "Ember/Core/Input.h"

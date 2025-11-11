@@ -149,6 +149,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Ember\ResourceManager\ShaderLibrary.h" />
     <ClInclude Include="Source\Ember.h" />
     <ClInclude Include="Source\Ember\Core\Application.h" />
     <ClInclude Include="Source\Ember\Core\Concurrent\AsyncTask.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Source\emberpch.h" />
+    <ClInclude Include="Source\Ember\ResourceManager\TextureLibrary.h" />
     <ClInclude Include="Vendor\glm\glm\common.hpp" />
     <ClInclude Include="Vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="Vendor\glm\glm\detail\_fixes.hpp" />
@@ -613,6 +615,7 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Ember\ResourceManager\ShaderLibrary.cpp" />
     <ClCompile Include="Source\Ember\Core\Application.cpp" />
     <ClCompile Include="Source\Ember\Core\Concurrent\ConcurrentBuild.cpp" />
     <ClCompile Include="Source\Ember\Core\Layer.cpp" />
@@ -645,6 +648,7 @@
     <ClCompile Include="Source\emberpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Ember\ResourceManager\TextureLibrary.cpp" />
     <ClCompile Include="Vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>

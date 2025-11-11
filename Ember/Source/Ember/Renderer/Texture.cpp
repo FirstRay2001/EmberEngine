@@ -51,4 +51,14 @@ namespace Ember
 	{
 		stbi_image_free(data);
 	}
+
+	std::string Texture::FilePathToName(const std::string& filepath)
+	{
+		// 从文件路径中提取名称
+		size_t lastSlash = filepath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		size_t lastDot = filepath.rfind('.');
+		size_t count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+		return filepath.substr(lastSlash, count);
+	}
 }

@@ -35,27 +35,8 @@ namespace Ember
 		virtual void SetUniformFloat4(const std::string& name, const glm::vec4& vector) const = 0;
 		virtual void SetUniformMat3(const std::string& name, const glm::mat3& matrix) const = 0;
 		virtual void SetUniformMat4(const std::string& name, const glm::mat4& matrix) const = 0;
-	};
 
-	// 着色器库
-	class ShaderLibrary
-	{
-	public:
-		// 添加着色器
-		void Add(const std::string& name, const Ref<Shader>& shader);
-		void Add(const Ref<Shader>& shader);
-
-		// 加载着色器
-		Ref<Shader> Load(const std::string& filepath);
-		Ref<Shader> Load(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
-
-		// 获取着色器
-		Ref<Shader> Get(const std::string& name);
-
-		// 检查着色器是否存在
-		bool Exists(const std::string& name) const;
-
-	private:
-		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+		// 文件路径转换为名称
+		static std::string FilePathToName(const std::string& filepath);
 	};
 }

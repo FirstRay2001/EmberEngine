@@ -1,6 +1,6 @@
 workspace "Ember"
     architecture "x64"
-    startproject "Client"
+    startproject "Ember-Editor"
 
     configurations
     {
