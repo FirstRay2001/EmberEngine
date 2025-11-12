@@ -1,4 +1,4 @@
-一个简单的游戏引擎。目前计划完成渲染板块，后续将添加内存管理、物理、Gameplay等系统。
+基于OpenGL的游戏引擎
 
-目前已完成：
-OBJ格式模型加载、Blinn-Phong光照模型、动态阴影、物体描边
+OpenGL参考 LearnOpenGL: https://learnopengl-cn.github.io/
+架构参考 Hazel: https://github.com/TheCherno/Hazel
