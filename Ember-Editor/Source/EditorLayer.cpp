@@ -191,15 +191,6 @@ namespace Ember
 		//if (m_Shader == nullptr)
 		//	m_Shader = ShaderLibrary::Get().GetShaderAsync("BlinnPhong");
 
-		// 控制方块Transform
-		{
-			glm::mat4 newTransform = glm::mat4(1.0f);
-			newTransform = glm::rotate(newTransform, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			newTransform = glm::translate(newTransform, glm::vec3(0.0f, -0.3f, 0.0f));
-			auto& transform = m_BoxEntity.GetComponent<TransformComponent>();
-			transform = newTransform;
-		}
-
 		//////////////// 渲染流程 ////////////////////
 		m_Framebuffer->Bind();
 		{
@@ -272,10 +263,6 @@ namespace Ember
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
-				// which we can't undo at the moment without finer window depth/z control.
-				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
-
 				if (ImGui::MenuItem("Exit")) Ember::Application::Get().Close();
 				ImGui::EndMenu();
 			}
@@ -283,8 +270,15 @@ namespace Ember
 			ImGui::EndMenuBar();
 		}
 
-		ImGui::Begin("Settings");
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_BoxColor));
+		// Hierarchy面板
+		ImGui::Begin("Hierarchy");
+		ImGui::End();
+
+		// Inspector面板
+		ImGui::Begin("Inspector");
+		const float dragSpeed = 0.01f;
+		ImGui::DragFloat3("Box Location",
+			glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Transform[3]), dragSpeed);
 		ImGui::End();
 
 		// 渲染Framebuffer内容
