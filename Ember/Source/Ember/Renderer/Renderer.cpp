@@ -54,6 +54,11 @@ namespace Ember
 		RenderCommand::DrawIndexed(vertexArray);
 	}
 
+	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform)
+	{
+		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
+	}
+
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{
 		RenderCommand::SetViewPort(width, height);

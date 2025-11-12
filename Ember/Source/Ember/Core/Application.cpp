@@ -7,13 +7,11 @@
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/Events/KeyEvent.h"
 #include "Ember/ImGui/ImGuiLayer.h"
-
 #include "Ember/Renderer/Renderer.h"
 #include "Ember/Core/Timestep.h"
+#include "Ember/ResourceManager/ResourceManager.h"
 
 #include <GLFW/glfw3.h>
-
-#include "Ember/ResourceManager/ResourceManager.h"
 
 #include <cstdlib>
 
@@ -128,18 +126,18 @@ bool Ember::Application::OnKeyPressed(KeyPressedEvent& e)
 		Close();
 		return true;
 	}
-	if (e.GetKeyCode() == EMBER_KEY_M)
-	{
-		// 捕获鼠标
-		GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-	if (e.GetKeyCode() == EMBER_KEY_N)
-	{
-		// 释放鼠标
-		GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
+	//if (e.GetKeyCode() == EMBER_KEY_M)
+	//{
+	//	// 捕获鼠标
+	//	GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
+	//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//}
+	//if (e.GetKeyCode() == EMBER_KEY_N)
+	//{
+	//	// 释放鼠标
+	//	GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
+	//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	//}
 	return false;
 }
 

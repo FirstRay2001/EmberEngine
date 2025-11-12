@@ -85,6 +85,5 @@ namespace Ember
 		// ============ PBR参数 ====================
 		float				m_Glossiness			= 0.5f;
 		Ref<Texture2D>		m_SpecularGlossinessTexture = nullptr;
-
 	};
 }

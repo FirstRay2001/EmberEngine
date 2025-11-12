@@ -31,6 +31,9 @@
     <Filter Include="Source\Ember\ResourceManager">
       <UniqueIdentifier>{E2A0232C-CE5B-13D8-7713-8C2263AD5D68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Ember\Scene">
+      <UniqueIdentifier>{ED20AAF0-D904-6B46-4265-65992E6855C8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Platform">
       <UniqueIdentifier>{6A48A913-D6D3-16D8-DFE4-99CC4BEF72D8}</UniqueIdentifier>
     </Filter>
@@ -141,6 +144,9 @@
     <ClInclude Include="Source\Ember\Renderer\Material.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Mesh.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\RenderCommand.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
@@ -164,6 +170,21 @@
     </ClInclude>
     <ClInclude Include="Source\Ember\ResourceManager\ResourceManager.h">
       <Filter>Source\Ember\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\ResourceManager\ShaderLibrary.h">
+      <Filter>Source\Ember\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\ResourceManager\TextureLibrary.h">
+      <Filter>Source\Ember\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Scene\Component.h">
+      <Filter>Source\Ember\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Scene\Entity.h">
+      <Filter>Source\Ember\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Scene\Scene.h">
+      <Filter>Source\Ember\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>Source\Platform\OpenGL</Filter>
@@ -1452,8 +1473,6 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\ResourceManager\ShaderLibrary.h" />
-    <ClInclude Include="Source\Ember\ResourceManager\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1516,6 +1535,18 @@
     <ClCompile Include="Source\Ember\ResourceManager\ResourceManager.cpp">
       <Filter>Source\Ember\ResourceManager</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\ResourceManager\ShaderLibrary.cpp">
+      <Filter>Source\Ember\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\ResourceManager\TextureLibrary.cpp">
+      <Filter>Source\Ember\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Scene\Entity.cpp">
+      <Filter>Source\Ember\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Scene\Scene.cpp">
+      <Filter>Source\Ember\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1549,7 +1580,5 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Ember\ResourceManager\ShaderLibrary.cpp" />
-    <ClCompile Include="Source\Ember\ResourceManager\TextureLibrary.cpp" />
   </ItemGroup>
 </Project>

@@ -16,6 +16,8 @@ IncludeDir["GLFW"] = "Ember/Vendor/glfw/include"
 IncludeDir["Glad"] = "Ember/Vendor/glad/include"
 IncludeDir["ImGui"] = "Ember/Vendor/imgui"
 IncludeDir["glm"] = "Ember/Vendor/glm"
+IncludeDir["stb_image"] = "Ember/Vendor/stb_image"
+IncludeDir["entt"] = "Ember/Vendor/entt/include"
 
 group "Dependencies"
     include "Ember/Vendor/glfw"
@@ -44,8 +46,7 @@ project "Ember"
         "%{prj.name}/Vendor/glm/glm/**.hpp",
         "%{prj.name}/Vendor/glm/glm/**.inl",
         "%{prj.name}/Vendor/stb_image/**.h",
-        "%{prj.name}/Vendor/stb_image/**.cpp"
-
+        "%{prj.name}/Vendor/stb_image/**.cpp",
     }
 
     includedirs
@@ -55,7 +56,9 @@ project "Ember"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.entt}"
     }
 
     links
@@ -127,7 +130,8 @@ project "Ember-Editor"
         "Ember/Vendor/spdlog/include",
         "Ember/Vendor",
         "Ember/Source",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}"
     }
 
     links

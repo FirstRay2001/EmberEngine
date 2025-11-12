@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include "Ember/Scene/Scene.h"
+#include "Ember/Scene/Entity.h"
+
 namespace Ember
 {
 	class EditorLayer : public Layer
@@ -21,16 +24,16 @@ namespace Ember
 		virtual void OnImGuiRender() override;
 
 	private:
-		Ref<VertexArray> m_VertexArray;
-		Ref<Shader> m_Shader;
+		Ref<Scene> m_ActiveScene;
+		Entity m_BoxEntity;
+
 		Scope<Camera> m_Camera;
 		Ref<Texture2D> m_Texture;
-		Ref<Material> m_Material;
 		Ref<Framebuffer> m_Framebuffer;
 		glm::vec3 m_BoxColor = { 0.2f, 0.32f, 0.8f };
 
 		float m_MoveSpeed = 1.0f;
-		float m_RotateSpeed = 100.0f;
+		float m_CameraSensitivity = 0.2f;
 
 		bool m_FirstMouseMovement = true;
 		glm::vec2 m_LastMousePosition = { 0.0f, 0.0f };

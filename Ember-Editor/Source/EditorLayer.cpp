@@ -8,6 +8,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "Ember/Scene/Component.h"
+
 namespace Ember
 {
 	EditorLayer::EditorLayer() :
@@ -19,7 +21,7 @@ namespace Ember
 	void EditorLayer::OnAttach()
 	{
 		// Graphics Test
-		m_VertexArray = Ember::Ref<Ember::VertexArray>(Ember::VertexArray::Create());
+		auto vertexArray = Ember::Ref<Ember::VertexArray>(Ember::VertexArray::Create());
 		float vertices[] = {
 			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
@@ -70,7 +72,7 @@ namespace Ember
 			{ Ember::ShaderDataType::Float2, "a_TexCoord" }
 		};
 		vertexBuffer->SetLayout(layout);
-		m_VertexArray->AddVertexBuffer(vertexBuffer);
+		vertexArray->AddVertexBuffer(vertexBuffer);
 
 		uint32_t indices[] = {
 			0,1,2,
@@ -86,17 +88,24 @@ namespace Ember
 			30,31,32,
 			30,32,34 };
 		Ember::Ref<Ember::IndexBuffer> indexBuffer(Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-		m_VertexArray->SetIndexBuffer(indexBuffer);
+		vertexArray->SetIndexBuffer(indexBuffer);
 
-		// 异步加载Shader
-		ShaderLibrary::Get().LoadAsync("Asset/Shader/BlinnPhong.glsl");
-		m_Material = Ember::Material::Create("BoxMaterial");
+		//// 异步加载Shader
+		//ShaderLibrary::Get().LoadAsync("Asset/Shader/BlinnPhong.glsl");
 
-		// 异步加载纹理
-		TextureLibrary::Get().LoadAsync("Asset/Texture/GridBox_Default.png");
+		//// 异步加载纹理
+		//TextureLibrary::Get().LoadAsync("Asset/Texture/GridBox_Default.png");
+
+		// 同步加载Shader
+		auto shader = Ember::ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
+
+		// 同步加载纹理
+		auto texture = Ember::TextureLibrary::Get().LoadSync("Asset/Texture/GridBox_Default.png");
 
 		// 设置材质参数
-		m_Material->SetSpecularColor(glm::vec3(0.3f));
+		auto material = Ember::Material::Create("BoxMaterial");
+		material->SetSpecularColor(glm::vec3(0.3f));
+		material->SetAlbedoTexture(texture);
 
 		m_Camera->SetPosition({ 0.0f, 0.0f, 3.0f });
 
@@ -105,6 +114,13 @@ namespace Ember
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Ember::Framebuffer::Create(fbSpec);
+
+		// 设置活动场景
+		m_ActiveScene = CreateRef<Scene>();
+
+		// 初始化Entity
+		m_BoxEntity = m_ActiveScene->CreateEntity("BoxEntity");
+		m_BoxEntity.AddComponent<MeshComponent>(vertexArray, material, shader);
 	}
 
 	void EditorLayer::OnDetach()
@@ -115,7 +131,6 @@ namespace Ember
 	{
 		float deltaSeconds = timestep.GetSeconds();
 		float moveAmount = m_MoveSpeed * deltaSeconds;
-		float rotateAmount = m_RotateSpeed * deltaSeconds;
 
 		// 相机移动逻辑
 		if(m_ViewportFocused)
@@ -132,43 +147,58 @@ namespace Ember
 				m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
 
 			// 相机旋转逻辑
-			if (m_FirstMouseMovement)
+			if (Ember::Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_RIGHT))
 			{
-				auto [x, y] = Ember::Input::GetMousePosition();
-				m_LastMousePosition = { x, y };
-				m_FirstMouseMovement = false;
+				if (m_FirstMouseMovement)
+				{
+					auto [x, y] = Ember::Input::GetMousePosition();
+					m_LastMousePosition = { x, y };
+					m_FirstMouseMovement = false;
+				}
+				else
+				{
+					// 计算鼠标偏移
+					auto [x, y] = Ember::Input::GetMousePosition();
+					float xOffset = x - m_LastMousePosition.x;
+					float yOffset = y - m_LastMousePosition.y;
+					m_LastMousePosition = { x, y };
+
+					// 应用鼠标偏移到相机旋转
+					xOffset *= m_CameraSensitivity;
+					yOffset *= m_CameraSensitivity;
+					glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
+					glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
+					glm::quat currentRotation = m_Camera->GetRotation();
+					glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
+					m_Camera->SetRotation(newRotation);
+				}
 			}
 			else
 			{
-				// 计算鼠标偏移
-				auto [x, y] = Ember::Input::GetMousePosition();
-				float xOffset = x - m_LastMousePosition.x;
-				float yOffset = y - m_LastMousePosition.y;
-				m_LastMousePosition = { x, y };
-
-				// 应用鼠标偏移到相机旋转
-				float sensitivity = 0.1f;
-				xOffset *= sensitivity;
-				yOffset *= sensitivity;
-				glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
-				glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
-				glm::quat currentRotation = m_Camera->GetRotation();
-				glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
-				// m_Camera->SetRotation(newRotation);
+				m_FirstMouseMovement = true;
 			}
 		}
 
-		// 非阻塞获取纹理
-		if (m_Texture == nullptr)
-		{
-			m_Texture = TextureLibrary::Get().GetTextureAsync("GridBox_Default");
-			if (m_Texture != nullptr)
-				m_Material->SetAlbedoTexture(m_Texture);
-		}
+		//// 非阻塞获取纹理
+		//if (m_Texture == nullptr)
+		//{
+		//	m_Texture = TextureLibrary::Get().GetTextureAsync("GridBox_Default");
+		//	if (m_Texture != nullptr)
+		//		m_Material->SetAlbedoTexture(m_Texture);
+		//}
 
-		// 非阻塞获取Shader
-		if (m_Shader == nullptr)
-			m_Shader = ShaderLibrary::Get().GetShaderAsync("BlinnPhong");
+		//// 非阻塞获取Shader
+		//if (m_Shader == nullptr)
+		//	m_Shader = ShaderLibrary::Get().GetShaderAsync("BlinnPhong");
+
+		// 控制方块Transform
+		{
+			glm::mat4 newTransform = glm::mat4(1.0f);
+			newTransform = glm::rotate(newTransform, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			newTransform = glm::translate(newTransform, glm::vec3(0.0f, -0.3f, 0.0f));
+			auto& transform = m_BoxEntity.GetComponent<TransformComponent>();
+			transform = newTransform;
+		}
 
 		//////////////// 渲染流程 ////////////////////
 		m_Framebuffer->Bind();
@@ -179,14 +209,7 @@ namespace Ember
 			// 渲染场景
 			Ember::Renderer::BeginScene(*m_Camera.get());
 			{
-				// 判断异步资源有效性
-				if (m_Shader && m_Texture)
-				{
-					glm::mat4 transform = glm::mat4(1.0f);
-					transform = glm::rotate(transform, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-					transform = glm::translate(transform, glm::vec3(0.0f, -0.3f, 0.0f));
-					Ember::Renderer::Submit(m_Shader, m_Material, m_VertexArray, transform);
-				}
+				m_ActiveScene->OnUpdate(timestep);
 			}
 			Ember::Renderer::EndScene();
 		}
