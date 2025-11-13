@@ -61,10 +61,10 @@ namespace Ember
 		glm::mat4 m_ProjectionMatrix;  
 		glm::mat4 m_ViewProjectionMatrix;  
 
-		float m_Aspect;  
-		float m_Fov;  
-		float m_Near;  
-		float m_Far;  
+		float m_Aspect = 16.0f/9.0f;  
+		float m_Fov = 45;  
+		float m_Near = 0.1f;  
+		float m_Far = 100.0f;  
 
 		bool bInitialized = false;  
 		uint32_t m_ScreenWidth;  

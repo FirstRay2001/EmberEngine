@@ -27,8 +27,6 @@ namespace Ember
 
 	Ref<VertexArray> VertexArray::CreateCube(glm::vec3 scale)
 	{
-        auto vertexArray = Create();
-
         float vertices[] = {
             // 前面 (Z负方向)
             // 右前下
@@ -122,7 +120,13 @@ namespace Ember
             vertices[i + 2] *= scale.z; // Z坐标
         }
 
+		// 创建顶点数组对象
+        auto vertexArray = Create();
+
+		// 创建顶点缓冲区
         auto vertexBuffer(VertexBuffer::Create(vertices, sizeof(vertices)));
+
+		// 设置缓冲区布局
         BufferLayout layout = {
             { Ember::ShaderDataType::Float3, "a_Position" },
             { Ember::ShaderDataType::Float3, "a_Normal" },
@@ -144,4 +148,83 @@ namespace Ember
 
         return vertexArray;
 	}
+
+    Ref<VertexArray> VertexArray::CreateSphere(float radius, uint32_t sectorCount, uint32_t stackCount)
+    {
+        std::vector<float> vertices;
+        std::vector<uint32_t> indices;
+
+        // 生成顶点数据
+        for (uint32_t i = 0; i <= stackCount; ++i) {
+            float stackAngle = glm::pi<float>() / 2 - i * glm::pi<float>() / stackCount; // 从pi/2到-pi/2
+            float xy = radius * cosf(stackAngle);             // r * cos(u)
+            float z = radius * sinf(stackAngle);              // r * sin(u)
+
+            for (uint32_t j = 0; j <= sectorCount; ++j) {
+                float sectorAngle = j * 2 * glm::pi<float>() / sectorCount; // 从0到2pi
+                float x = xy * cosf(sectorAngle);           // r * cos(u) * cos(v)
+                float y = xy * sinf(sectorAngle);           // r * cos(u) * sin(v)
+
+                // 位置
+                vertices.push_back(x);
+                vertices.push_back(y);
+                vertices.push_back(z);
+
+                // 法线
+                glm::vec3 normal = glm::normalize(glm::vec3(x, y, z));
+                vertices.push_back(normal.x);
+                vertices.push_back(normal.y);
+                vertices.push_back(normal.z);
+
+                // 纹理坐标
+                float s = (float)j / sectorCount;
+                float t = (float)i / stackCount;
+                vertices.push_back(s);
+                vertices.push_back(t);
+            }
+        }
+
+        // 生成索引数据
+        for (uint32_t i = 0; i < stackCount; ++i) {
+            uint32_t k1 = i * (sectorCount + 1);     // 当前栈的第一个顶点
+            uint32_t k2 = k1 + sectorCount + 1;      // 下一个栈的第一个顶点
+
+            for (uint32_t j = 0; j < sectorCount; ++j, ++k1, ++k2) {
+                if (i != 0) {
+                    // 第一个三角形
+                    indices.push_back(k1);
+                    indices.push_back(k2);
+                    indices.push_back(k1 + 1);
+                }
+
+                if (i != (stackCount - 1)) {
+                    // 第二个三角形
+                    indices.push_back(k1 + 1);
+                    indices.push_back(k2);
+                    indices.push_back(k2 + 1);
+                }
+            }
+        }
+
+        // 创建顶点数组对象
+        auto vertexArray = VertexArray::Create();
+
+        // 创建顶点缓冲区
+        auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
+
+        // 设置缓冲区布局
+        BufferLayout layout = {
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float3, "a_Normal" },
+            { ShaderDataType::Float2, "a_TexCoord" }
+        };
+        vertexBuffer->SetLayout(layout);
+        vertexArray->AddVertexBuffer(vertexBuffer);
+
+        // 创建索引缓冲区
+        auto indexBuffer = IndexBuffer::Create(indices.data(), indices.size());
+        vertexArray->SetIndexBuffer(indexBuffer);
+
+        return vertexArray;
+    }
 }

@@ -21,6 +21,7 @@ namespace Ember
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
 		static Ref<VertexArray> Create();
 		static Ref<VertexArray> CreateCube(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
+		static Ref<VertexArray> CreateSphere(float radius = 1.0f, uint32_t sectorCount = 36, uint32_t stackCount = 18);
 	};
 }
 

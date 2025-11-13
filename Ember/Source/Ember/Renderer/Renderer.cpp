@@ -8,6 +8,7 @@
 namespace Ember
 {
 	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
+	int Renderer::s_PointLightCount = 0;
 
 	void Renderer::Init()
 	{
@@ -23,6 +24,7 @@ namespace Ember
 
 	void Renderer::EndScene()
 	{
+		s_PointLightCount = 0;
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
@@ -45,6 +47,28 @@ namespace Ember
 		shader->Bind();
 		shader->SetUniformFloat3("u_Camera.Position", s_SceneData->CameraPosition);
 		shader->SetUniformFloat3("u_Camera.Direction", s_SceneData->CameraDirection);
+
+		// 设置平行光
+		shader->Bind();
+		shader->SetUniformFloat3("u_DirectionalLight.Direction", s_SceneData->DirectionalLight.Direction);
+		shader->SetUniformFloat3("u_DirectionalLight.Ambient", s_SceneData->DirectionalLight.Ambient);
+		shader->SetUniformFloat3("u_DirectionalLight.Diffuse", s_SceneData->DirectionalLight.Diffuse);
+		shader->SetUniformFloat3("u_DirectionalLight.Specular", s_SceneData->DirectionalLight.Specular);
+
+		// 设置点光源
+		shader->Bind();
+		shader->SetUniformInt("u_PointLightCount", s_PointLightCount);
+		for (int i = 0; i < s_PointLightCount; i++)
+		{
+			std::string index = std::to_string(i);
+			shader->SetUniformFloat3("u_PointLights[" + index + "].Position", s_SceneData->PointLights[i].Position);
+			shader->SetUniformFloat3("u_PointLights[" + index + "].Ambient", s_SceneData->PointLights[i].Ambient);
+			shader->SetUniformFloat3("u_PointLights[" + index + "].Diffuse", s_SceneData->PointLights[i].Diffuse);
+			shader->SetUniformFloat3("u_PointLights[" + index + "].Specular", s_SceneData->PointLights[i].Specular);
+			shader->SetUniformFloat("u_PointLights[" + index + "].Constant", s_SceneData->PointLights[i].Constant);
+			shader->SetUniformFloat("u_PointLights[" + index + "].Linear", s_SceneData->PointLights[i].Linear);
+			shader->SetUniformFloat("u_PointLights[" + index + "].Quadratic", s_SceneData->PointLights[i].Quadratic);
+		}
 		
 		// 应用材质
 		material->ApplyToShader(shader);
@@ -57,6 +81,19 @@ namespace Ember
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform)
 	{
 		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
+	}
+
+	void Renderer::AddPointLight(const PointLight& pointLight)
+	{
+		if (s_PointLightCount >= 4)
+			return;
+		s_SceneData->PointLights[s_PointLightCount] = pointLight;
+		s_PointLightCount++;
+	}
+
+	void Renderer::AddDirectionalLight(const DirectionalLight& dirLight)
+	{
+		s_SceneData->DirectionalLight = dirLight;
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

@@ -29,6 +29,8 @@ namespace Ember
 		Entity m_BoxEntity;
 		Entity m_EditorCamera;
 		Entity m_GameCamera;
+		Entity m_DirectionalLight;
+		Entity m_PointLight;
 
 		Ref<Framebuffer> m_Framebuffer;
 

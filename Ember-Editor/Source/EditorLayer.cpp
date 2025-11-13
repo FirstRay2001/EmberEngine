@@ -31,7 +31,7 @@ namespace Ember
 
 		// 设置材质参数
 		auto material = Material::Create("BoxMaterial");
-		material->SetSpecularColor(glm::vec3(0.3f));
+		material->SetSpecularColor(glm::vec3(0.2f));
 		material->SetAlbedoTexture(texture);
 
 		// 初始化Framebuffer
@@ -43,19 +43,49 @@ namespace Ember
 		// 设置活动场景
 		m_ActiveScene = CreateRef<Scene>();
 
-		// 初始化Entity
+		// Box实体
 		m_BoxEntity = m_ActiveScene->CreateEntity("Wall");
 		m_BoxEntity.AddComponent<MeshComponent>(vertexArray, material, shader);
 		auto& boxTransform = m_BoxEntity.GetComponent<TransformComponent>();
 		boxTransform.Position = { 1.0f, 0.0f, -5.0f };
 		boxTransform.Rotation = { 0.0f, 25.0f, 0.0f };
 
+		// 场景相机
 		auto camera = Camera(16.0f / 9.0f, 45.0f, 0.1f, 100.0f);
 		m_EditorCamera = m_ActiveScene->CreateEntity("EditorCamera");
 		m_EditorCamera.AddComponent<CameraComponent>(camera);
 		m_EditorCamera.GetComponent<TransformComponent>().Position = { 0.0f, 0.0f, 5.0f };
 		m_EditorCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
+		// 平行光实体
+		m_DirectionalLight = m_ActiveScene->CreateEntity("DirectionalLight");
+		auto& dirLight = m_DirectionalLight.AddComponent<DirectionalLightComponent>().m_DirectionalLight;
+		dirLight.Ambient = glm::vec3(0.2f);
+		dirLight.Diffuse = glm::vec3(0.5f);
+		dirLight.Specular = glm::vec3(1.0f);
+		m_DirectionalLight.GetComponent<TransformComponent>().Rotation = glm::vec3(-20.0f, 80.0f, 0.0f);
+
+		// 点光源Mesh
+		auto pointLightVAO = VertexArray::CreateSphere(0.1f, 18, 18);
+
+		// 点光源材质
+		auto pointLightMaterial = Material::Create("PointLightMaterial");
+		pointLightMaterial->SetAlbedo(glm::vec3(1.0));
+
+		// 点光源Shader
+		auto pointLightShader = ShaderLibrary::Get().LoadSync("Asset/Shader/SimpleColor.glsl");
+
+		// 点光源实体
+		m_PointLight = m_ActiveScene->CreateEntity("PointLight");
+		m_PointLight.AddComponent<MeshComponent>(pointLightVAO, pointLightMaterial, pointLightShader);
+		auto& pointLight = m_PointLight.AddComponent<PointLightComponent>().m_PointLight;
+		pointLight.Ambient = glm::vec3(0.1f);
+		pointLight.Diffuse = glm::vec3(0.5f);
+		pointLight.Specular = glm::vec3(1.0f);
+		m_PointLight.GetComponent<TransformComponent>().Position = glm::vec3(2.0f, 2.0f, 2.0f);
+
+
+		// 初始化Hierarchy面板
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
@@ -157,7 +187,7 @@ namespace Ember
 		{
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_EditorCamera.GetComponent<CameraComponent>().Camera.SetScreentSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_EditorCamera.GetComponent<CameraComponent>().m_Camera.SetScreentSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((void*)(uintptr_t)textureID, 

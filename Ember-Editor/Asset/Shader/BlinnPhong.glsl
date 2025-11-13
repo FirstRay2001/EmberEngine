@@ -49,21 +49,79 @@ struct Material {
 	sampler2D NormalTexture;
 };
 
-uniform Material u_Material;
-
 struct Camera
 {
 	vec3 Position;
 	vec3 Direction;
 };
 
+struct PointLight
+{
+	vec3 Position;
+	vec3 Ambient;
+	vec3 Diffuse;
+	vec3 Specular;
+	float Constant;
+	float Linear;
+	float Quadratic;
+};
+
+struct DirectionalLight
+{
+	vec3 Direction;
+	vec3 Ambient;
+	vec3 Diffuse;
+	vec3 Specular;
+};
+
+uniform Material u_Material;
 uniform Camera u_Camera;
+uniform int u_PointLightCount;
+uniform PointLight u_PointLights[4];
+uniform DirectionalLight u_DirectionalLight;
 
 in vec3 v_Normal;
 in vec2 v_TexCoord;
 in vec3 v_FragPos;
 
 out vec4 FragColor;
+
+vec3 CalcDirectionalLighting(vec3 albedo, vec3 specularColor, float shininess, vec3 normal)
+{
+	vec3 L = -1.0 * u_DirectionalLight.Direction;
+	vec3 N = normal;
+	vec3 V = normalize(u_Camera.Position - v_FragPos);
+	vec3 H = normalize(L + V);
+
+	vec3 ambient = albedo * u_DirectionalLight.Ambient;
+	vec3 diffuse = albedo * clamp(dot(N, L), 0, 1) * u_DirectionalLight.Diffuse;
+	vec3 specular = specularColor * pow(clamp(dot(N, H), 0, 1), shininess) * u_DirectionalLight.Specular;
+
+    vec3 result = ambient + diffuse + specular;
+
+	return result;
+}
+
+vec3 CalcPointLighting(vec3 albedo, vec3 specularColor, float shininess, vec3 normal, PointLight pointLight)
+{
+    vec3 L = normalize(pointLight.Position - v_FragPos);
+    vec3 N = normal;
+    vec3 V = normalize(u_Camera.Position - v_FragPos);
+    vec3 H = normalize(L + V);
+
+    vec3 ambient = albedo * pointLight.Ambient;
+    vec3 diffuse = albedo * clamp(dot(N, L), 0, 1) * pointLight.Diffuse;
+    vec3 specular = specularColor * pow(clamp(dot(N, H), 0, 1), shininess) * pointLight.Specular;
+
+    // 光照衰减
+    float distance = length(pointLight.Position - v_FragPos);
+    float attenuation = 1.0 / (pointLight.Constant + 
+                              pointLight.Linear * distance + 
+                              pointLight.Quadratic * (distance * distance));
+
+    vec3 result = ambient + (diffuse + specular) * attenuation;
+    return result;
+}
 
 void main() {
 	// 基础色
@@ -94,18 +152,17 @@ void main() {
         normal = normalize(normal);
     }
     
+	vec3 lighting = vec3(0, 0, 0);
 
-	vec3 LightDirection = normalize(vec3(-1, -0.8, -0.3));
-	vec3 L = -LightDirection;
-	vec3 N = v_Normal;
-	vec3 V = normalize(u_Camera.Position - v_FragPos);
-	vec3 H = normalize(L + V);
+	// 环境光照
+	// TODO: 环境光
 
-	vec3 ambient = albedo * 0.1;
-	vec3 diffuse = albedo * clamp(dot(N, L), 0, 1);
-	vec3 specular = specularColor * pow(clamp(dot(N, H), 0, 1), u_Material.Shininess);
+	// 平行光照
+	lighting += CalcDirectionalLighting(albedo, specularColor, shininess, normal);
 
-    vec3 result = ambient + diffuse + specular;
+	// 点光源光照
+	for(int i = 0; i < u_PointLightCount; i++)
+		lighting += CalcPointLighting(albedo, specularColor, shininess, normal, u_PointLights[i]);
 	
-    FragColor = vec4(result, 1);
+    FragColor = vec4(lighting, 1);
 }

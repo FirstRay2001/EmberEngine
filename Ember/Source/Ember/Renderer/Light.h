@@ -9,21 +9,21 @@
 namespace Ember
 {
 	// 平行光数据
-	struct DiretionalLight
+	struct DirectionalLight
 	{
-		glm::vec3 Direction		= { -0.2f, -1.0f, -0.3f };
-		glm::vec3 Ambient		= { 0.2f, 0.2f, 0.2f };
-		glm::vec3 Diffuse		= { 0.5f, 0.5f, 0.5f };
-		glm::vec3 Specular		= { 1.0f, 1.0f, 1.0f };
+		glm::vec3 Direction		= { 0.0f, -1.0f, 0.0f };
+		glm::vec3 Ambient		= { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Diffuse		= { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Specular		= { 0.0f, 0.0f, 0.0f };
 	};
 
 	// 点光源数据
 	struct PointLight
 	{
 		glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Ambient = { 0.2f, 0.2f, 0.2f };
-		glm::vec3 Diffuse = { 0.5f, 0.5f, 0.5f };
-		glm::vec3 Specular = { 1.0f, 1.0f, 1.0f };
+		glm::vec3 Ambient = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Diffuse = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Specular = { 0.0f, 0.0f, 0.0f };
 
 		float Constant = 1.0f;
 		float Linear = 0.09f;

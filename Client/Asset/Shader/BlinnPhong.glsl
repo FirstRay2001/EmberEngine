@@ -49,15 +49,34 @@ struct Material {
 	sampler2D NormalTexture;
 };
 
-uniform Material u_Material;
-
 struct Camera
 {
 	vec3 Position;
 	vec3 Direction;
 };
 
+struct PointLight
+{
+	vec3 Position;
+	vec3 Ambient;
+	vec3 Diffuse;
+	vec3 Specular;
+	float Constant;
+	float Quadratic;
+};
+
+struct DirectionalLight
+{
+	vec3 Direction;
+	vec3 Ambient;
+	vec3 Diffuse;
+	vec3 Specular;
+}
+
+uniform Material u_Material;
 uniform Camera u_Camera;
+uniform PointLight u_PointLights[4];
+uniform DirectionalLight u_DirectionalLight;
 
 in vec3 v_Normal;
 in vec2 v_TexCoord;
@@ -94,16 +113,14 @@ void main() {
         normal = normalize(normal);
     }
     
-
-	vec3 LightDirection = normalize(vec3(-1, -0.8, -0.3));
-	vec3 L = -LightDirection;
+	vec3 L = -1.0 * u_DirectionalLight.Direction;
 	vec3 N = v_Normal;
 	vec3 V = normalize(u_Camera.Position - v_FragPos);
 	vec3 H = normalize(L + V);
 
-	vec3 ambient = albedo * 0.1;
-	vec3 diffuse = albedo * clamp(dot(N, L), 0, 1);
-	vec3 specular = specularColor * pow(clamp(dot(N, H), 0, 1), u_Material.Shininess);
+	vec3 ambient = albedo * u_DirectionalLight.Ambient;
+	vec3 diffuse = albedo * clamp(dot(N, L), 0, 1) * u_DirectionalLight.Diffuse;
+	vec3 specular = specularColor * pow(clamp(dot(N, H), 0, 1), u_Material.Shininess) * u_DirectionalLight.Specular;
 
     vec3 result = ambient + diffuse + specular;
 	

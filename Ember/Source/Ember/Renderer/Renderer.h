@@ -9,6 +9,7 @@
 #include "Ember/Renderer/Shader.h"
 #include "Ember/Renderer/Material.h"
 #include "Ember/Renderer/Mesh.h"
+#include "Ember/Renderer/Light.h"
 
 namespace Ember
 {
@@ -28,6 +29,9 @@ namespace Ember
 
 		static void Submit(const Mesh& mesh, const glm::mat4& transform = glm::mat4(1.0));
 
+		static void AddPointLight(const PointLight& pointLight);
+		static void AddDirectionalLight(const DirectionalLight& dirLight);
+
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
@@ -38,8 +42,11 @@ namespace Ember
 			glm::vec3 CameraPosition;
 			glm::vec3 CameraDirection;
 			glm::mat4 ViewProjectionMatrix;
+			PointLight PointLights[4];
+			DirectionalLight DirectionalLight;
 		};
 
+		static int s_PointLightCount;
 		static SceneData* s_SceneData;
 	};
 }

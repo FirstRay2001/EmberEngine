@@ -25,6 +25,10 @@ namespace Ember
 		void OnUpdate(const Timestep& timestep);
 
 	private:
+		void UpdateScripts(const Timestep& timestep);
+		void Render();
+
+	private:
 		entt::registry m_Registry;
 	};
 }

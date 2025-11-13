@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Ember/Renderer/Mesh.h"
 #include "Ember/Renderer/Camera.h"
+#include "Ember/Renderer/Light.h"
 #include "ScriptableEntity.h"
 
 namespace Ember
@@ -55,39 +56,39 @@ namespace Ember
 	// 网格组件
 	struct MeshComponent
 	{
-		Mesh mesh;
+		Mesh Mesh;
 		MeshComponent() = default;
 		MeshComponent(const MeshComponent&) = default;
 		MeshComponent(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<Shader>& shader)
-			: mesh(vertexArray, material, shader)
+			: Mesh(vertexArray, material, shader)
 		{
 		}
 
-		const Mesh& GetMesh() const { return mesh; }
-		Mesh& GetMesh() { return mesh; }
+		const Ember::Mesh& GetMesh() const { return Mesh; }
+		Ember::Mesh& GetMesh() { return Mesh; }
 	};
 
 	// 摄像机组件
 	struct CameraComponent
 	{
-		Camera Camera;
+		Camera m_Camera;
 		bool Primary = true; // 主摄像机标志
 		bool FixedAspectRatio = false;
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 		CameraComponent(const Ember::Camera& camera)
-			: Camera(camera)
+			: m_Camera(camera)
 		{
 		}
 
 		glm::mat4 GetViewMatrix() const
 		{
-			return Camera.GetViewMatrix();
+			return m_Camera.GetViewMatrix();
 		}
 
 		glm::mat4 GetProjectionMatrix() const
 		{
-			return Camera.GetProjectionMatrix();
+			return m_Camera.GetProjectionMatrix();
 		}
 	};
 
@@ -103,6 +104,30 @@ namespace Ember
 		{
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		}
+	};
+
+	// 点光源组件
+	struct PointLightComponent
+	{
+		PointLight m_PointLight;
+		PointLightComponent() = default;
+		PointLightComponent(const PointLightComponent&) = default;
+		PointLightComponent(const Ember::PointLight& pointLight)
+			: m_PointLight(pointLight)
+		{
+		}
+	};
+
+	// 平行光组件
+	struct DirectionalLightComponent
+	{
+		DirectionalLight m_DirectionalLight;
+		DirectionalLightComponent() = default;
+		DirectionalLightComponent(const DirectionalLightComponent&) = default;
+		DirectionalLightComponent(const Ember::DirectionalLight& directionalLight)
+			: m_DirectionalLight(directionalLight)
+		{
 		}
 	};
 }
