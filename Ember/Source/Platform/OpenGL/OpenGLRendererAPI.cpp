@@ -18,6 +18,9 @@ namespace Ember
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
+
+		// 开启面剔除
+		glEnable(GL_CULL_FACE);
 	}
 
 	void* OpenGLRendererAPI::SetupMutiThread(void* window)

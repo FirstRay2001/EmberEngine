@@ -5,6 +5,7 @@
 #pragma once
 #include "Ember/Core/Core.h"
 #include "Buffer.h"
+#include <glm/glm.hpp>
 
 namespace Ember
 {
@@ -18,7 +19,8 @@ namespace Ember
 		virtual void SetIndexBuffer(const Ref<IndexBuffer> indexBuffer) = 0;
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
-		static VertexArray* Create();
+		static Ref<VertexArray> Create();
+		static Ref<VertexArray> CreateCube(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 	};
 }
 

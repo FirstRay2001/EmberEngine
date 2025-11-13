@@ -13,82 +13,15 @@
 namespace Ember
 {
 	EditorLayer::EditorLayer() :
-		Ember::Layer("PortalGameLayer"),
-		m_Camera(Ember::CreateScope<Ember::Camera>(Ember::Camera(16.0f / 9.0f)))
+		Layer("PortalGameLayer"),
+		m_Camera(CreateScope<Camera>(Camera(16.0f / 9.0f)))
 	{
 	}
 
 	void EditorLayer::OnAttach()
 	{
-		// Graphics Test
-		auto vertexArray = Ember::Ref<Ember::VertexArray>(Ember::VertexArray::Create());
-		float vertices[] = {
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-		};
-		Ember::Ref<Ember::VertexBuffer> vertexBuffer(Ember::VertexBuffer::Create(vertices, sizeof(vertices)));
-		Ember::BufferLayout layout = {
-			{ Ember::ShaderDataType::Float3, "a_Position" },
-			{ Ember::ShaderDataType::Float3, "a_Normal" },
-			{ Ember::ShaderDataType::Float2, "a_TexCoord" }
-		};
-		vertexBuffer->SetLayout(layout);
-		vertexArray->AddVertexBuffer(vertexBuffer);
-
-		uint32_t indices[] = {
-			0,1,2,
-			0,2,4,
-			6,7,8,
-			6,8,10,
-			12,13,14,
-			12,14,16,
-			18,19,20,
-			18,20,22,
-			24,25,26,
-			24,26,28,
-			30,31,32,
-			30,32,34 };
-		Ember::Ref<Ember::IndexBuffer> indexBuffer(Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-		vertexArray->SetIndexBuffer(indexBuffer);
+		// Cube Mesh
+		auto vertexArray = VertexArray::CreateCube(glm::vec3(5.0f, 5.0f, 1.0f));
 
 		//// 异步加载Shader
 		//ShaderLibrary::Get().LoadAsync("Asset/Shader/BlinnPhong.glsl");
@@ -97,23 +30,23 @@ namespace Ember
 		//TextureLibrary::Get().LoadAsync("Asset/Texture/GridBox_Default.png");
 
 		// 同步加载Shader
-		auto shader = Ember::ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
+		auto shader = ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
 
 		// 同步加载纹理
-		auto texture = Ember::TextureLibrary::Get().LoadSync("Asset/Texture/GridBox_Default.png");
+		auto texture = TextureLibrary::Get().LoadSync("Asset/Texture/GridBox_Default.png");
 
 		// 设置材质参数
-		auto material = Ember::Material::Create("BoxMaterial");
+		auto material = Material::Create("BoxMaterial");
 		material->SetSpecularColor(glm::vec3(0.3f));
 		material->SetAlbedoTexture(texture);
 
 		m_Camera->SetPosition({ 0.0f, 0.0f, 3.0f });
 
 		// 初始化Framebuffer
-		Ember::FramebufferSpecification fbSpec;
+		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
-		m_Framebuffer = Ember::Framebuffer::Create(fbSpec);
+		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		// 设置活动场景
 		m_ActiveScene = CreateRef<Scene>();
@@ -121,13 +54,16 @@ namespace Ember
 		// 初始化Entity
 		m_BoxEntity = m_ActiveScene->CreateEntity("BoxEntity");
 		m_BoxEntity.AddComponent<MeshComponent>(vertexArray, material, shader);
+		auto& boxTransform = m_BoxEntity.GetComponent<TransformComponent>();
+		boxTransform.Position = { 1.0f, 0.0f, -5.0f };
+		boxTransform.Rotation = { 15.0f, 25.0f, 0.0f };
 	}
 
 	void EditorLayer::OnDetach()
 	{
 	}
 
-	void EditorLayer::OnUpdate(const Ember::Timestep& timestep)
+	void EditorLayer::OnUpdate(const Timestep& timestep)
 	{
 		float deltaSeconds = timestep.GetSeconds();
 		float moveAmount = m_MoveSpeed * deltaSeconds;
@@ -137,28 +73,28 @@ namespace Ember
 		{
 			glm::vec3 forward = m_Camera->GetForwardDirection();
 			glm::vec3 right = m_Camera->GetRightDirection();
-			if (Ember::Input::IsKeyPressed(EMBER_KEY_A))
+			if (Input::IsKeyPressed(EMBER_KEY_A))
 				m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * right * moveAmount);
-			if (Ember::Input::IsKeyPressed(EMBER_KEY_D))
+			if (Input::IsKeyPressed(EMBER_KEY_D))
 				m_Camera->SetPosition(m_Camera->GetPosition() + right * moveAmount);
-			if (Ember::Input::IsKeyPressed(EMBER_KEY_W))
+			if (Input::IsKeyPressed(EMBER_KEY_W))
 				m_Camera->SetPosition(m_Camera->GetPosition() + forward * moveAmount);
-			if (Ember::Input::IsKeyPressed(EMBER_KEY_S))
+			if (Input::IsKeyPressed(EMBER_KEY_S))
 				m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
 
 			// 相机旋转逻辑
-			if (Ember::Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_RIGHT))
+			if (Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_RIGHT))
 			{
 				if (m_FirstMouseMovement)
 				{
-					auto [x, y] = Ember::Input::GetMousePosition();
+					auto [x, y] = Input::GetMousePosition();
 					m_LastMousePosition = { x, y };
 					m_FirstMouseMovement = false;
 				}
 				else
 				{
 					// 计算鼠标偏移
-					auto [x, y] = Ember::Input::GetMousePosition();
+					auto [x, y] = Input::GetMousePosition();
 					float xOffset = x - m_LastMousePosition.x;
 					float yOffset = y - m_LastMousePosition.y;
 					m_LastMousePosition = { x, y };
@@ -194,20 +130,20 @@ namespace Ember
 		//////////////// 渲染流程 ////////////////////
 		m_Framebuffer->Bind();
 		{
-			Ember::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
-			Ember::RenderCommand::Clear();
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
+			RenderCommand::Clear();
 
 			// 渲染场景
-			Ember::Renderer::BeginScene(*m_Camera.get());
+			Renderer::BeginScene(*m_Camera.get());
 			{
 				m_ActiveScene->OnUpdate(timestep);
 			}
-			Ember::Renderer::EndScene();
+			Renderer::EndScene();
 		}
 		m_Framebuffer->Unbind();
 	}
 
-	void EditorLayer::OnEvent(Ember::Event& e)
+	void EditorLayer::OnEvent(Event& e)
 	{
 
 	}
@@ -263,7 +199,7 @@ namespace Ember
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Exit")) Ember::Application::Get().Close();
+				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
 			}
 
@@ -277,8 +213,9 @@ namespace Ember
 		// Inspector面板
 		ImGui::Begin("Inspector");
 		const float dragSpeed = 0.01f;
-		ImGui::DragFloat3("Box Location",
-			glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Transform[3]), dragSpeed);
+		ImGui::DragFloat3("Location", glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Position), dragSpeed * 1.0f);
+		ImGui::DragFloat3("Rotation", glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Rotation), dragSpeed * 5.0f);
+		ImGui::DragFloat3("Scale", glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Scale), dragSpeed * 0.2f);
 		ImGui::End();
 
 		// 渲染Framebuffer内容

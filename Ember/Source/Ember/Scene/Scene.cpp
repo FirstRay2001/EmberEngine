@@ -32,7 +32,7 @@ namespace Ember
 		auto view = m_Registry.view<TransformComponent, MeshComponent>();
 		for (auto entity : view)
 		{
-			auto& transform = view.get<TransformComponent>(entity);
+			auto& transform = view.get<TransformComponent>(entity).GetTransform();
 			auto& meshComp = view.get<MeshComponent>(entity);
 			auto mesh = meshComp.GetMesh();
 			Renderer::Submit(mesh, transform);
