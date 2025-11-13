@@ -23,12 +23,6 @@ namespace Ember
 		// Cube Mesh
 		auto vertexArray = VertexArray::CreateCube(glm::vec3(5.0f, 5.0f, 1.0f));
 
-		//// 异步加载Shader
-		//ShaderLibrary::Get().LoadAsync("Asset/Shader/BlinnPhong.glsl");
-
-		//// 异步加载纹理
-		//TextureLibrary::Get().LoadAsync("Asset/Texture/GridBox_Default.png");
-
 		// 同步加载Shader
 		auto shader = ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
 
@@ -61,6 +55,8 @@ namespace Ember
 		m_EditorCamera.AddComponent<CameraComponent>(camera);
 		m_EditorCamera.GetComponent<TransformComponent>().Position = { 0.0f, 0.0f, 5.0f };
 		m_EditorCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -69,24 +65,9 @@ namespace Ember
 
 	void EditorLayer::OnUpdate(const Timestep& timestep)
 	{
-		float deltaSeconds = timestep.GetSeconds();
-		float moveAmount = m_MoveSpeed * deltaSeconds;
-
 		auto* scriptInstance = m_EditorCamera.GetComponent<NativeScriptComponent>().Instance;
 		if(scriptInstance != nullptr)
 			scriptInstance->As<CameraController>().SetEnable(m_ViewportFocused || m_ViewportHovered);
-
-		//// 非阻塞获取纹理
-		//if (m_Texture == nullptr)
-		//{
-		//	m_Texture = TextureLibrary::Get().GetTextureAsync("GridBox_Default");
-		//	if (m_Texture != nullptr)
-		//		m_Material->SetAlbedoTexture(m_Texture);
-		//}
-
-		//// 非阻塞获取Shader
-		//if (m_Shader == nullptr)
-		//	m_Shader = ShaderLibrary::Get().GetShaderAsync("BlinnPhong");
 
 		//////////////// 更新Scene ////////////////////
 		m_Framebuffer->Bind();
@@ -168,8 +149,7 @@ namespace Ember
 		ImGui::End();
 
 		// Hierarchy面板
-		ImGui::Begin("Hierarchy");
-		ImGui::End();
+		m_SceneHierarchyPanel.OnImGuiRender();
 
 		// Inspector面板
 		ImGui::Begin("Inspector");

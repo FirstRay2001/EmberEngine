@@ -48,9 +48,6 @@ namespace Ember
 			}
 		}
 
-
-
-
 		// 获取主相机实体
 		Camera camera;
 		{

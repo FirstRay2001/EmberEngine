@@ -6,6 +6,7 @@
 
 #include "Ember/Scene/Scene.h"
 #include "Ember/Scene/Entity.h"
+#include "Panel/SceneHierarchy.h"
 
 namespace Ember
 {
@@ -29,19 +30,12 @@ namespace Ember
 		Entity m_EditorCamera;
 		Entity m_GameCamera;
 
-		Ref<Texture2D> m_Texture;
 		Ref<Framebuffer> m_Framebuffer;
-		glm::vec3 m_BoxColor = { 0.2f, 0.32f, 0.8f };
-
-		float m_MoveSpeed = 1.0f;
-		float m_CameraSensitivity = 0.2f;
-
-		bool m_FirstMouseMovement = true;
-		glm::vec2 m_LastMousePosition = { 0.0f, 0.0f };
 
 		glm::vec2 m_ViewportSize = { 0, 0 };
-
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
+
+		SceneHierarchy m_SceneHierarchyPanel;
 	};
 }

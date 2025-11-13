@@ -9,13 +9,13 @@
 
 namespace Ember
 {
-	class Entity;
 	class VertexArray;
 	class Material;
 
 	class Scene
 	{
-		friend Entity;
+		friend class Entity;
+		friend class SceneHierarchy;
 	public:
 		Scene();
 		~Scene();

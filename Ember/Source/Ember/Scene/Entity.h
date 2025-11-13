@@ -59,6 +59,20 @@ namespace Ember
 		// 检测有效性
 		operator bool() const { return m_EntityHandle != entt::null; }
 
+		// 获取实体ID
+		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
+
+		// 比较运算符
+		bool operator==(const Entity& other) const
+		{
+			return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
+		}
+
+		bool operator!=(const Entity& other) const
+		{
+			return !(*this == other);
+		}
+
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;
