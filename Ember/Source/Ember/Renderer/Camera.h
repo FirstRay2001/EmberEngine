@@ -12,6 +12,8 @@ namespace Ember
 class Camera  
 {  
 public:  
+	Camera() = default;
+	Camera(const Camera&) = default;
 	Camera(float aspect_, float fov_ = 45.0f, float near_ = 0.1f, float far_ = 100.0f);  
 
 	const		glm::vec3& GetPosition() const			{ return Position; }  

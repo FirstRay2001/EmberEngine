@@ -13,8 +13,7 @@
 namespace Ember
 {
 	EditorLayer::EditorLayer() :
-		Layer("PortalGameLayer"),
-		m_Camera(CreateScope<Camera>(Camera(16.0f / 9.0f)))
+		Layer("PortalGameLayer")
 	{
 	}
 
@@ -40,8 +39,6 @@ namespace Ember
 		material->SetSpecularColor(glm::vec3(0.3f));
 		material->SetAlbedoTexture(texture);
 
-		m_Camera->SetPosition({ 0.0f, 0.0f, 3.0f });
-
 		// 初始化Framebuffer
 		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
@@ -56,7 +53,12 @@ namespace Ember
 		m_BoxEntity.AddComponent<MeshComponent>(vertexArray, material, shader);
 		auto& boxTransform = m_BoxEntity.GetComponent<TransformComponent>();
 		boxTransform.Position = { 1.0f, 0.0f, -5.0f };
-		boxTransform.Rotation = { 15.0f, 25.0f, 0.0f };
+		boxTransform.Rotation = { 0.0f, 25.0f, 0.0f };
+
+		auto camera = Camera(16.0f / 9.0f, 45.0f, 0.1f, 100.0f);
+		m_EditorCamera = m_ActiveScene->CreateEntity("EditorCamera");
+		m_EditorCamera.AddComponent<CameraComponent>(camera);
+		m_EditorCamera.GetComponent<TransformComponent>().Position = { 0.0f, 0.0f, 5.0f };
 	}
 
 	void EditorLayer::OnDetach()
@@ -69,51 +71,51 @@ namespace Ember
 		float moveAmount = m_MoveSpeed * deltaSeconds;
 
 		// 相机移动逻辑
-		if(m_ViewportFocused)
-		{
-			glm::vec3 forward = m_Camera->GetForwardDirection();
-			glm::vec3 right = m_Camera->GetRightDirection();
-			if (Input::IsKeyPressed(EMBER_KEY_A))
-				m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * right * moveAmount);
-			if (Input::IsKeyPressed(EMBER_KEY_D))
-				m_Camera->SetPosition(m_Camera->GetPosition() + right * moveAmount);
-			if (Input::IsKeyPressed(EMBER_KEY_W))
-				m_Camera->SetPosition(m_Camera->GetPosition() + forward * moveAmount);
-			if (Input::IsKeyPressed(EMBER_KEY_S))
-				m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
+		//if(m_ViewportFocused)
+		//{
+		//	glm::vec3 forward = m_Camera->GetForwardDirection();
+		//	glm::vec3 right = m_Camera->GetRightDirection();
+		//	if (Input::IsKeyPressed(EMBER_KEY_A))
+		//		m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * right * moveAmount);
+		//	if (Input::IsKeyPressed(EMBER_KEY_D))
+		//		m_Camera->SetPosition(m_Camera->GetPosition() + right * moveAmount);
+		//	if (Input::IsKeyPressed(EMBER_KEY_W))
+		//		m_Camera->SetPosition(m_Camera->GetPosition() + forward * moveAmount);
+		//	if (Input::IsKeyPressed(EMBER_KEY_S))
+		//		m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
 
-			// 相机旋转逻辑
-			if (Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_RIGHT))
-			{
-				if (m_FirstMouseMovement)
-				{
-					auto [x, y] = Input::GetMousePosition();
-					m_LastMousePosition = { x, y };
-					m_FirstMouseMovement = false;
-				}
-				else
-				{
-					// 计算鼠标偏移
-					auto [x, y] = Input::GetMousePosition();
-					float xOffset = x - m_LastMousePosition.x;
-					float yOffset = y - m_LastMousePosition.y;
-					m_LastMousePosition = { x, y };
+		//	// 相机旋转逻辑
+		//	if (Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_RIGHT))
+		//	{
+		//		if (m_FirstMouseMovement)
+		//		{
+		//			auto [x, y] = Input::GetMousePosition();
+		//			m_LastMousePosition = { x, y };
+		//			m_FirstMouseMovement = false;
+		//		}
+		//		else
+		//		{
+		//			// 计算鼠标偏移
+		//			auto [x, y] = Input::GetMousePosition();
+		//			float xOffset = x - m_LastMousePosition.x;
+		//			float yOffset = y - m_LastMousePosition.y;
+		//			m_LastMousePosition = { x, y };
 
-					// 应用鼠标偏移到相机旋转
-					xOffset *= m_CameraSensitivity;
-					yOffset *= m_CameraSensitivity;
-					glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
-					glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
-					glm::quat currentRotation = m_Camera->GetRotation();
-					glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
-					m_Camera->SetRotation(newRotation);
-				}
-			}
-			else
-			{
-				m_FirstMouseMovement = true;
-			}
-		}
+		//			// 应用鼠标偏移到相机旋转
+		//			xOffset *= m_CameraSensitivity;
+		//			yOffset *= m_CameraSensitivity;
+		//			glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
+		//			glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
+		//			glm::quat currentRotation = m_Camera->GetRotation();
+		//			glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
+		//			m_Camera->SetRotation(newRotation);
+		//		}
+		//	}
+		//	else
+		//	{
+		//		m_FirstMouseMovement = true;
+		//	}
+		//}
 
 		//// 非阻塞获取纹理
 		//if (m_Texture == nullptr)
@@ -127,18 +129,10 @@ namespace Ember
 		//if (m_Shader == nullptr)
 		//	m_Shader = ShaderLibrary::Get().GetShaderAsync("BlinnPhong");
 
-		//////////////// 渲染流程 ////////////////////
+		//////////////// 更新Scene ////////////////////
 		m_Framebuffer->Bind();
 		{
-			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
-			RenderCommand::Clear();
-
-			// 渲染场景
-			Renderer::BeginScene(*m_Camera.get());
-			{
-				m_ActiveScene->OnUpdate(timestep);
-			}
-			Renderer::EndScene();
+			m_ActiveScene->OnUpdate(timestep);
 		}
 		m_Framebuffer->Unbind();
 	}
@@ -206,6 +200,14 @@ namespace Ember
 			ImGui::EndMenuBar();
 		}
 
+		// Camera面板
+		ImGui::Begin("Camera");
+		glm::vec3 camPos = m_EditorCamera.GetComponent<TransformComponent>().Position;
+		ImGui::Text("Position: (%.2f, %.2f, %.2f)", camPos.x, camPos.y, camPos.z);
+		glm::vec3 camRot = m_EditorCamera.GetComponent<TransformComponent>().Rotation;
+		ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", camRot.x, camRot.y, camRot.z);
+		ImGui::End();
+
 		// Hierarchy面板
 		ImGui::Begin("Hierarchy");
 		ImGui::End();
@@ -218,7 +220,7 @@ namespace Ember
 		ImGui::DragFloat3("Scale", glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Scale), dragSpeed * 0.2f);
 		ImGui::End();
 
-		// 渲染Framebuffer内容
+		// Viewport面板
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
 		m_ViewportFocused = ImGui::IsWindowFocused();
@@ -229,7 +231,7 @@ namespace Ember
 		{
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_Camera->SetScreentSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_EditorCamera.GetComponent<CameraComponent>().Camera.SetScreentSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((void*)(uintptr_t)textureID, 

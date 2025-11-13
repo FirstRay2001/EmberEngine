@@ -26,8 +26,9 @@ namespace Ember
 	private:
 		Ref<Scene> m_ActiveScene;
 		Entity m_BoxEntity;
+		Entity m_EditorCamera;
+		Entity m_GameCamera;
 
-		Scope<Camera> m_Camera;
 		Ref<Texture2D> m_Texture;
 		Ref<Framebuffer> m_Framebuffer;
 		glm::vec3 m_BoxColor = { 0.2f, 0.32f, 0.8f };

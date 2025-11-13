@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Ember/Renderer/Mesh.h>
+#include <Ember/Renderer/Camera.h>
 
 namespace Ember
 {
@@ -63,5 +64,29 @@ namespace Ember
 
 		const Mesh& GetMesh() const { return mesh; }
 		Mesh& GetMesh() { return mesh; }
+	};
+
+	// 摄像机组件
+	struct CameraComponent
+	{
+		Camera Camera;
+		bool Primary = true; // 主摄像机标志
+		bool FixedAspectRatio = false;
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const Ember::Camera& camera)
+			: Camera(camera)
+		{
+		}
+
+		glm::mat4 GetViewMatrix() const
+		{
+			return Camera.GetViewMatrix();
+		}
+
+		glm::mat4 GetProjectionMatrix() const
+		{
+			return Camera.GetProjectionMatrix();
+		}
 	};
 }
