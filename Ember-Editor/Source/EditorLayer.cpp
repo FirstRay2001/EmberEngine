@@ -44,7 +44,7 @@ namespace Ember
 		m_ActiveScene = CreateRef<Scene>();
 
 		// 初始化Entity
-		m_BoxEntity = m_ActiveScene->CreateEntity("BoxEntity");
+		m_BoxEntity = m_ActiveScene->CreateEntity("Wall");
 		m_BoxEntity.AddComponent<MeshComponent>(vertexArray, material, shader);
 		auto& boxTransform = m_BoxEntity.GetComponent<TransformComponent>();
 		boxTransform.Position = { 1.0f, 0.0f, -5.0f };
@@ -140,24 +140,11 @@ namespace Ember
 			ImGui::EndMenuBar();
 		}
 
-		// Camera面板
-		ImGui::Begin("Camera");
-		glm::vec3 camPos = m_EditorCamera.GetComponent<TransformComponent>().Position;
-		ImGui::Text("Position: (%.2f, %.2f, %.2f)", camPos.x, camPos.y, camPos.z);
-		glm::vec3 camRot = m_EditorCamera.GetComponent<TransformComponent>().Rotation;
-		ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", camRot.x, camRot.y, camRot.z);
-		ImGui::End();
+		// ImGui Demo
+		//ImGui::ShowDemoWindow();
 
 		// Hierarchy面板
 		m_SceneHierarchyPanel.OnImGuiRender();
-
-		// Inspector面板
-		ImGui::Begin("Inspector");
-		const float dragSpeed = 0.01f;
-		ImGui::DragFloat3("Location", glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Position), dragSpeed * 1.0f);
-		ImGui::DragFloat3("Rotation", glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Rotation), dragSpeed * 5.0f);
-		ImGui::DragFloat3("Scale", glm::value_ptr(m_BoxEntity.GetComponent<TransformComponent>().Scale), dragSpeed * 0.2f);
-		ImGui::End();
 
 		// Viewport面板
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });

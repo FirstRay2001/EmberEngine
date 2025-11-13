@@ -20,7 +20,7 @@ namespace Ember
 
 		virtual void OnUpdate(Timestep timestep) override
 		{
-			if (!m_Enabled)
+			if (!m_Enabled && !m_MousePosInitialized)
 				return;
 
 			// 获取前、右方向
