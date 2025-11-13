@@ -6,8 +6,9 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <Ember/Renderer/Mesh.h>
-#include <Ember/Renderer/Camera.h>
+#include "Ember/Renderer/Mesh.h"
+#include "Ember/Renderer/Camera.h"
+#include "ScriptableEntity.h"
 
 namespace Ember
 {
@@ -87,6 +88,21 @@ namespace Ember
 		glm::mat4 GetProjectionMatrix() const
 		{
 			return Camera.GetProjectionMatrix();
+		}
+	};
+
+	// 原生脚本组件
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+		ScriptableEntity* (*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
 }

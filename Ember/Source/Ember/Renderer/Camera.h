@@ -9,65 +9,68 @@
 
 namespace Ember  
 {  
-class Camera  
-{  
-public:  
-	Camera() = default;
-	Camera(const Camera&) = default;
-	Camera(float aspect_, float fov_ = 45.0f, float near_ = 0.1f, float far_ = 100.0f);  
+	// Note - 这个类设计得不好，应该和Transform分离开来，现在先这样凑合用着吧 :>
+	class Camera  
+	{  
+		friend class Scene;
+		friend class Renderer;
+	public:  
+		Camera() = default;
+		Camera(const Camera&) = default;
+		Camera(float aspect_, float fov_ = 45.0f, float near_ = 0.1f, float far_ = 100.0f);  
 
-	const		glm::vec3& GetPosition() const			{ return Position; }  
-	void		SetPosition(const glm::vec3& position)	{ Position = position; RecalculateViewMatrix(); }  
-	glm::quat	GetRotation() const						{ return m_Rotation; }
-	void		SetRotation(glm::quat rotation)			{ m_Rotation = rotation; RecalculateViewMatrix(); }
-	float		GetAspectRatio() const					{ return m_Aspect; }  
-	void		SetAspectRatio(float aspect)			{ m_Aspect = aspect; RecalculateProjectionMatrix(); }  
-	float		GetFov() const							{ return m_Fov; }  
-	void		SetFov(float fov)						{ m_Fov = fov; RecalculateProjectionMatrix(); }  
+		void SetScreentSize(uint32_t width, uint32_t height);
 
-	void SetScreentSize(uint32_t width, uint32_t height);  
+		const glm::mat4& GetViewMatrix() const				{ return m_ViewMatrix; }  
+		const glm::mat4& GetProjectionMatrix() const		{ return m_ProjectionMatrix; }  
+		const glm::mat4& GetViewProjectionMatrix() const	{ return m_ViewProjectionMatrix; }  
 
-	const glm::mat4& GetViewMatrix() const				{ return m_ViewMatrix; }  
-	const glm::mat4& GetProjectionMatrix() const		{ return m_ProjectionMatrix; }  
-	const glm::mat4& GetViewProjectionMatrix() const	{ return m_ViewProjectionMatrix; }  
+		const glm::vec3 GetForwardDirection() const
+		{
+			return glm::normalize(m_Rotation * glm::vec3(0.0f, 0.0f, -1.0f));
+		}
 
-	const glm::vec3 GetForwardDirection() const
-	{
-		return glm::normalize(m_Rotation * glm::vec3(0.0f, 0.0f, -1.0f));
-	}
+		const glm::vec3 GetRightDirection() const
+		{
+			return glm::normalize(m_Rotation * glm::vec3(1.0f, 0.0f, 0.0f));
+		}
 
-	const glm::vec3 GetRightDirection() const
-	{
-		return glm::normalize(m_Rotation * glm::vec3(1.0f, 0.0f, 0.0f));
-	}
+		const glm::vec3 GetUpDirection() const
+		{
+			return glm::normalize(m_Rotation * glm::vec3(0.0f, 1.0f, 0.0f));
+		}
 
-	const glm::vec3 GetUpDirection() const
-	{
-		return glm::normalize(m_Rotation * glm::vec3(0.0f, 1.0f, 0.0f));
-	}
+	private:  
+		// 重新计算视图矩阵  
+		void RecalculateViewMatrix();  
 
-private:  
-	// 重新计算视图矩阵  
-	void RecalculateViewMatrix();  
+		// 重新计算投影矩阵  
+		void RecalculateProjectionMatrix();  
 
-	// 重新计算投影矩阵  
-	void RecalculateProjectionMatrix();  
+		const		glm::vec3& GetPosition() const { return Position; }
+		void		SetPosition(const glm::vec3& position) { Position = position; RecalculateViewMatrix(); }
+		glm::quat	GetRotation() const { return m_Rotation; }
+		void		SetRotation(glm::quat rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
+		float		GetAspectRatio() const { return m_Aspect; }
+		void		SetAspectRatio(float aspect) { m_Aspect = aspect; RecalculateProjectionMatrix(); }
+		float		GetFov() const { return m_Fov; }
+		void		SetFov(float fov) { m_Fov = fov; RecalculateProjectionMatrix(); }
 
-private:  
-	glm::mat4 m_ViewMatrix;  
-	glm::mat4 m_ProjectionMatrix;  
-	glm::mat4 m_ViewProjectionMatrix;  
+	private:  
+		glm::mat4 m_ViewMatrix;  
+		glm::mat4 m_ProjectionMatrix;  
+		glm::mat4 m_ViewProjectionMatrix;  
 
-	float m_Aspect;  
-	float m_Fov;  
-	float m_Near;  
-	float m_Far;  
+		float m_Aspect;  
+		float m_Fov;  
+		float m_Near;  
+		float m_Far;  
 
-	bool bInitialized = false;  
-	uint32_t m_ScreenWidth;  
-	uint32_t m_ScreenHeight;  
+		bool bInitialized = false;  
+		uint32_t m_ScreenWidth;  
+		uint32_t m_ScreenHeight;  
 
-	glm::vec3 Position = { 0.0f, 0.0f, 0.0f };  
-	glm::quat m_Rotation = glm::quat(glm::vec3(0, 0, 0));
-};  
+		glm::vec3 Position = { 0.0f, 0.0f, 0.0f };  
+		glm::quat m_Rotation = glm::quat(glm::vec3(0, 0, 0));
+	};  
 }

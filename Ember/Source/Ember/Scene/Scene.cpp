@@ -28,6 +28,29 @@ namespace Ember
 
 	void Scene::OnUpdate(const Timestep& timestep)
 	{
+		// 更新脚本组件
+		{
+			auto view = m_Registry.view<NativeScriptComponent>();
+			for (auto entity : view)
+			{
+				auto& scriptComp = view.get<NativeScriptComponent>(entity);
+
+				// 如果脚本实例不存在，则实例化脚本并调用OnCreate方法
+				if (!scriptComp.Instance)
+				{
+					scriptComp.Instance = scriptComp.InstantiateScript();
+					scriptComp.Instance->m_Entity = Entity{ entity, this };
+					scriptComp.Instance->OnCreate();
+				}
+
+				// 调用脚本的OnUpdate方法
+				scriptComp.Instance->OnUpdate(timestep);
+			}
+		}
+
+
+
+
 		// 获取主相机实体
 		Camera camera;
 		{
@@ -36,6 +59,12 @@ namespace Ember
 			{
 				auto& camComp = view.get<CameraComponent>(entity);
 				camera = camComp.Camera;
+
+				// 把Transform组件同步到Camera
+				auto& transform = m_Registry.get<TransformComponent>(entity);
+				camera.SetPosition(transform.Position);
+				camera.SetRotation(glm::quat(glm::radians(transform.Rotation)));
+
 				break; // 只取第一个相机
 			}
 		}
@@ -52,7 +81,7 @@ namespace Ember
 		{
 			auto& transform = view.get<TransformComponent>(entity).GetTransform();
 			auto& meshComp = view.get<MeshComponent>(entity);
-			auto mesh = meshComp.GetMesh();
+			auto& mesh = meshComp.GetMesh();
 			Renderer::Submit(mesh, transform);
 		}
 

@@ -9,6 +9,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "Ember/Scene/Component.h"
+#include "Script/CameraController.h"
 
 namespace Ember
 {
@@ -59,6 +60,7 @@ namespace Ember
 		m_EditorCamera = m_ActiveScene->CreateEntity("EditorCamera");
 		m_EditorCamera.AddComponent<CameraComponent>(camera);
 		m_EditorCamera.GetComponent<TransformComponent>().Position = { 0.0f, 0.0f, 5.0f };
+		m_EditorCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 	}
 
 	void EditorLayer::OnDetach()
@@ -70,52 +72,9 @@ namespace Ember
 		float deltaSeconds = timestep.GetSeconds();
 		float moveAmount = m_MoveSpeed * deltaSeconds;
 
-		// 相机移动逻辑
-		//if(m_ViewportFocused)
-		//{
-		//	glm::vec3 forward = m_Camera->GetForwardDirection();
-		//	glm::vec3 right = m_Camera->GetRightDirection();
-		//	if (Input::IsKeyPressed(EMBER_KEY_A))
-		//		m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * right * moveAmount);
-		//	if (Input::IsKeyPressed(EMBER_KEY_D))
-		//		m_Camera->SetPosition(m_Camera->GetPosition() + right * moveAmount);
-		//	if (Input::IsKeyPressed(EMBER_KEY_W))
-		//		m_Camera->SetPosition(m_Camera->GetPosition() + forward * moveAmount);
-		//	if (Input::IsKeyPressed(EMBER_KEY_S))
-		//		m_Camera->SetPosition(m_Camera->GetPosition() + -1.0f * forward * moveAmount);
-
-		//	// 相机旋转逻辑
-		//	if (Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_RIGHT))
-		//	{
-		//		if (m_FirstMouseMovement)
-		//		{
-		//			auto [x, y] = Input::GetMousePosition();
-		//			m_LastMousePosition = { x, y };
-		//			m_FirstMouseMovement = false;
-		//		}
-		//		else
-		//		{
-		//			// 计算鼠标偏移
-		//			auto [x, y] = Input::GetMousePosition();
-		//			float xOffset = x - m_LastMousePosition.x;
-		//			float yOffset = y - m_LastMousePosition.y;
-		//			m_LastMousePosition = { x, y };
-
-		//			// 应用鼠标偏移到相机旋转
-		//			xOffset *= m_CameraSensitivity;
-		//			yOffset *= m_CameraSensitivity;
-		//			glm::quat yaw = glm::angleAxis(glm::radians(-xOffset), glm::vec3(0.0f, 1.0f, 0.0f));
-		//			glm::quat pitch = glm::angleAxis(glm::radians(-yOffset), right);
-		//			glm::quat currentRotation = m_Camera->GetRotation();
-		//			glm::quat newRotation = glm::normalize(pitch * yaw * currentRotation);
-		//			m_Camera->SetRotation(newRotation);
-		//		}
-		//	}
-		//	else
-		//	{
-		//		m_FirstMouseMovement = true;
-		//	}
-		//}
+		auto* scriptInstance = m_EditorCamera.GetComponent<NativeScriptComponent>().Instance;
+		if(scriptInstance != nullptr)
+			scriptInstance->As<CameraController>().SetEnable(m_ViewportFocused || m_ViewportHovered);
 
 		//// 非阻塞获取纹理
 		//if (m_Texture == nullptr)
