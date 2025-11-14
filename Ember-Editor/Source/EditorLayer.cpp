@@ -20,19 +20,11 @@ namespace Ember
 
 	void EditorLayer::OnAttach()
 	{
-		// Cube Mesh
-		auto vertexArray = VertexArray::CreateCube(glm::vec3(5.0f, 5.0f, 1.0f));
-
 		// 同步加载Shader
 		auto shader = ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
 
 		// 同步加载纹理
 		auto texture = TextureLibrary::Get().LoadSync("Asset/Texture/GridBox_Default.png");
-
-		// 设置材质参数
-		auto material = Material::Create("BoxMaterial");
-		material->SetSpecularColor(glm::vec3(0.2f));
-		material->SetAlbedoTexture(texture);
 
 		// 初始化Framebuffer
 		FramebufferSpecification fbSpec;
@@ -42,13 +34,28 @@ namespace Ember
 
 		// 设置活动场景
 		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize(fbSpec.Width, fbSpec.Height);
 
 		// Box实体
+		auto gridMaterial = Material::Create("BoxMaterial");
+		gridMaterial->SetSpecularColor(glm::vec3(0.2f));
+		gridMaterial->SetAlbedoTexture(texture);
 		m_BoxEntity = m_ActiveScene->CreateEntity("Wall");
-		m_BoxEntity.AddComponent<MeshComponent>(vertexArray, material, shader);
+		m_BoxEntity.AddComponent<MeshComponent>(VertexArray::CreateCube(glm::vec3(5.0f, 5.0f, 1.0f)), gridMaterial, shader);
 		auto& boxTransform = m_BoxEntity.GetComponent<TransformComponent>();
 		boxTransform.Position = { 1.0f, 0.0f, -5.0f };
 		boxTransform.Rotation = { 0.0f, 25.0f, 0.0f };
+
+		// Sphere实体
+		auto sphereMaterial = Material::Create("BallMateial");
+		sphereMaterial->SetAlbedo(glm::vec3(0.8f, 0.2f, 0.2f));
+		sphereMaterial->SetSpecularColor(glm::vec3(0.8f));
+		sphereMaterial->SetShininess(64.0f);
+		m_SphereEntity = m_ActiveScene->CreateEntity("Ball");
+		m_SphereEntity.AddComponent<MeshComponent>(VertexArray::CreateSphere(1.0f, 32, 32), sphereMaterial, shader);
+		auto& sphereTransform = m_SphereEntity.GetComponent<TransformComponent>();
+		sphereTransform.Position = { 2.0f, -2.0f, -2.0f };
+		sphereTransform.Rotation = { 0.0f, -15.0f, 0.0f };
 
 		// 场景相机
 		auto camera = Camera(16.0f / 9.0f, 45.0f, 0.1f, 100.0f);
@@ -63,7 +70,7 @@ namespace Ember
 		dirLight.Ambient = glm::vec3(0.2f);
 		dirLight.Diffuse = glm::vec3(0.5f);
 		dirLight.Specular = glm::vec3(1.0f);
-		m_DirectionalLight.GetComponent<TransformComponent>().Rotation = glm::vec3(-20.0f, 80.0f, 0.0f);
+		m_DirectionalLight.GetComponent<TransformComponent>().Rotation = glm::vec3(-20.0f, 260.0f, 0.0f);
 
 		// 点光源Mesh
 		auto pointLightVAO = VertexArray::CreateSphere(0.1f, 18, 18);
@@ -82,7 +89,7 @@ namespace Ember
 		pointLight.Ambient = glm::vec3(0.1f);
 		pointLight.Diffuse = glm::vec3(0.5f);
 		pointLight.Specular = glm::vec3(1.0f);
-		m_PointLight.GetComponent<TransformComponent>().Position = glm::vec3(2.0f, 2.0f, 2.0f);
+		m_PointLight.GetComponent<TransformComponent>().Position = glm::vec3(2.0f, 0.5f, -2.0f);
 
 
 		// 初始化Hierarchy面板
@@ -95,10 +102,13 @@ namespace Ember
 
 	void EditorLayer::OnUpdate(const Timestep& timestep)
 	{
-		auto* scriptInstance = m_EditorCamera.GetComponent<NativeScriptComponent>().Instance;
-		if(scriptInstance != nullptr)
-			scriptInstance->As<CameraController>().SetEnable(m_ViewportFocused || m_ViewportHovered);
-
+		if (m_EditorCamera)
+		{
+			auto* scriptInstance = m_EditorCamera.GetComponent<NativeScriptComponent>().Instance;
+			if (scriptInstance != nullptr)
+				scriptInstance->As<CameraController>().SetEnable(m_ViewportFocused || m_ViewportHovered);
+		}
+		
 		//////////////// 更新Scene ////////////////////
 		m_Framebuffer->Bind();
 		{
@@ -153,11 +163,18 @@ namespace Ember
 
 		// DockSpace
 		ImGuiIO& io = ImGui::GetIO();
+
+		ImGuiStyle& style = ImGui::GetStyle();
+		float minWinSizeX = style.WindowMinSize.x;
+		style.WindowMinSize.x = 450.0f;
+
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+
+		style.WindowMinSize.x = minWinSizeX;
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -171,7 +188,7 @@ namespace Ember
 		}
 
 		// ImGui Demo
-		//ImGui::ShowDemoWindow();
+		// ImGui::ShowDemoWindow();
 
 		// Hierarchy面板
 		m_SceneHierarchyPanel.OnImGuiRender();
@@ -187,7 +204,7 @@ namespace Ember
 		{
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_EditorCamera.GetComponent<CameraComponent>().m_Camera.SetScreentSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((void*)(uintptr_t)textureID, 

@@ -149,7 +149,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Ember\Scene\ScriptableEntity.h" />
     <ClInclude Include="Source\Ember.h" />
     <ClInclude Include="Source\Ember\Core\Application.h" />
     <ClInclude Include="Source\Ember\Core\Concurrent\AsyncTask.h" />
@@ -189,6 +188,7 @@
     <ClInclude Include="Source\Ember\Scene\Component.h" />
     <ClInclude Include="Source\Ember\Scene\Entity.h" />
     <ClInclude Include="Source\Ember\Scene\Scene.h" />
+    <ClInclude Include="Source\Ember\Scene\ScriptableEntity.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLFramebuffer.h" />

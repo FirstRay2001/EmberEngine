@@ -170,62 +170,62 @@ project "Ember-Editor"
         runtime "Release"
         optimize "on"
 
-    project "Client"
-        location "Client"
-        kind "ConsoleApp"
-        language "C++"
-        cppdialect "C++17"
-        staticruntime "on"
-    
-        targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-        objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-    
-        files
+project "Client"
+    location "Client"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/Source/**.h",
+        "%{prj.name}/Source/**.cpp",
+    }
+
+    includedirs
+    {
+        "Ember/Vendor/spdlog/include",
+        "Ember/Vendor",
+        "Ember/Source",
+        "%{IncludeDir.glm}"
+    }
+
+    links
+    {
+        "Ember"
+    }
+
+    filter "configurations:*"
+        buildoptions 
         {
-            "%{prj.name}/Source/**.h",
-            "%{prj.name}/Source/**.cpp",
+            "/utf-8"
         }
-    
-        includedirs
+
+        disablewarnings { "4828" }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines
         {
-            "Ember/Vendor/spdlog/include",
-            "Ember/Vendor",
-            "Ember/Source",
-            "%{IncludeDir.glm}"
+            "EMBER_PLATFORM_WINDOWS"
         }
-    
-        links
-        {
-            "Ember"
-        }
-    
-        filter "configurations:*"
-            buildoptions 
-            {
-                "/utf-8"
-            }
-    
-            disablewarnings { "4828" }
-    
-        filter "system:windows"
-            systemversion "latest"
-    
-            defines
-            {
-                "EMBER_PLATFORM_WINDOWS"
-            }
-    
-        filter "configurations:Debug"
-            defines "EMBER_DEBUG"
-            runtime "Debug"
-            symbols "on"
-    
-        filter "configurations:Release"
-            defines "EMBER_RELEASE"
-            runtime "Release"
-            optimize "on"
-    
-        filter "configurations:Dist"
-            defines "EMBER_DIST"
-            runtime "Release"
-            optimize "on"
+
+    filter "configurations:Debug"
+        defines "EMBER_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "EMBER_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Dist"
+        defines "EMBER_DIST"
+        runtime "Release"
+        optimize "on"

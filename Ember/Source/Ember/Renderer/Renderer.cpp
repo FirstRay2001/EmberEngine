@@ -25,6 +25,11 @@ namespace Ember
 	void Renderer::EndScene()
 	{
 		s_PointLightCount = 0;
+		
+		// TODO: 高效内存管理
+		// 目前每次结束场景都重新分配内存，后续可以改为对象池等方式优化
+		delete s_SceneData;
+		s_SceneData = new SceneData();
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)

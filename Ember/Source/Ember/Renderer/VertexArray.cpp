@@ -210,7 +210,7 @@ namespace Ember
         auto vertexArray = VertexArray::Create();
 
         // 创建顶点缓冲区
-        auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
+        auto vertexBuffer = VertexBuffer::Create(vertices.data(), (uint32_t)vertices.size() * sizeof(float));
 
         // 设置缓冲区布局
         BufferLayout layout = {
@@ -222,7 +222,7 @@ namespace Ember
         vertexArray->AddVertexBuffer(vertexBuffer);
 
         // 创建索引缓冲区
-        auto indexBuffer = IndexBuffer::Create(indices.data(), indices.size());
+        auto indexBuffer = IndexBuffer::Create(indices.data(), (uint32_t)indices.size());
         vertexArray->SetIndexBuffer(indexBuffer);
 
         return vertexArray;

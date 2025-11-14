@@ -26,6 +26,9 @@ namespace Ember
 		void End();
 
 	private:
+		void SetDrakThemeColor();
+
+	private:
 		float m_Time = 0.0f;
 		bool m_BlockEvents = false;
 	};

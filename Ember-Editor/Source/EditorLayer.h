@@ -27,6 +27,7 @@ namespace Ember
 	private:
 		Ref<Scene> m_ActiveScene;
 		Entity m_BoxEntity;
+		Entity m_SphereEntity;
 		Entity m_EditorCamera;
 		Entity m_GameCamera;
 		Entity m_DirectionalLight;

@@ -22,6 +22,7 @@ namespace Ember
 		{
 			EMBER_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
 		}
 
@@ -57,10 +58,19 @@ namespace Ember
 		}
 
 		// 检测有效性
-		operator bool() const { return m_EntityHandle != entt::null; }
+		operator bool() const 
+		{ 
+			return m_EntityHandle != entt::null && m_Scene != nullptr && m_Scene->m_Registry.valid(m_EntityHandle);
+		}
 
 		// 获取实体ID
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
+
+		// 无效化
+		void Invalidate() { m_EntityHandle = entt::null; m_Scene = nullptr; }
+
+		// 转换为entt::entity
+		operator entt::entity() const { return m_EntityHandle; }
 
 		// 比较运算符
 		bool operator==(const Entity& other) const

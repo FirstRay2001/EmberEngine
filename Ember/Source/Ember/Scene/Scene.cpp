@@ -26,6 +26,13 @@ namespace Ember
 		return entity;
 	}
 
+	void Scene::DestroyEntity(Entity& entity)
+	{
+		
+		m_Registry.destroy(entity);
+		entity.Invalidate();
+	}
+
 	void Scene::OnUpdate(const Timestep& timestep)
 	{
 		// 更新脚本组件
@@ -33,6 +40,16 @@ namespace Ember
 
 		// 渲染
 		Render();
+	}
+
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	{
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+		m_Registry.view<CameraComponent>().each([=](auto entityID, auto& cameraComp)
+		{
+			cameraComp.m_Camera.SetScreentSize(width, height);
+		});
 	}
 
 	void Scene::UpdateScripts(const Timestep& timestep)
@@ -84,31 +101,38 @@ namespace Ember
 				
 				// 把Transform组件同步到DirectionalLight
 				auto& transform = m_Registry.get<TransformComponent>(entity);
-				dirLightComp.m_DirectionalLight.Direction = glm::normalize(transform.GetTransform() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
+				glm::vec3 euler = glm::radians(transform.Rotation);
+				dirLightComp.m_DirectionalLight.Direction = glm::vec3(
+					cos(euler.x) * sin(euler.y),
+					sin(euler.x),
+					cos(euler.x) * cos(euler.y)
+				);
 
 				Renderer::AddDirectionalLight(dirLightComp.m_DirectionalLight);
 			}
 		}
 
 		// 获取主相机实体
-		Camera camera;
+		Camera* camera = nullptr;
 		{
 			auto view = m_Registry.view<CameraComponent>();
 			for (auto entity : view)
 			{
 				auto& camComp = view.get<CameraComponent>(entity);
-				camera = camComp.m_Camera;
+				camera = &camComp.m_Camera;
 
 				// 把Transform组件同步到Camera
 				auto& transform = m_Registry.get<TransformComponent>(entity);
-				camera.SetPosition(transform.Position);
-				camera.SetRotation(glm::quat(glm::radians(transform.Rotation)));
+				camera->SetPosition(transform.Position);
+				camera->SetRotation(glm::quat(glm::radians(transform.Rotation)));
 				break; // 只取第一个相机
 			}
 		}
 
 		// 传入相机数据
-		Renderer::BeginScene(camera);
+		if (camera == nullptr)
+			return;
+		Renderer::BeginScene(*camera);
 
 		// 遍历所有带有MeshComponent和TransformComponent的实体并渲染它们
 		auto view = m_Registry.view<TransformComponent, MeshComponent>();
@@ -122,4 +146,54 @@ namespace Ember
 
 		Renderer::EndScene();
 	}
+
+
+	template<typename T>
+	void OnComponentAdded(Entity entity, T& component)
+	{
+		static_assert(false);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+	{
+		component.m_Camera.SetScreentSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<PointLightComponent>(Entity entity, PointLightComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<DirectionalLightComponent>(Entity entity, DirectionalLightComponent& component)
+	{
+		// Nothing to do
+	}
+
 }

@@ -15,15 +15,21 @@ namespace Ember
 		friend class Scene;
 		friend class Renderer;
 	public:  
-		Camera() = default;
 		Camera(const Camera&) = default;
-		Camera(float aspect_, float fov_ = 45.0f, float near_ = 0.1f, float far_ = 100.0f);  
+		Camera(float aspect_ = 16.0f/9.0f, float fov_ = 45.0f, float near_ = 0.1f, float far_ = 100.0f);  
 
 		void SetScreentSize(uint32_t width, uint32_t height);
 
 		const glm::mat4& GetViewMatrix() const				{ return m_ViewMatrix; }  
 		const glm::mat4& GetProjectionMatrix() const		{ return m_ProjectionMatrix; }  
 		const glm::mat4& GetViewProjectionMatrix() const	{ return m_ViewProjectionMatrix; }  
+
+		float		GetFov() const { return m_Fov; }
+		void		SetFov(float fov) { m_Fov = fov; RecalculateProjectionMatrix(); }
+		float		GetNearClip() const { return m_Near; }
+		void		SetNearClip(float nearClip) { m_Near = nearClip; RecalculateProjectionMatrix(); }
+		float		GetFarClip() const { return m_Far; }
+		void		SetFarClip(float farClip) { m_Far = farClip; RecalculateProjectionMatrix(); }
 
 		const glm::vec3 GetForwardDirection() const
 		{
@@ -53,8 +59,6 @@ namespace Ember
 		void		SetRotation(glm::quat rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 		float		GetAspectRatio() const { return m_Aspect; }
 		void		SetAspectRatio(float aspect) { m_Aspect = aspect; RecalculateProjectionMatrix(); }
-		float		GetFov() const { return m_Fov; }
-		void		SetFov(float fov) { m_Fov = fov; RecalculateProjectionMatrix(); }
 
 	private:  
 		glm::mat4 m_ViewMatrix;  
