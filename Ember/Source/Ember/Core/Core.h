@@ -35,6 +35,9 @@
 	#define EMBER_CORE_ASSERT(x, ...)
 #endif
 
+// 未实现警告
+#define EMBER_NOT_IMPLEMENTED() { EMBER_CORE_ASSERT(false, "Function not implemented yet!"); }
+
 
 // 位操作
 #define BIT(x) (1 << x)

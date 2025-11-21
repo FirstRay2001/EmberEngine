@@ -16,6 +16,7 @@ namespace Ember
 	{
 		friend class Entity;
 		friend class SceneHierarchy;
+		friend class SceneSerializer;
 	public:
 		Scene();
 		~Scene();

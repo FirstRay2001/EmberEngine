@@ -186,6 +186,9 @@
     <ClInclude Include="Source\Ember\Scene\Scene.h">
       <Filter>Source\Ember\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Scene\SceneSerializer.h">
+      <Filter>Source\Ember\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Scene\ScriptableEntity.h">
       <Filter>Source\Ember\Scene</Filter>
     </ClInclude>
@@ -1548,6 +1551,9 @@
       <Filter>Source\Ember\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Scene\Scene.cpp">
+      <Filter>Source\Ember\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Scene\SceneSerializer.cpp">
       <Filter>Source\Ember\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp">

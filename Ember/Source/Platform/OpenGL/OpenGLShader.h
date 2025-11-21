@@ -19,6 +19,7 @@ namespace Ember
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 		virtual const std::string& GetName() const override { return m_Name; }
+		virtual const std::string& GetFilepath() const override { return m_Filepath; }
 
 		virtual void SetUniformInt(const std::string& name, int value) const override;
 		virtual void SetUniformFloat(const std::string& name, float value) const override;

@@ -10,7 +10,8 @@ namespace Ember
 {
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
 	{
-		EMBER_CORE_ASSERT(!Exists(name), "Shader already exists!");
+		if (Exists(name))
+			EMBER_CORE_WARN("Shader already exists! Overwriting {0}", name.c_str());
 		m_Shaders[name] = shader;
 	}
 

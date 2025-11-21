@@ -15,10 +15,22 @@ namespace Ember
 	class Material
 	{
 	public:
+		// 着色模型
+		enum class ShadingModel
+		{
+			Unlit,
+			BlinnPhong,
+			PBR
+		};
+
+
 		Material(const std::string& name = "DefaultMaterial");
 
 		// 获取材质名称
 		const std::string& GetName() const { return m_Name; }
+
+		// 获取着色模型
+		ShadingModel GetShadingModel() const { return m_ShadingModel; }
 
 		// 设置着色模型
 		void SetShadingModelBlinnPhong() { m_ShadingModel = ShadingModel::BlinnPhong; }
@@ -50,6 +62,14 @@ namespace Ember
 		Ref<Texture2D>& GetSpecularGlossinessTexture()									{ return m_SpecularGlossinessTexture; }
 		void			SetSpecularGlossinessTexture(const Ref<Texture2D>& texture)		{ m_SpecularGlossinessTexture = texture; }
 
+		// 判断是否使用某个纹理
+		bool HasAlbedoTexture() const { return m_AlbedoTexture != nullptr; }
+		bool HasNormalMap() const { return m_NormalMap != nullptr; }
+		bool HasEmissiveTexture() const { return m_EmissiveTexture != nullptr; }
+		bool HasSpecularTexture() const { return m_SpecularTexture != nullptr; }
+		bool HasShininessTexture() const { return m_ShininessTexture != nullptr; }
+		bool HasSpecularGlossinessTexture() const { return m_SpecularGlossinessTexture != nullptr; }
+
 		// 应用到Shader
 		void ApplyToShader(const Ref<Shader>& shader) const;
 
@@ -58,14 +78,6 @@ namespace Ember
 
 	protected:
 		std::string m_Name;
-
-		// 着色模型
-		enum class ShadingModel
-		{
-			Unlit,
-			BlinnPhong,
-			PBR
-		};
 		ShadingModel m_ShadingModel = ShadingModel::BlinnPhong;
 
 		// ============ 通用参数 ====================

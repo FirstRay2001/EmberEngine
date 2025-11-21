@@ -18,11 +18,13 @@ IncludeDir["ImGui"] = "Ember/Vendor/imgui"
 IncludeDir["glm"] = "Ember/Vendor/glm"
 IncludeDir["stb_image"] = "Ember/Vendor/stb_image"
 IncludeDir["entt"] = "Ember/Vendor/entt/include"
+IncludeDir["yaml_cpp"] = "Ember/Vendor/yaml-cpp/include"
 
 group "Dependencies"
     include "Ember/Vendor/glfw"
     include "Ember/Vendor/glad"
     include "Ember/Vendor/imgui"
+    include "Ember/Vendor/yaml-cpp"
 group ""
 
 
@@ -58,7 +60,8 @@ project "Ember"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
-        "%{IncludeDir.entt}"
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.yaml_cpp}",
     }
 
     links
@@ -66,6 +69,7 @@ project "Ember"
         "GLFW",
         "Glad",
         "ImGui",
+        "yaml-cpp",
         "opengl32.lib",
     }
 

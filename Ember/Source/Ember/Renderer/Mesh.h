@@ -25,8 +25,8 @@ namespace Ember
 		Ref<Shader> GetShader() const { return m_Shader; }
 
 	private:
-		Ref<VertexArray> m_VertexArray;
-		Ref<Material>    m_Material;
-		Ref<Shader>      m_Shader;
+		Ref<VertexArray>	m_VertexArray;
+		Ref<Material>		m_Material;
+		Ref<Shader>			m_Shader;
 	};
 }

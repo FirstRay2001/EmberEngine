@@ -24,6 +24,8 @@ namespace Ember
 		const glm::mat4& GetProjectionMatrix() const		{ return m_ProjectionMatrix; }  
 		const glm::mat4& GetViewProjectionMatrix() const	{ return m_ViewProjectionMatrix; }  
 
+		float		GetAspectRatio() const { return m_Aspect; }
+		void		SetAspectRatio(float aspect) { m_Aspect = aspect; RecalculateProjectionMatrix(); }
 		float		GetFov() const { return m_Fov; }
 		void		SetFov(float fov) { m_Fov = fov; RecalculateProjectionMatrix(); }
 		float		GetNearClip() const { return m_Near; }
@@ -57,8 +59,6 @@ namespace Ember
 		void		SetPosition(const glm::vec3& position) { Position = position; RecalculateViewMatrix(); }
 		glm::quat	GetRotation() const { return m_Rotation; }
 		void		SetRotation(glm::quat rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
-		float		GetAspectRatio() const { return m_Aspect; }
-		void		SetAspectRatio(float aspect) { m_Aspect = aspect; RecalculateProjectionMatrix(); }
 
 	private:  
 		glm::mat4 m_ViewMatrix;  

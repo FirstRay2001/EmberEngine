@@ -19,6 +19,9 @@ namespace Ember
 		virtual int GetHeight() const = 0;
 		virtual uint32_t GetRendererID() const = 0;
 
+		// 获取图像路径
+		virtual const std::string& GetPath() const = 0;
+
 		// 文件路径转换为名称
 		static std::string FilePathToName(const std::string& filepath);
 	};

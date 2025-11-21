@@ -9,6 +9,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "Ember/Scene/Component.h"
+#include "Ember/Scene/SceneSerializer.h"
 #include "Script/CameraController.h"
 
 namespace Ember
@@ -20,12 +21,6 @@ namespace Ember
 
 	void EditorLayer::OnAttach()
 	{
-		// 同步加载Shader
-		auto shader = ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
-
-		// 同步加载纹理
-		auto texture = TextureLibrary::Get().LoadSync("Asset/Texture/GridBox_Default.png");
-
 		// 初始化Framebuffer
 		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
@@ -35,6 +30,12 @@ namespace Ember
 		// 设置活动场景
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize(fbSpec.Width, fbSpec.Height);
+#if 0
+		// 同步加载Shader
+		auto shader = ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
+
+		// 同步加载纹理
+		auto texture = TextureLibrary::Get().LoadSync("Asset/Texture/GridBox_Default.png");
 
 		// Box实体
 		auto gridMaterial = Material::Create("BoxMaterial");
@@ -90,7 +91,7 @@ namespace Ember
 		pointLight.Diffuse = glm::vec3(0.5f);
 		pointLight.Specular = glm::vec3(1.0f);
 		m_PointLight.GetComponent<TransformComponent>().Position = glm::vec3(2.0f, 0.5f, -2.0f);
-
+#endif
 
 		// 初始化Hierarchy面板
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -182,6 +183,22 @@ namespace Ember
 			{
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("Serialize Scene"))
+			{
+				SceneSerializer serilizer(m_ActiveScene);
+				serilizer.Serialize("Asset/Scene/EditorLayerScene.ember");
+			}
+
+			if (ImGui::MenuItem("Deserialize Scene"))
+			{
+				// 卸载当前场景
+				//m_ActiveScene = CreateRef<Scene>();
+				//m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+				SceneSerializer serilizer(m_ActiveScene);
+				serilizer.Deserialize("Asset/Scene/EditorLayerScene.ember");
 			}
 
 			ImGui::EndMenuBar();

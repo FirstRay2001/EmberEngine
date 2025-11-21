@@ -355,7 +355,77 @@ namespace Ember
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.8f, 0.8f, 0.2f, 1.0f });
 		DrawSingleComponent<MeshComponent>("Mesh Renderer", entity, [](auto& meshComp)
 		{
-			ImGui::Text("Mesh Component");
+				VertexArray::PrimitiveType primitiveType = meshComp.GetMesh().GetVertexArray()->GetPrimitiveType();
+				std::string primitiveTypeName;
+				switch (primitiveType)
+				{
+				case VertexArray::PrimitiveType::Cube:
+					primitiveTypeName = "Cube";
+					break;
+				case VertexArray::PrimitiveType::Sphere:
+					primitiveTypeName = "Sphere";
+					break;
+				case VertexArray::PrimitiveType::Model:
+					primitiveTypeName = "Model";
+					break;
+				default:
+					primitiveTypeName = "None";
+					break;
+				};
+
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100);
+
+				ImGui::Text("Type");
+				ImGui::NextColumn();
+				ImGui::Text("%s", primitiveTypeName.c_str());
+
+				// 显示不同类型的参数
+				if (primitiveType == VertexArray::PrimitiveType::Cube)
+				{
+					auto scale = meshComp.GetMesh().GetVertexArray()->GetCubeScale();
+					ImGui::NextColumn();
+					ImGui::Text("Scale");
+					ImGui::NextColumn();
+					ImGui::Text("X: %.2f  Y: %.2f  Z: %.2f", scale.x, scale.y, scale.z);
+				}
+				else if (primitiveType == VertexArray::PrimitiveType::Sphere)
+				{
+					auto radius = meshComp.GetMesh().GetVertexArray()->GetSphereRadius();
+					auto sectorCount = meshComp.GetMesh().GetVertexArray()->GetSphereSectorCount();
+					auto stackCount = meshComp.GetMesh().GetVertexArray()->GetSphereStackCount();
+					ImGui::NextColumn();
+					ImGui::Text("Radius");
+					ImGui::NextColumn();
+					ImGui::Text("%.2f", radius);
+				}
+				else
+				{
+					ImGui::NextColumn();
+					ImGui::Text("Model Mesh");
+					ImGui::NextColumn();
+				}
+
+				ImGui::Separator();
+
+				// Shader
+				auto shader = meshComp.GetMesh().GetShader();
+				std::string shaderName = shader ? shader->GetName() : "None";
+				
+				ImGui::NextColumn();
+				ImGui::Text("Shader");
+				ImGui::NextColumn();
+				ImGui::Text("%s", shaderName.c_str());
+
+				// Material
+				auto material = meshComp.GetMesh().GetMaterial();
+				std::string materialName = material ? material->GetName() : "None";
+				ImGui::NextColumn();
+				ImGui::Text("Material");
+				ImGui::NextColumn();
+				ImGui::Text("%s", materialName.c_str());
+
+				ImGui::Columns(1);
 		});
 		ImGui::PopStyleColor();
 	}

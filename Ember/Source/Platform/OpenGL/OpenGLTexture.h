@@ -19,6 +19,8 @@ namespace Ember
 		virtual int GetWidth() const override { return m_Width; }
 		virtual int GetHeight() const override { return m_Height; }
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
+		virtual const std::string& GetPath() const override { return m_Path; }
+
 	private:
 		uint32_t m_RendererID;
 		std::string m_Path;

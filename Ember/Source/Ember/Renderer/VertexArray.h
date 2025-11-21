@@ -12,6 +12,15 @@ namespace Ember
 	class VertexArray
 	{
 	public:
+		enum class PrimitiveType
+		{
+			None = 0,
+			Cube = 1,
+			Sphere = 2,
+			Model = 3
+		};
+
+	public:
 		virtual ~VertexArray() = default;
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
@@ -22,6 +31,19 @@ namespace Ember
 		static Ref<VertexArray> Create();
 		static Ref<VertexArray> CreateCube(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 		static Ref<VertexArray> CreateSphere(float radius = 1.0f, uint32_t sectorCount = 36, uint32_t stackCount = 18);
+
+		PrimitiveType	GetPrimitiveType()	const		{ return m_PrimitiveType; }
+		glm::vec3		GetCubeScale() const			{ return m_CubeScale; }
+		float			GetSphereRadius() const			{ return m_SphereRadius; }
+		uint32_t		GetSphereSectorCount() const	{ return m_SphereSectorCount; }
+		uint32_t		GetSphereStackCount() const		{ return m_SphereStackCount; }
+
+	private:
+		PrimitiveType m_PrimitiveType = PrimitiveType::None;
+		glm::vec3 m_CubeScale = glm::vec3(1.0f, 1.0f, 1.0f);
+		float m_SphereRadius = 1.0f;
+		uint32_t m_SphereSectorCount = 36;
+		uint32_t m_SphereStackCount = 18;
 	};
 }
 

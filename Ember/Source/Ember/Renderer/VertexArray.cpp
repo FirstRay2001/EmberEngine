@@ -122,6 +122,8 @@ namespace Ember
 
 		// 创建顶点数组对象
         auto vertexArray = Create();
+		vertexArray->m_PrimitiveType = PrimitiveType::Cube;
+		vertexArray->m_CubeScale = scale;
 
 		// 创建顶点缓冲区
         auto vertexBuffer(VertexBuffer::Create(vertices, sizeof(vertices)));
@@ -208,6 +210,10 @@ namespace Ember
 
         // 创建顶点数组对象
         auto vertexArray = VertexArray::Create();
+		vertexArray->m_PrimitiveType = PrimitiveType::Sphere;
+		vertexArray->m_SphereRadius = radius;
+		vertexArray->m_SphereSectorCount = sectorCount;
+		vertexArray->m_SphereStackCount = stackCount;
 
         // 创建顶点缓冲区
         auto vertexBuffer = VertexBuffer::Create(vertices.data(), (uint32_t)vertices.size() * sizeof(float));

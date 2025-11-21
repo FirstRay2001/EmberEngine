@@ -28,6 +28,9 @@ namespace Ember
 		// 获取着色器名称
 		virtual const std::string& GetName() const = 0;
 
+		// 获取着色器文件路径
+		virtual const std::string& GetFilepath() const = 0;
+
 		virtual void SetUniformInt(const std::string& name, int value) const = 0;
 		virtual void SetUniformFloat(const std::string& name, float value) const = 0;
 		virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) const = 0;

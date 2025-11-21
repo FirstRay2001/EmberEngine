@@ -6,6 +6,7 @@
 
 #include "Ember/Core/Core.h"
 #include "Ember/ResourceManager/ResourceManager.h"
+#include "Ember/Renderer/Texture.h"
 
 namespace Ember
 {

@@ -15,6 +15,8 @@
 
 #include <cstdlib>
 
+#include <filesystem>
+
 using namespace Ember;
 
 Application* Application::s_Instance = nullptr;
@@ -22,6 +24,9 @@ Application* Application::s_Instance = nullptr;
 Application::Application()
 {
 	// system("pause");
+
+	// 输出当前工作目录
+	EMBER_CORE_TRACE("Current working directory: {}", std::filesystem::current_path().string());
 
 	EMBER_CORE_ASSERT(!s_Instance, "Application already exists!");
 	s_Instance = this;

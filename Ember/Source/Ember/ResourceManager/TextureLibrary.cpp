@@ -3,14 +3,14 @@
 // created by FirstRay2001, Nov/11/2025
 
 #include "emberpch.h"
-#include "Ember/Renderer/Texture.h"
 #include "TextureLibrary.h"
 
 namespace Ember
 {
 	void TextureLibrary::Add(const std::string& name, const Ref<Texture2D>& texture)
 	{
-		EMBER_CORE_ASSERT(!Exists(name), "Texture already exists!");
+		if(Exists(name))
+			EMBER_CORE_WARN("Texture already exists! Overwriting {0}", name.c_str());
 		m_Textures[name] = texture;
 	}
 

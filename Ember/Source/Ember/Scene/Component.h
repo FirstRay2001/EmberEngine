@@ -72,8 +72,6 @@ namespace Ember
 	struct CameraComponent
 	{
 		Camera m_Camera;
-		bool Primary = true; // 主摄像机标志
-		bool FixedAspectRatio = false;
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 		CameraComponent(const Ember::Camera& camera)
