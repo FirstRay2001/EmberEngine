@@ -66,6 +66,12 @@ namespace Ember
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
+	void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray)
+	{
+		vertexArray->Bind();
+		glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
 	void OpenGLRendererAPI::SetViewport(const uint32_t& width, const uint32_t& height)
 	{
 		glViewport(0, 0, width, height);

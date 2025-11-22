@@ -266,6 +266,28 @@ namespace Ember
 			out << YAML::EndMap;
 		}
 
+		// Grid组件
+		if (entity.HasComponent<GridComponent>())
+		{
+			out << YAML::Key << "Grid";
+			out << YAML::BeginMap;
+
+			// 网格线框Shader路径
+			auto& gridComp = entity.GetComponent<GridComponent>();
+			out << YAML::Key << "ShaderPath" << YAML::Value << gridComp.m_Shader->GetFilepath();
+
+			// 网格线框VertexArray参数
+			auto gridVAO = gridComp.m_Grid;
+			out << YAML::Key << "VertexArray";
+			out << YAML::BeginMap;
+			auto gridSize = gridVAO->GetGridSize();
+			auto gridDivisions = gridVAO->GetGridDivisions();
+			out << YAML::Key << "Size" << YAML::Value << gridSize;
+			out << YAML::Key << "Divisions" << YAML::Value << gridDivisions;
+			out << YAML::EndMap;
+			out << YAML::EndMap;
+		}
+
 		// 摄像机组件
 		if (entity.HasComponent<CameraComponent>())
 		{
@@ -466,6 +488,27 @@ namespace Ember
 
 				// 添加Mesh组件
 				entity.AddComponent<MeshComponent>(vertexArray, material, shader);
+			}
+
+			// Grid组件
+			if (entityNode["Grid"])
+			{
+				auto& gridNode = entityNode["Grid"];
+
+				// Shader
+				std::string shaderPath = gridNode["ShaderPath"].as<std::string>();
+				auto shader = ShaderLibrary::Get().LoadSync(shaderPath);
+
+				// VertexArray
+				auto vaNode = gridNode["VertexArray"];
+				float size = vaNode["Size"].as<float>();
+				int divisions = vaNode["Divisions"].as<int>();
+				auto gridVAO = VertexArray::CreateGrid(size, divisions);
+
+				// 添加Grid组件
+				auto& gridComp = entity.AddComponent<GridComponent>();
+				gridComp.m_Shader = shader;
+				gridComp.m_Grid = gridVAO;
 			}
 
 			// Camera组件

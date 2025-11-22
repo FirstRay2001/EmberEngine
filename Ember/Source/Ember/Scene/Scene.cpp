@@ -135,13 +135,22 @@ namespace Ember
 		Renderer::BeginScene(*camera);
 
 		// 遍历所有带有MeshComponent和TransformComponent的实体并渲染它们
-		auto view = m_Registry.view<TransformComponent, MeshComponent>();
-		for (auto entity : view)
+		auto meshView = m_Registry.view<TransformComponent, MeshComponent>();
+		for (auto entity : meshView)
 		{
-			auto& transform = view.get<TransformComponent>(entity).GetTransform();
-			auto& meshComp = view.get<MeshComponent>(entity);
+			auto& transform = meshView.get<TransformComponent>(entity).GetTransform();
+			auto& meshComp = meshView.get<MeshComponent>(entity);
 			auto& mesh = meshComp.GetMesh();
 			Renderer::Submit(mesh, transform);
+		}
+
+		// 遍历所有网格线框实体并渲染它们
+		auto lineView = m_Registry.view<TransformComponent, GridComponent>();
+		for (auto entity : lineView)
+		{
+			auto& transform = lineView.get<TransformComponent>(entity).GetTransform();
+			auto& gridComp = lineView.get<GridComponent>(entity);
+			Renderer::DrawLines(gridComp.m_Shader, gridComp.m_Grid, transform);
 		}
 
 		Renderer::EndScene();
@@ -174,6 +183,12 @@ namespace Ember
 
 	template<>
 	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<GridComponent>(Entity entity, GridComponent& component)
 	{
 		// Nothing to do
 	}

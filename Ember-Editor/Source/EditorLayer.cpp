@@ -91,7 +91,14 @@ namespace Ember
 		pointLight.Diffuse = glm::vec3(0.5f);
 		pointLight.Specular = glm::vec3(1.0f);
 		m_PointLight.GetComponent<TransformComponent>().Position = glm::vec3(2.0f, 0.5f, -2.0f);
+
+		// Grid实体
+		auto gridShader = ShaderLibrary::Get().LoadSync("Asset/Shader/SimpleColor.glsl");
+		auto gridVAO = VertexArray::CreateGrid(10.0f, 10);
+		auto gridEntity = m_ActiveScene->CreateEntity("Grid");
+		gridEntity.AddComponent<GridComponent>(gridVAO, gridShader);
 #endif
+		
 
 		// 初始化Hierarchy面板
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -181,25 +188,29 @@ namespace Ember
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+
+				if (ImGui::MenuItem("Serialize Scene"))
+				{
+					SceneSerializer serilizer(m_ActiveScene);
+					serilizer.Serialize("Asset/Scene/EditorLayerScene.ember");
+				}
+
+				if (ImGui::MenuItem("Deserialize Scene"))
+				{
+					// 卸载当前场景
+					//m_ActiveScene = CreateRef<Scene>();
+					//m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+					SceneSerializer serilizer(m_ActiveScene);
+					serilizer.Deserialize("Asset/Scene/EditorLayerScene.ember");
+				}
+
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
+
 				ImGui::EndMenu();
 			}
 
-			if (ImGui::MenuItem("Serialize Scene"))
-			{
-				SceneSerializer serilizer(m_ActiveScene);
-				serilizer.Serialize("Asset/Scene/EditorLayerScene.ember");
-			}
-
-			if (ImGui::MenuItem("Deserialize Scene"))
-			{
-				// 卸载当前场景
-				//m_ActiveScene = CreateRef<Scene>();
-				//m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-				SceneSerializer serilizer(m_ActiveScene);
-				serilizer.Deserialize("Asset/Scene/EditorLayerScene.ember");
-			}
+			
 
 			ImGui::EndMenuBar();
 		}

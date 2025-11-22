@@ -428,5 +428,42 @@ namespace Ember
 				ImGui::Columns(1);
 		});
 		ImGui::PopStyleColor();
+
+		// Grid Component
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.2f, 0.8f, 0.2f, 1.0f });
+		DrawSingleComponent<GridComponent>("Grid Renderer", entity, [](auto& gridComp)
+			{
+				auto primitiveType = gridComp.m_Grid->GetPrimitiveType();
+				std::string primitiveTypeName;
+				switch (primitiveType)
+				{
+				case VertexArray::PrimitiveType::Grid:
+					primitiveTypeName = "Grid";
+					break;
+				default:
+					primitiveTypeName = "None";
+					break;
+				};
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100);
+				ImGui::Text("Type");
+				ImGui::NextColumn();
+				ImGui::Text("%s", primitiveTypeName.c_str());
+				if (primitiveType == VertexArray::PrimitiveType::Grid)
+				{
+					auto size = gridComp.m_Grid->GetGridSize();
+					auto divisions = gridComp.m_Grid->GetGridDivisions();
+					ImGui::NextColumn();
+					ImGui::Text("Size");
+					ImGui::NextColumn();
+					ImGui::Text("%.2f", size);
+					ImGui::NextColumn();
+					ImGui::Text("Divisions");
+					ImGui::NextColumn();
+					ImGui::Text("%d", divisions);
+				}
+				ImGui::Columns(1);
+			});
+		ImGui::PopStyleColor();
 	}
 }

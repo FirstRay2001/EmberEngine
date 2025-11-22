@@ -29,6 +29,8 @@ namespace Ember
 
 		static void Submit(const Mesh& mesh, const glm::mat4& transform = glm::mat4(1.0));
 
+		static void DrawLines(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0));
+
 		static void AddPointLight(const PointLight& pointLight);
 		static void AddDirectionalLight(const DirectionalLight& dirLight);
 

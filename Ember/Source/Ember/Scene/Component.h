@@ -45,27 +45,41 @@ namespace Ember
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
-		TagComponent(const std::string& tag)
-			: Tag(tag)
+		TagComponent(const std::string& tag) :
+			Tag(tag)
 		{
 		}
 
 		operator std::string& () { return Tag; }	// 是否合适?
 	};
 
-	// 网格组件
+	// Mesh组件
 	struct MeshComponent
 	{
 		Mesh Mesh;
 		MeshComponent() = default;
 		MeshComponent(const MeshComponent&) = default;
-		MeshComponent(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<Shader>& shader)
-			: Mesh(vertexArray, material, shader)
+		MeshComponent(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<Shader>& shader) :
+			Mesh(vertexArray, material, shader)
 		{
 		}
 
 		const Ember::Mesh& GetMesh() const { return Mesh; }
 		Ember::Mesh& GetMesh() { return Mesh; }
+	};
+
+	// 网格组件
+	struct GridComponent
+	{
+		Ref<VertexArray> m_Grid;
+		Ref<Shader> m_Shader;
+		GridComponent() = default;
+		GridComponent(const GridComponent&) = default;
+		GridComponent(const Ref<VertexArray>& grid, const Ref<Shader>& shader) :
+			m_Grid(grid),
+			m_Shader(shader)
+		{
+		}
 	};
 
 	// 摄像机组件
@@ -74,8 +88,8 @@ namespace Ember
 		Camera m_Camera;
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const Ember::Camera& camera)
-			: m_Camera(camera)
+		CameraComponent(const Ember::Camera& camera) :
+			m_Camera(camera)
 		{
 		}
 
@@ -111,8 +125,8 @@ namespace Ember
 		PointLight m_PointLight;
 		PointLightComponent() = default;
 		PointLightComponent(const PointLightComponent&) = default;
-		PointLightComponent(const Ember::PointLight& pointLight)
-			: m_PointLight(pointLight)
+		PointLightComponent(const Ember::PointLight& pointLight) :
+			m_PointLight(pointLight)
 		{
 		}
 	};
@@ -123,8 +137,8 @@ namespace Ember
 		DirectionalLight m_DirectionalLight;
 		DirectionalLightComponent() = default;
 		DirectionalLightComponent(const DirectionalLightComponent&) = default;
-		DirectionalLightComponent(const Ember::DirectionalLight& directionalLight)
-			: m_DirectionalLight(directionalLight)
+		DirectionalLightComponent(const Ember::DirectionalLight& directionalLight) :
+			m_DirectionalLight(directionalLight)
 		{
 		}
 	};

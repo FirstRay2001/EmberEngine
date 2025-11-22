@@ -88,6 +88,16 @@ namespace Ember
 		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
 	}
 
+	void Renderer::DrawLines(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+	{
+		shader->Bind();
+		shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SetUniformMat4("u_Transform", transform);
+		shader->SetUniformFloat3("u_Material.Albedo", glm::vec3(0.0f, 0.0f, 0.0f)); // 默认黑色
+		vertexArray->Bind();
+		RenderCommand::DrawLines(vertexArray);
+	}
+
 	void Renderer::AddPointLight(const PointLight& pointLight)
 	{
 		if (s_PointLightCount >= 4)

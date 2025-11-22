@@ -49,6 +49,12 @@ namespace Ember
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
 
+		// 绘制线条
+		inline static void DrawLines(const Ref<VertexArray>& vertexArray)
+		{
+			s_RendererAPI->DrawLines(vertexArray);
+		}
+
 		inline static void SetViewPort(const uint32_t& width, const uint32_t height)
 		{
 			s_RendererAPI->SetViewport(width, height);

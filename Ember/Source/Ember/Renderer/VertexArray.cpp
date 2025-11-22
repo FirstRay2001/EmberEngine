@@ -233,4 +233,82 @@ namespace Ember
 
         return vertexArray;
     }
+
+    Ref<VertexArray> VertexArray::CreateGrid(float size, uint32_t divisions)
+    {
+        std::vector<float> vertices;
+        std::vector<uint32_t> indices;
+
+        // 生成顶点数据
+        float halfSize = size / 2.0f;
+        float divisionSize = size / divisions;
+        for (uint32_t i = 0; i <= divisions; ++i) {
+            float position = -halfSize + i * divisionSize;
+            // 水平线
+            vertices.push_back(-halfSize); // x
+            vertices.push_back(0.0f);      // y
+            vertices.push_back(position);   // z
+            vertices.push_back(0.0f);      // 法线 x
+            vertices.push_back(1.0f);      // 法线 y
+            vertices.push_back(0.0f);      // 法线 z
+            vertices.push_back(0.0f);      // 纹理坐标 u
+            vertices.push_back((float)i / divisions); // 纹理坐标 v
+
+            vertices.push_back(halfSize);  // x
+            vertices.push_back(0.0f);      // y
+            vertices.push_back(position);   // z
+            vertices.push_back(0.0f);      // 法线 x
+            vertices.push_back(1.0f);      // 法线 y
+            vertices.push_back(0.0f);      // 法线 z
+            vertices.push_back(1.0f);      // 纹理坐标 u
+            vertices.push_back((float)i / divisions); // 纹理坐标 v
+
+            // 垂直线
+            vertices.push_back(position);   // x
+            vertices.push_back(0.0f);      // y
+            vertices.push_back(-halfSize);  // z
+            vertices.push_back(0.0f);      // 法线 x
+            vertices.push_back(1.0f);      // 法线 y
+            vertices.push_back(0.0f);      // 法线 z
+            vertices.push_back((float)i / divisions); // 纹理坐标 u
+            vertices.push_back(0.0f);      // 纹理坐标 v
+
+            vertices.push_back(position);   // x
+            vertices.push_back(0.0f);      // y
+            vertices.push_back(halfSize);   // z
+            vertices.push_back(0.0f);      // 法线 x
+            vertices.push_back(1.0f);      // 法线 y
+            vertices.push_back(0.0f);      // 法线 z
+            vertices.push_back((float)i / divisions); // 纹理坐标 u
+            vertices.push_back(1.0f);      // 纹理坐标 v
+        }
+
+        // 生成索引数据
+        for (uint32_t i = 0; i <= divisions * 2 + 1; ++i) {
+            indices.push_back(i * 2);
+            indices.push_back(i * 2 + 1);
+        }
+
+        // 创建顶点数组对象
+        auto vertexArray = VertexArray::Create();
+        vertexArray->m_PrimitiveType = PrimitiveType::Grid;
+
+        // 创建顶点缓冲区
+        auto vertexBuffer = VertexBuffer::Create(vertices.data(), (uint32_t)vertices.size() * sizeof(float));
+
+        // 设置缓冲区布局
+        BufferLayout layout = {
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float3, "a_Normal" },
+            { ShaderDataType::Float2, "a_TexCoord" }
+        };
+        vertexBuffer->SetLayout(layout);
+        vertexArray->AddVertexBuffer(vertexBuffer);
+
+        // 创建索引缓冲区
+        auto indexBuffer = IndexBuffer::Create(indices.data(), (uint32_t)indices.size());
+        vertexArray->SetIndexBuffer(indexBuffer);
+
+        return vertexArray;
+    }
 }
