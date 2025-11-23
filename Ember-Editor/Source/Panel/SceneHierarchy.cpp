@@ -18,6 +18,7 @@ namespace Ember
 	void SceneHierarchy::SetContext(const Ref<Scene>& scene)
 	{
 		m_Context = scene;
+		m_SelectedEntity = {};
 	}
 
 	void SceneHierarchy::OnImGuiRender()
@@ -338,11 +339,19 @@ namespace Ember
 			{
 				camera.SetFov(fov);
 			}
+
+			float aspect = camera.GetAspectRatio();
+			if (DrawFloatControl("Aspect Ratio", aspect, 0.01f, 0.1f, 4.0f))
+			{
+				camera.SetAspectRatio(aspect);
+			}
+
 			float nearClip = camera.GetNearClip();
 			if (DrawFloatControl("Near Clip", nearClip, 0.1f, 0.1f, 100.0f))
 			{
 				camera.SetNearClip(nearClip);
 			}
+
 			float farClip = camera.GetFarClip();
 			if (DrawFloatControl("Far Clip", farClip, 1.0f, 1.0f, 1000.0f))
 			{

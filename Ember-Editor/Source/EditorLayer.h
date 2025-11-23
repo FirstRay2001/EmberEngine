@@ -25,6 +25,11 @@ namespace Ember
 		virtual void OnImGuiRender() override;
 
 	private:
+		void NewScene();
+		void SaveScene();
+		void LoadScene();
+
+	private:
 		Ref<Scene> m_ActiveScene;
 
 		Entity m_BoxEntity;

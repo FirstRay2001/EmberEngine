@@ -519,7 +519,7 @@ namespace Ember
 				float fov = entityNode["Camera"]["FOV"].as<float>();
 				float nearClip = entityNode["Camera"]["NearClip"].as<float>();
 				float farClip = entityNode["Camera"]["FarClip"].as<float>();
-				cameraComp.m_Camera.SetAspectRatio(aspect);
+				//cameraComp.m_Camera.SetAspectRatio(aspect);
 				cameraComp.m_Camera.SetFov(fov);
 				cameraComp.m_Camera.SetNearClip(nearClip);
 				cameraComp.m_Camera.SetFarClip(farClip);

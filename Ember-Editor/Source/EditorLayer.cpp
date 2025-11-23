@@ -11,6 +11,7 @@
 #include "Ember/Scene/Component.h"
 #include "Ember/Scene/SceneSerializer.h"
 #include "Script/CameraController.h"
+#include "Ember/Utils/PlatformUtils.h"
 
 namespace Ember
 {
@@ -188,22 +189,16 @@ namespace Ember
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("New"))
+					NewScene();
 
-				if (ImGui::MenuItem("Serialize Scene"))
-				{
-					SceneSerializer serilizer(m_ActiveScene);
-					serilizer.Serialize("Asset/Scene/EditorLayerScene.ember");
-				}
+				if (ImGui::MenuItem("Open..."))
+					LoadScene();
 
-				if (ImGui::MenuItem("Deserialize Scene"))
-				{
-					// 卸载当前场景
-					//m_ActiveScene = CreateRef<Scene>();
-					//m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+				if (ImGui::MenuItem("Save As..."))
+					SaveScene();
 
-					SceneSerializer serilizer(m_ActiveScene);
-					serilizer.Deserialize("Asset/Scene/EditorLayerScene.ember");
-				}
+				ImGui::Separator();
 
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 
@@ -241,5 +236,45 @@ namespace Ember
 		ImGui::End();
 		ImGui::PopStyleVar();
 		ImGui::End();
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		std::string filepath = FileDialog::SaveFile("Ember Scene (*.ember)\0*.ember\0");
+
+		// 用户取消
+		if (filepath.empty())
+			return;
+
+		// 检查后缀
+		std::string suffix = ".ember";
+		if (filepath.rfind(suffix) != (filepath.length() - suffix.length()))
+			filepath += suffix;
+
+		SceneSerializer serilizer(m_ActiveScene);
+		serilizer.Serialize(filepath);
+	}
+
+	void EditorLayer::LoadScene()
+	{
+		std::string filepath = FileDialog::OpenFile("Ember Scene (*.ember)\0*.ember\0");
+
+		// 用户取消
+		if (filepath.empty())
+			return;
+
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		SceneSerializer serilizer(m_ActiveScene);
+		serilizer.Deserialize(filepath);
 	}
 }
