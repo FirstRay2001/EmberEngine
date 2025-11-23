@@ -253,11 +253,6 @@ namespace Ember
 		if (filepath.empty())
 			return;
 
-		// 检查后缀
-		std::string suffix = ".ember";
-		if (filepath.rfind(suffix) != (filepath.length() - suffix.length()))
-			filepath += suffix;
-
 		SceneSerializer serilizer(m_ActiveScene);
 		serilizer.Serialize(filepath);
 	}

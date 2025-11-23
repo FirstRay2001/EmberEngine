@@ -5,6 +5,7 @@
 #include "emberpch.h"
 #include "Ember/Utils/PlatformUtils.h"
 
+#include <sstream>
 #include <commdlg.h>
 #include <GLFW/glfw3.h>
 #define  GLFW_EXPOSE_NATIVE_WIN32
@@ -48,6 +49,9 @@ namespace Ember
 		ofn.nMaxFile = sizeof(szFile); 	 // 文件名缓冲区大小
 		ofn.lpstrFilter = filter; 	 // 过滤器
 		ofn.nFilterIndex = 1; 		 // 过滤器索引
+
+		ofn.lpstrDefExt = strchr(filter, '\0') + 1; // 默认扩展名，取过滤器中的第一个扩展名
+
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
 
 		// 显示保存文件对话框
