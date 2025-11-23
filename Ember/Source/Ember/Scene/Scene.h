@@ -6,6 +6,7 @@
 
 #include "entt.hpp"
 #include "Ember/Core/Timestep.h"
+#include "Ember/Renderer/EditorCamera.h"
 
 namespace Ember
 {
@@ -24,7 +25,8 @@ namespace Ember
 		Entity CreateEntity(const std::string& name = "Entity_Default_Name");
 		void DestroyEntity(Entity& entity);
 
-		void OnUpdate(const Timestep& timestep);
+		void OnUpdateRuntime(const Timestep& timestep);
+		void OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 	public:
@@ -32,7 +34,8 @@ namespace Ember
 
 	private:
 		void UpdateScripts(const Timestep& timestep);
-		void Render();
+		void RenderRuntime();
+		void RenderEditor(EditorCamera& editorCamera);
 
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

@@ -102,6 +102,9 @@ namespace Ember
 		gridEntity.AddComponent<GridComponent>(gridVAO, gridShader);
 #endif
 		
+		// 初始化场景相机
+		m_EditorCamera = CreateRef<EditorCamera>(45.0f, 1.778f, 0.1f, 1000.0f);
+		m_EditorCamera->SetScreenSize(fbSpec.Width, fbSpec.Height);
 
 		// 初始化Hierarchy面板
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -116,14 +119,15 @@ namespace Ember
 		//////////////// 更新Scene ////////////////////
 		m_Framebuffer->Bind();
 		{
-			m_ActiveScene->OnUpdate(timestep);
+			// m_ActiveScene->OnUpdateRuntime(timestep);
+			m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera);
 		}
 		m_Framebuffer->Unbind();
 	}
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-
+		m_EditorCamera->OnEvent(e);
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -223,6 +227,7 @@ namespace Ember
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_EditorCamera->SetScreenSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((void*)(uintptr_t)textureID, 
@@ -258,10 +263,8 @@ namespace Ember
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
 			// 获取相机矩阵
-			auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>();
-			const glm::mat4& cameraProjection = cameraComponent.m_Camera.GetProjectionMatrix();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+			const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
+			glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
 
 			// 获取实体矩阵
 			auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();

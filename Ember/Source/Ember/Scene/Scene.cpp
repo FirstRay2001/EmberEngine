@@ -33,13 +33,22 @@ namespace Ember
 		entity.Invalidate();
 	}
 
-	void Scene::OnUpdate(const Timestep& timestep)
+	void Scene::OnUpdateRuntime(const Timestep& timestep)
 	{
 		// 更新脚本组件
 		UpdateScripts(timestep);
 
-		// 渲染
-		Render();
+		// 运行时场景渲染
+		RenderRuntime();
+	}
+
+	void Scene::OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera)
+	{
+		// 更新编辑器相机
+		editorCamera.OnUpdate(timestep);
+
+		// 编辑器场景渲染
+		RenderEditor(editorCamera);
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -86,7 +95,7 @@ namespace Ember
 		}
 	}
 
-	void Scene::Render()
+	void Scene::RenderRuntime()
 	{
 		// 清屏
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
@@ -170,6 +179,69 @@ namespace Ember
 		Renderer::EndScene();
 	}
 
+	void Scene::RenderEditor(EditorCamera& editorCamera)
+	{
+		// 清屏
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
+		RenderCommand::Clear();
+
+		// 获取光照组件
+		{
+			// 点光源
+			auto pointLightView = m_Registry.view<PointLightComponent>();
+			for (auto entity : pointLightView)
+			{
+				auto& pointLightComp = pointLightView.get<PointLightComponent>(entity);
+
+				// 把Transform组件同步到PointLight
+				auto& transform = m_Registry.get<TransformComponent>(entity);
+				pointLightComp.m_PointLight.Position = transform.Position;
+
+				Renderer::AddPointLight(pointLightComp.m_PointLight);
+			}
+
+			// 平行光
+			auto dirLightView = m_Registry.view<DirectionalLightComponent>();
+			for (auto entity : dirLightView)
+			{
+				auto& dirLightComp = dirLightView.get<DirectionalLightComponent>(entity);
+
+				// 把Transform组件同步到DirectionalLight
+				auto& transform = m_Registry.get<TransformComponent>(entity);
+				glm::vec3 euler = glm::radians(transform.Rotation);
+				dirLightComp.m_DirectionalLight.Direction = glm::vec3(
+					cos(euler.x) * sin(euler.y),
+					sin(euler.x),
+					cos(euler.x) * cos(euler.y)
+				);
+
+				Renderer::AddDirectionalLight(dirLightComp.m_DirectionalLight);
+			}
+		}
+		
+		Renderer::BeginScene(editorCamera);
+
+		// 遍历所有带有MeshComponent和TransformComponent的实体并渲染它们
+		auto meshView = m_Registry.view<TransformComponent, MeshComponent>();
+		for (auto entity : meshView)
+		{
+			auto& transform = meshView.get<TransformComponent>(entity).GetTransform();
+			auto& meshComp = meshView.get<MeshComponent>(entity);
+			auto& mesh = meshComp.GetMesh();
+			Renderer::Submit(mesh, transform);
+		}
+
+		// 遍历所有网格线框实体并渲染它们
+		auto lineView = m_Registry.view<TransformComponent, GridComponent>();
+		for (auto entity : lineView)
+		{
+			auto& transform = lineView.get<TransformComponent>(entity).GetTransform();
+			auto& gridComp = lineView.get<GridComponent>(entity);
+			Renderer::DrawLines(gridComp.m_Shader, gridComp.m_Grid, transform);
+		}
+
+		Renderer::EndScene();
+	}
 
 	template<typename T>
 	void OnComponentAdded(Entity entity, T& component)

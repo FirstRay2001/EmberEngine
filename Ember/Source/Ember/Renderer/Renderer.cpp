@@ -22,6 +22,13 @@ namespace Ember
 		s_SceneData->CameraDirection = camera.GetForwardDirection();
 	}
 
+	void Renderer::BeginScene(EditorCamera& camera)
+	{
+		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_SceneData->CameraPosition = camera.GetPosition();
+		s_SceneData->CameraDirection = camera.GetForwardDirection();
+	}
+
 	void Renderer::EndScene()
 	{
 		s_PointLightCount = 0;

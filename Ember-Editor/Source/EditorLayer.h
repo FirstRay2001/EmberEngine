@@ -6,6 +6,7 @@
 
 #include "Ember/Scene/Scene.h"
 #include "Ember/Scene/Entity.h"
+#include "Ember/Renderer/EditorCamera.h"
 #include "Panel/SceneHierarchy.h"
 
 namespace Ember
@@ -31,6 +32,14 @@ namespace Ember
 
 	private:
 		Ref<Scene> m_ActiveScene;
+		Ref<EditorCamera> m_EditorCamera;
+		Ref<Framebuffer> m_Framebuffer;
+
+		glm::vec2 m_ViewportSize = { 0, 0 };
+		bool m_ViewportFocused = false;
+		bool m_ViewportHovered = false;
+
+		SceneHierarchy m_SceneHierarchyPanel;
 
 #if 0
 		Entity m_BoxEntity;
@@ -40,13 +49,5 @@ namespace Ember
 		Entity m_DirectionalLight;
 		Entity m_PointLight;
 #endif
-
-		Ref<Framebuffer> m_Framebuffer;
-
-		glm::vec2 m_ViewportSize = { 0, 0 };
-		bool m_ViewportFocused = false;
-		bool m_ViewportHovered = false;
-
-		SceneHierarchy m_SceneHierarchyPanel;
 	};
 }

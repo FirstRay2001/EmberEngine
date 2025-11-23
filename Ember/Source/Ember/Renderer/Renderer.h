@@ -6,6 +6,7 @@
 
 #include "Ember/Renderer/RenderCommand.h"
 #include "Ember/Renderer/Camera.h"
+#include "Ember/Renderer/EditorCamera.h"
 #include "Ember/Renderer/Shader.h"
 #include "Ember/Renderer/Material.h"
 #include "Ember/Renderer/Mesh.h"
@@ -19,6 +20,7 @@ namespace Ember
 		static void Init();
 
 		static void BeginScene(Camera& camera);
+		static void BeginScene(EditorCamera& camera);
 		static void EndScene();
 
 		// 提交Shader VAO
