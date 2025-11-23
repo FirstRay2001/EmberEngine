@@ -19,6 +19,7 @@ IncludeDir["glm"] = "Ember/Vendor/glm"
 IncludeDir["stb_image"] = "Ember/Vendor/stb_image"
 IncludeDir["entt"] = "Ember/Vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Ember/Vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "Ember/Vendor/ImGuizmo"
 
 group "Dependencies"
     include "Ember/Vendor/glfw"
@@ -49,6 +50,8 @@ project "Ember"
         "%{prj.name}/Vendor/glm/glm/**.inl",
         "%{prj.name}/Vendor/stb_image/**.h",
         "%{prj.name}/Vendor/stb_image/**.cpp",
+        "%{prj.name}/Vendor/ImGuizmo/**.cpp",
+        "%{prj.name}/Vendor/ImGuizmo/**.h"
     }
 
     includedirs
@@ -62,6 +65,7 @@ project "Ember"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.yaml_cpp}",
+        "%{IncludeDir.ImGuizmo}"
     }
 
     links
@@ -85,6 +89,9 @@ project "Ember"
         }
 
         disablewarnings { "4828" }
+
+    filter "files:Ember/Vendor/ImGuizmo/**.cpp"
+        flags { "NoPCH" }
 
     filter "system:windows"
         systemversion "latest"
@@ -135,7 +142,8 @@ project "Ember-Editor"
         "Ember/Vendor",
         "Ember/Source",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.entt}"
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.ImGuizmo}"
     }
 
     links

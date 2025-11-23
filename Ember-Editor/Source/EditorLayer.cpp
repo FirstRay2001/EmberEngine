@@ -7,11 +7,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <ImGuizmo.h>
 
 #include "Ember/Scene/Component.h"
 #include "Ember/Scene/SceneSerializer.h"
 #include "Script/CameraController.h"
 #include "Ember/Utils/PlatformUtils.h"
+#include "Ember/Math/Math.h"
 
 namespace Ember
 {
@@ -111,13 +113,6 @@ namespace Ember
 
 	void EditorLayer::OnUpdate(const Timestep& timestep)
 	{
-		if (m_EditorCamera)
-		{
-			auto* scriptInstance = m_EditorCamera.GetComponent<NativeScriptComponent>().Instance;
-			if (scriptInstance != nullptr)
-				scriptInstance->As<CameraController>().SetEnable(m_ViewportFocused || m_ViewportHovered);
-		}
-		
 		//////////////// 更新Scene ////////////////////
 		m_Framebuffer->Bind();
 		{
@@ -233,8 +228,62 @@ namespace Ember
 		ImGui::Image((void*)(uintptr_t)textureID, 
 			ImVec2{ (float)m_Framebuffer->GetSpecification().Width, (float)m_Framebuffer->GetSpecification().Height }, 
 			ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		// Gizmo操作面板
+		static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
+		ImVec2 windowPos = ImVec2(io.DisplaySize.x - 260.0f, 10.0f);
+		ImGui::SetNextWindowPos(windowPos, ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(250, 0), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Gizmo Operation", nullptr,
+			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize);
+		if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::TRANSLATE))
+			gizmoOperation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::ROTATE))
+			gizmoOperation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::SCALE))
+			gizmoOperation = ImGuizmo::SCALE;
+		ImGui::End();
+
+		// Gizmo
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			float windowWidth = ImGui::GetWindowWidth();
+			float windowHeight = ImGui::GetWindowHeight();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+			// 获取相机矩阵
+			auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>();
+			const glm::mat4& cameraProjection = cameraComponent.m_Camera.GetProjectionMatrix();
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			// 获取实体矩阵
+			auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 entityTransform = transformComponent.GetTransform();
+
+			// 使用ImGuizmo
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				gizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransform));
+
+			// 如果被修改，更新Transform组件
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(entityTransform, translation, rotation, scale);
+				transformComponent.Position = translation;
+				transformComponent.Rotation = rotation;
+				transformComponent.Scale = scale;
+			}
+		}
 		ImGui::End();
 		ImGui::PopStyleVar();
+
 		ImGui::End();
 	}
 

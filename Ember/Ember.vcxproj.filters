@@ -25,6 +25,9 @@
     <Filter Include="Source\Ember\ImGui">
       <UniqueIdentifier>{FA28FAEF-E60C-BB45-4F6D-B5983B70A5C7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Ember\Math">
+      <UniqueIdentifier>{A9DE206C-15F5-1E02-5E6C-AA23CAC1EF89}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Ember\Renderer">
       <UniqueIdentifier>{762576FC-E291-31F7-AB85-C95417B1535F}</UniqueIdentifier>
     </Filter>
@@ -33,6 +36,9 @@
     </Filter>
     <Filter Include="Source\Ember\Scene">
       <UniqueIdentifier>{ED20AAF0-D904-6B46-4265-65992E6855C8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Ember\Utils">
+      <UniqueIdentifier>{30B5D7F0-1C99-9846-85F9-929971FC82C8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Platform">
       <UniqueIdentifier>{6A48A913-D6D3-16D8-DFE4-99CC4BEF72D8}</UniqueIdentifier>
@@ -45,6 +51,12 @@
     </Filter>
     <Filter Include="Vendor">
       <UniqueIdentifier>{935FDCD7-7F01-07AE-68BC-1A0254FD8DFE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\ImGuizmo">
+      <UniqueIdentifier>{530792E3-BF92-FFA7-C8A3-829C34AE5BA8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\ImGuizmo\example">
+      <UniqueIdentifier>{2EBCD55E-9AF3-1DF6-A3FD-81190FB444EF}</UniqueIdentifier>
     </Filter>
     <Filter Include="Vendor\glm">
       <UniqueIdentifier>{627B7327-4E33-B574-B73A-8ED0A3115065}</UniqueIdentifier>
@@ -126,6 +138,9 @@
     <ClInclude Include="Source\Ember\ImGui\ImGuiLayer.h">
       <Filter>Source\Ember\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Math\Math.h">
+      <Filter>Source\Ember\Math</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\Buffer.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
@@ -192,6 +207,9 @@
     <ClInclude Include="Source\Ember\Scene\ScriptableEntity.h">
       <Filter>Source\Ember\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Utils\PlatformUtils.h">
+      <Filter>Source\Ember\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClInclude>
@@ -221,6 +239,42 @@
     </ClInclude>
     <ClInclude Include="Source\emberpch.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\ImCurveEdit.h">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\ImGradient.h">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\ImGuizmo.h">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\ImSequencer.h">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\ImApp.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\imconfig.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\imgui.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\imgui_internal.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\imstb_rectpack.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\imstb_textedit.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\imstb_truetype.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\ImGuizmo\example\stb_image.h">
+      <Filter>Vendor\ImGuizmo\example</Filter>
     </ClInclude>
     <ClInclude Include="Vendor\glm\glm\common.hpp">
       <Filter>Vendor\glm\glm</Filter>
@@ -1479,7 +1533,6 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Utils\PlatformUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1502,6 +1555,9 @@
     </ClCompile>
     <ClCompile Include="Source\Ember\ImGui\ImGuiLayer.cpp">
       <Filter>Source\Ember\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Math\Math.cpp">
+      <Filter>Source\Ember\Math</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Renderer\Buffer.cpp">
       <Filter>Source\Ember\Renderer</Filter>
@@ -1581,15 +1637,41 @@
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp">
       <Filter>Source\Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsPlatformUtils.cpp">
+      <Filter>Source\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp">
       <Filter>Source\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Source\emberpch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImCurveEdit.cpp">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImGradient.cpp">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImSequencer.cpp">
+      <Filter>Vendor\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\imgui.cpp">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\imgui_draw.cpp">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\imgui_widgets.cpp">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\main.cpp">
+      <Filter>Vendor\ImGuizmo\example</Filter>
+    </ClCompile>
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Platform\Windows\WindowsPlatformUtils.cpp" />
   </ItemGroup>
 </Project>

@@ -32,12 +32,14 @@ namespace Ember
 	private:
 		Ref<Scene> m_ActiveScene;
 
+#if 0
 		Entity m_BoxEntity;
 		Entity m_SphereEntity;
 		Entity m_EditorCamera;
 		Entity m_GameCamera;
 		Entity m_DirectionalLight;
 		Entity m_PointLight;
+#endif
 
 		Ref<Framebuffer> m_Framebuffer;
 

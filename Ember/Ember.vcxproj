@@ -78,7 +78,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -101,7 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -128,7 +128,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -168,6 +168,7 @@
     <ClInclude Include="Source\Ember\Events\MouseEvent.h" />
     <ClInclude Include="Source\Ember\Gameplay\Controller\Controller.h" />
     <ClInclude Include="Source\Ember\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="Source\Ember\Math\Math.h" />
     <ClInclude Include="Source\Ember\Renderer\Buffer.h" />
     <ClInclude Include="Source\Ember\Renderer\Camera.h" />
     <ClInclude Include="Source\Ember\Renderer\Framebuffer.h" />
@@ -201,6 +202,18 @@
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Source\emberpch.h" />
+    <ClInclude Include="Vendor\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="Vendor\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="Vendor\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="Vendor\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\ImApp.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\imconfig.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\imgui.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\imgui_internal.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\imstb_rectpack.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\imstb_textedit.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\imstb_truetype.h" />
+    <ClInclude Include="Vendor\ImGuizmo\example\stb_image.h" />
     <ClInclude Include="Vendor\glm\glm\common.hpp" />
     <ClInclude Include="Vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="Vendor\glm\glm\detail\_fixes.hpp" />
@@ -629,6 +642,7 @@
     <ClCompile Include="Source\Ember\Core\Log.cpp" />
     <ClCompile Include="Source\Ember\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Ember\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="Source\Ember\Math\Math.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Buffer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Camera.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Framebuffer.cpp" />
@@ -659,6 +673,30 @@
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\emberpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImCurveEdit.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImGradient.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImGuizmo.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\ImSequencer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\imgui.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\imgui_draw.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\imgui_widgets.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\ImGuizmo\example\main.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Vendor\stb_image\stb_image.cpp" />
   </ItemGroup>

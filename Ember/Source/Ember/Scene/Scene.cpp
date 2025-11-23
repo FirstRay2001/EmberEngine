@@ -52,6 +52,20 @@ namespace Ember
 		});
 	}
 
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& camComp = view.get<CameraComponent>(entity);
+			if (camComp.m_IsPrimary)
+			{
+				return Entity{ entity, this };
+			}
+		}
+		return Entity{};
+	}
+
 	void Scene::UpdateScripts(const Timestep& timestep)
 	{
 		auto view = m_Registry.view<NativeScriptComponent>();

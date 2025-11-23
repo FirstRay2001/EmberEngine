@@ -26,6 +26,10 @@ namespace Ember
 
 		void OnUpdate(const Timestep& timestep);
 		void OnViewportResize(uint32_t width, uint32_t height);
+
+	public:
+		Entity GetPrimaryCameraEntity();
+
 	private:
 		void UpdateScripts(const Timestep& timestep);
 		void Render();

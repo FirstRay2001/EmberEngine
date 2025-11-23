@@ -23,6 +23,8 @@ namespace Ember
 		// 渲染Hierarchy
 		void OnImGuiRender();
 
+		Entity GetSelectedEntity() const { return m_SelectedEntity; }
+
 	private:
 		void DrawEntityNode(Entity entity);
 
