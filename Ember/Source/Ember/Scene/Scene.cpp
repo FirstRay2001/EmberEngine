@@ -44,9 +44,6 @@ namespace Ember
 
 	void Scene::OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera)
 	{
-		// 更新编辑器相机
-		editorCamera.OnUpdate(timestep);
-
 		// 编辑器场景渲染
 		RenderEditor(editorCamera);
 	}
@@ -97,10 +94,6 @@ namespace Ember
 
 	void Scene::RenderRuntime()
 	{
-		// 清屏
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
-		RenderCommand::Clear();
-
 		// 获取光照组件
 		{
 			// 点光源
@@ -181,10 +174,6 @@ namespace Ember
 
 	void Scene::RenderEditor(EditorCamera& editorCamera)
 	{
-		// 清屏
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
-		RenderCommand::Clear();
-
 		// 获取光照组件
 		{
 			// 点光源
@@ -228,7 +217,7 @@ namespace Ember
 			auto& transform = meshView.get<TransformComponent>(entity).GetTransform();
 			auto& meshComp = meshView.get<MeshComponent>(entity);
 			auto& mesh = meshComp.GetMesh();
-			Renderer::Submit(mesh, transform);
+			Renderer::Submit(mesh, (int)entity, transform);
 		}
 
 		// 遍历所有网格线框实体并渲染它们

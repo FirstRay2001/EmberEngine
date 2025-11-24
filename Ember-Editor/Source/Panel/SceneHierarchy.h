@@ -23,6 +23,7 @@ namespace Ember
 		// 渲染Hierarchy
 		void OnImGuiRender();
 
+		void SetSelectedEntity(Entity entity) { m_SelectedEntity = entity; }
 		Entity GetSelectedEntity() const { return m_SelectedEntity; }
 
 	private:

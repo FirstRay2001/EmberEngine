@@ -80,11 +80,14 @@ uniform int u_PointLightCount;
 uniform PointLight u_PointLights[4];
 uniform DirectionalLight u_DirectionalLight;
 
+uniform int u_EntityID;
+
 in vec3 v_Normal;
 in vec2 v_TexCoord;
 in vec3 v_FragPos;
 
 layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int EntityID;
 
 
 vec3 CalcDirectionalLighting(vec3 albedo, vec3 specularColor, float shininess, vec3 normal)
@@ -166,4 +169,5 @@ void main() {
 		lighting += CalcPointLighting(albedo, specularColor, shininess, normal, u_PointLights[i]);
 	
     FragColor = vec4(lighting, 1);
+	EntityID = u_EntityID;
 }

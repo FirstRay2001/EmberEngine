@@ -26,10 +26,14 @@ struct SimpelMaterial
 
 uniform SimpelMaterial u_Material;
 
-out vec4 FragColor;
+uniform int u_EntityID;
+
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int EntityID;
 
 void main()
 {
     FragColor =  vec4(u_Material.Albedo, 1.0);
+    EntityID = u_EntityID;
 }
 

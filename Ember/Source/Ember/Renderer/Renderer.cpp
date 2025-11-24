@@ -95,6 +95,16 @@ namespace Ember
 		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
 	}
 
+	void Renderer::Submit(const Mesh& mesh, int entityId, const glm::mat4& transform)
+	{
+		// 提交实体ID到Shader
+		auto shader = mesh.GetShader();
+		shader->Bind();
+		shader->SetUniformInt("u_EntityID", entityId);
+
+		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
+	}
+
 	void Renderer::DrawLines(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->Bind();

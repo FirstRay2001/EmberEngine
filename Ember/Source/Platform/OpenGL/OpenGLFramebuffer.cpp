@@ -28,7 +28,7 @@ namespace Ember
 			glCreateTextures(TextureTarget(multisampled), count, outID);
 		}
 
-		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, uint32_t width, uint32_t height, int index)
+		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
 		{
 			if (samples > 1)
 			{
@@ -36,7 +36,7 @@ namespace Ember
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -92,7 +92,7 @@ namespace Ember
 	OpenGlFrameBuffer::~OpenGlFrameBuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+		glDeleteTextures((int)m_ColorAttachments.size(), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
@@ -102,7 +102,7 @@ namespace Ember
 		if (m_RendererID)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
-			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+			glDeleteTextures((int)m_ColorAttachments.size(), m_ColorAttachments.data());
 			glDeleteTextures(1, &m_DepthAttachment);
 
 			m_ColorAttachments.clear();
@@ -118,14 +118,17 @@ namespace Ember
 		if (!m_ColorAttachmentSpecifications.empty())
 		{
 			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
-			Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
-			for (size_t i = 0; i < m_ColorAttachments.size(); i++)
+			Utils::CreateTextures(multisample, m_ColorAttachments.data(), (uint32_t)m_ColorAttachments.size());
+			for (int i = 0; i < m_ColorAttachments.size(); i++)
 			{
 				Utils::BindTexture(multisample, m_ColorAttachments[i]);
 				switch (m_ColorAttachmentSpecifications[i].TextureFormat)
 				{
 				case FramebufferTextureFormat::RGBA8:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, m_Specification.Width, m_Specification.Height, i);
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+					break;
+				case FramebufferTextureFormat::RED_INTEGER:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
 					break;
 				}
 			}
@@ -186,6 +189,31 @@ namespace Ember
 		m_Specification.Width = width;
 		m_Specification.Height = height;
 		Invalidate();
+	}
+
+	int OpenGlFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y) const
+	{
+		EMBER_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "Attachment index out of bounds!");
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + (GLenum)attachmentIndex);
+		int pixelData;
+		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+		return pixelData;
+	}
+
+	void OpenGlFrameBuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+		EMBER_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "Attachment index out of bounds!");
+		auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
+		GLenum format = 0;
+
+		switch (spec.TextureFormat)
+		{
+		case FramebufferTextureFormat::RED_INTEGER:
+			format = GL_RED_INTEGER;
+			break;
+		}
+
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0, format, GL_INT, &value);
 	}
 
 	

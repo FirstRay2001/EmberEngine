@@ -28,6 +28,7 @@ namespace Ember
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = {
 			FramebufferTextureSpecification(FramebufferTextureFormat::RGBA8),
+			FramebufferTextureSpecification(FramebufferTextureFormat::RED_INTEGER),
 			FramebufferTextureSpecification(FramebufferTextureFormat::Depth)
 		};
 		fbSpec.Width = 1280;
@@ -120,11 +121,49 @@ namespace Ember
 
 	void EditorLayer::OnUpdate(const Timestep& timestep)
 	{
+		// 更新Framebuffer规格
+		if (m_ViewportSize.x != m_Framebuffer->GetSpecification().Width || m_ViewportSize.y != m_Framebuffer->GetSpecification().Height)
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_EditorCamera->SetScreenSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
+
+		// 更新编辑器相机
+		if(m_ViewportFocused)
+			m_EditorCamera->OnUpdate(timestep);
+
 		//////////////// 更新Scene ////////////////////
 		m_Framebuffer->Bind();
 		{
+			// 清屏
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.13f, 1.0f });
+			RenderCommand::Clear();
+
+			// 清除颜色附件
+			m_Framebuffer->ClearAttachment(1, -1);
+
 			// m_ActiveScene->OnUpdateRuntime(timestep);
 			m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera);
+
+			// 鼠标拾取
+			if (m_ViewportHovered && !ImGuizmo::IsUsing() && Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_LEFT))
+			{
+				auto [mx, my] = ImGui::GetMousePos();
+				mx -= m_ViewportBounds[0].x;
+				my -= m_ViewportBounds[0].y;
+				my = m_ViewportSize.y - my;
+				glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+				if (mx >= 0 && my >= 0 && mx < viewportSize.x && my < viewportSize.y)
+				{
+					int pixelData = m_Framebuffer->ReadPixel(1, (int)mx, (int)my);
+					if (pixelData != -1)
+					{
+						Entity selectedEntity((entt::entity)pixelData, m_ActiveScene.get());
+						m_SceneHierarchyPanel.SetSelectedEntity(selectedEntity);
+					}
+				}
+			}
 		}
 		m_Framebuffer->Unbind();
 	}
@@ -222,21 +261,23 @@ namespace Ember
 		// Viewport面板
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
+		auto viewportOffset = ImGui::GetCursorPos();
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
 		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
-		{
-			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_EditorCamera->SetScreenSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-		}
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
 		ImGui::Image((void*)(uintptr_t)textureID, 
 			ImVec2{ (float)m_Framebuffer->GetSpecification().Width, (float)m_Framebuffer->GetSpecification().Height }, 
 			ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		auto windowSize = ImGui::GetWindowSize();
+		ImVec2 minBound = ImGui::GetWindowPos();
+		minBound.x += viewportOffset.x;
+		minBound.y += viewportOffset.y;
+		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+		m_ViewportBounds[0] = { minBound.x, minBound.y };
+		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 
 		// Gizmo操作面板
 		static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
