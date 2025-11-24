@@ -20,6 +20,8 @@ namespace Ember
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray) override;
 		virtual void SetViewport(const uint32_t& width, const uint32_t& height) override;
+		virtual void SetDepthMask(bool enabled) override;
+		virtual void SetCullFace(CullFace face) override;
 	};
 }
 

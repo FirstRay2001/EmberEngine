@@ -1,18 +1,83 @@
 Scene: Untitled
 Entities:
-  - EntityID: 5
+  - EntityID: 6
     Tag:
-      Tag: Grid
+      Tag: Skybox
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    Grid:
-      ShaderPath: Asset/Shader/SimpleColor.glsl
+    Skybox:
+      SkyboxPath: D:\Dev\Project\EmberEngine\Ember-Editor\Asset\Texture\Skybox
+      ShaderPath: D:\Dev\Project\EmberEngine\Ember-Editor\Asset\Shader\Skybox.glsl
+  - EntityID: 5
+    Tag:
+      Tag: Wall
+    Transform:
+      Position: [-2.4000001, 2.4000001, -0.800000012]
+      Rotation: [0, 55.5999985, 0]
+      Scale: [1, 1, 1]
+    Mesh:
       VertexArray:
-        Size: 10
-        Divisions: 10
+        Type: Cube
+        Scale: [5, 5, 1]
+      Material:
+        Name: BoxMaterial
+        ShadingModel: BlinnPhong
+        Albedo: [0.800000012, 0.800000012, 0.800000012]
+        AlbedoTexturePath: Asset/Texture/GridBox_Default.png
+        SpecularColor: [0.200000003, 0.200000003, 0.200000003]
+        Shininess: 32
+        Emissive: [0, 0, 0]
+        Opacity: 1
+      ShaderPath: Asset/Shader/BlinnPhong.glsl
   - EntityID: 4
+    Tag:
+      Tag: Ball
+    Transform:
+      Position: [2.70000005, 0.800000012, 2.0999999]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Mesh:
+      VertexArray:
+        Type: Sphere
+        Radius: 1
+        SectorCount: 32
+        StackCount: 32
+      Material:
+        Name: BallMateial
+        ShadingModel: BlinnPhong
+        Albedo: [0.800000012, 0.200000003, 0.200000003]
+        SpecularColor: [0.800000012, 0.800000012, 0.800000012]
+        Shininess: 64
+        Emissive: [0, 0, 0]
+        Opacity: 1
+      ShaderPath: Asset/Shader/BlinnPhong.glsl
+  - EntityID: 3
+    Tag:
+      Tag: EditorCamera
+    Transform:
+      Position: [-0.5, 3.5999999, 8.80000019]
+      Rotation: [-18.1000004, -0.200000003, 0]
+      Scale: [1, 1, 1]
+    Camera:
+      Aspect: 1.45392156
+      FOV: 52.598423
+      NearClip: 0.100000001
+      FarClip: 100
+  - EntityID: 2
+    Tag:
+      Tag: DirectionalLight
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-20, 260, 0]
+      Scale: [1, 1, 1]
+    DirectionalLight:
+      Ambient: [0.200000003, 0.200000003, 0.200000003]
+      Diffuse: [0.5, 0.5, 0.5]
+      Specular: [1, 1, 1]
+      Direction: [-0.925416589, -0.342020124, -0.163175866]
+  - EntityID: 1
     Tag:
       Tag: PointLight
     Transform:
@@ -41,70 +106,15 @@ Entities:
       Constant: 1
       Linear: 0.0900000036
       Quadratic: 0.0320000015
-  - EntityID: 3
-    Tag:
-      Tag: DirectionalLight
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-20, 260, 0]
-      Scale: [1, 1, 1]
-    DirectionalLight:
-      Ambient: [0.200000003, 0.200000003, 0.200000003]
-      Diffuse: [0.5, 0.5, 0.5]
-      Specular: [1, 1, 1]
-      Direction: [-0.925416589, -0.342020124, -0.163175866]
-  - EntityID: 2
-    Tag:
-      Tag: EditorCamera
-    Transform:
-      Position: [-0.5, 3.5999999, 8.80000019]
-      Rotation: [-18.1000004, -0.200000003, 0]
-      Scale: [1, 1, 1]
-    Camera:
-      Aspect: 1.45392156
-      FOV: 52.598423
-      NearClip: 0.100000001
-      FarClip: 100
-  - EntityID: 1
-    Tag:
-      Tag: Ball
-    Transform:
-      Position: [2.70000005, 0.800000012, 2.0999999]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Mesh:
-      VertexArray:
-        Type: Sphere
-        Radius: 1
-        SectorCount: 32
-        StackCount: 32
-      Material:
-        Name: BallMateial
-        ShadingModel: BlinnPhong
-        Albedo: [0.800000012, 0.200000003, 0.200000003]
-        SpecularColor: [0.800000012, 0.800000012, 0.800000012]
-        Shininess: 64
-        Emissive: [0, 0, 0]
-        Opacity: 1
-      ShaderPath: Asset/Shader/BlinnPhong.glsl
   - EntityID: 0
     Tag:
-      Tag: Wall
+      Tag: Grid
     Transform:
-      Position: [-2.4000001, 2.4000001, -0.800000012]
-      Rotation: [0, 55.5999985, 0]
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    Mesh:
+    Grid:
+      ShaderPath: Asset/Shader/SimpleColor.glsl
       VertexArray:
-        Type: Cube
-        Scale: [5, 5, 1]
-      Material:
-        Name: BoxMaterial
-        ShadingModel: BlinnPhong
-        Albedo: [0.800000012, 0.800000012, 0.800000012]
-        AlbedoTexturePath: Asset/Texture/GridBox_Default.png
-        SpecularColor: [0.200000003, 0.200000003, 0.200000003]
-        Shininess: 32
-        Emissive: [0, 0, 0]
-        Opacity: 1
-      ShaderPath: Asset/Shader/BlinnPhong.glsl
+        Size: 10
+        Divisions: 10

@@ -332,6 +332,18 @@ namespace Ember
 			out << YAML::EndMap;
 		}
 
+		// 天空盒组件
+		if (entity.HasComponent<SkyboxComponent>())
+		{
+			out << YAML::Key << "Skybox";
+			out << YAML::BeginMap;
+			auto skyboxPath = entity.GetComponent<SkyboxComponent>().m_Cubemap->GetPath();
+			out << YAML::Key << "SkyboxPath" << YAML::Value << skyboxPath;
+			auto shaderPath = entity.GetComponent<SkyboxComponent>().m_Shader->GetFilepath();
+			out << YAML::Key << "ShaderPath" << YAML::Value << shaderPath;
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap;
 	}
 
@@ -546,6 +558,16 @@ namespace Ember
 				dirLight.Diffuse = entityNode["DirectionalLight"]["Diffuse"].as<glm::vec3>();
 				dirLight.Specular = entityNode["DirectionalLight"]["Specular"].as<glm::vec3>();
 				dirLight.Direction = entityNode["DirectionalLight"]["Direction"].as<glm::vec3>();
+			}
+
+			// 天空盒组件
+			if (entityNode["Skybox"])
+			{
+				auto& skyboxComp = entity.AddComponent<SkyboxComponent>();
+				std::string skyboxPath = entityNode["Skybox"]["SkyboxPath"].as<std::string>();
+				skyboxComp.m_Cubemap = CubemapTexture::Create(skyboxPath);
+				std::string shaderPath = entityNode["Skybox"]["ShaderPath"].as<std::string>();
+				skyboxComp.m_Shader = ShaderLibrary::Get().LoadSync(shaderPath);
 			}
 		}
 

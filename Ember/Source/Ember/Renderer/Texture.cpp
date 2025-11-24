@@ -41,13 +41,13 @@ namespace Ember
 		return nullptr;
 	}
 
-	unsigned char* Texture2D::ReadData(const std::string& path, int& width, int& height, int& channel)
+	unsigned char* Texture::ReadData(const std::string& path, int& width, int& height, int& channel)
 	{
 		stbi_set_flip_vertically_on_load(1);
 		return stbi_load(path.c_str(), &width, &height, &channel, 0);
 	}
 
-	void Texture2D::freeImageData(unsigned char* data)
+	void Texture::freeImageData(unsigned char* data)
 	{
 		stbi_image_free(data);
 	}
@@ -61,4 +61,34 @@ namespace Ember
 		size_t count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 		return filepath.substr(lastSlash, count);
 	}
+
+	Ref<CubemapTexture> CubemapTexture::Create(const std::array<std::string, 6>& faces)
+	{
+		// 根据API类型创建立方体纹理实例
+		switch (RendererAPI::GetAPI())
+		{
+		case RendererAPI::API::None:
+			EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return CreateRef<OpenGLCubemapTexture>(faces);
+		}
+		EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
+
+	Ref<CubemapTexture> CubemapTexture::Create(const std::string& directory)
+	{
+		std::array<std::string, 6> faces =
+		{
+			directory + "/right.jpg",
+			directory + "/left.jpg",
+			directory + "/top.jpg",
+			directory + "/bottom.jpg",
+			directory + "/front.jpg",
+			directory + "/back.jpg"
+		};
+		return Create(faces);
+	}
+
 }

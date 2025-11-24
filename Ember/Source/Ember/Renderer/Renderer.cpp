@@ -9,10 +9,14 @@ namespace Ember
 {
 	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
 	int Renderer::s_PointLightCount = 0;
+	Ref<VertexArray> Renderer::s_DefaultCube = nullptr;
 
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
+
+		// 创建默认立方体VAO
+		s_DefaultCube = VertexArray::CreateCube(glm::vec3(1.0f));
 	}
 
 	void Renderer::BeginScene(Camera& camera)
@@ -103,6 +107,24 @@ namespace Ember
 		shader->SetUniformInt("u_EntityID", entityId);
 
 		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
+	}
+
+	void Renderer::RenderSkybox(const Ref<Shader>& shader, const Ref<CubemapTexture>& cubemap, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+	{
+		if (!cubemap || !shader)
+			return;
+
+		shader->Bind();
+
+		// 去掉平移分量
+		glm::mat4 view = glm::mat4(glm::mat3(viewMatrix));
+		shader->SetUniformMat4("u_View", view);
+		shader->SetUniformMat4("u_Projection", projectionMatrix);
+		cubemap->Bind(0);
+		shader->SetUniformInt("u_Cubemap", 0);
+
+		s_DefaultCube->Bind();
+		RenderCommand::DrawIndexed(s_DefaultCube);
 	}
 
 	void Renderer::DrawLines(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)

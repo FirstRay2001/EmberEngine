@@ -60,6 +60,16 @@ namespace Ember
 			s_RendererAPI->SetViewport(width, height);
 		}
 
+		inline static void SetDepthMask(bool enabled)
+		{
+			s_RendererAPI->SetDepthMask(enabled);
+		}
+
+		inline static void SetCullFace(RendererAPI::CullFace face)
+		{
+			s_RendererAPI->SetCullFace(face);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

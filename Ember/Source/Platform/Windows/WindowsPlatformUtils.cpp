@@ -7,6 +7,7 @@
 
 #include <sstream>
 #include <commdlg.h>
+#include <shlobj.h>
 #include <GLFW/glfw3.h>
 #define  GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
@@ -61,6 +62,28 @@ namespace Ember
 		}
 
 		// 用户取消或出错，返回空字符串
+		return std::string();
+	}
+
+	std::string FileDialog::OpenFolder()
+	{	
+		BROWSEINFOA bi;
+		CHAR path[MAX_PATH];
+		ZeroMemory(&bi, sizeof(bi));
+		bi.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow());
+		bi.lpszTitle = "Select Folder";
+		bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+		LPITEMIDLIST pidl = SHBrowseForFolderA(&bi);
+		if (pidl != nullptr)
+		{
+			// 获取选中的路径
+			if (SHGetPathFromIDListA(pidl, path))
+			{
+				CoTaskMemFree(pidl);
+				return std::string(path);
+			}
+			CoTaskMemFree(pidl);
+		}
 		return std::string();
 	}
 }

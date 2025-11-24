@@ -16,5 +16,8 @@ namespace Ember
 
 		// 保存文件对话框，返回保存的文件路径
 		static std::string SaveFile(const char* filter = "All Files\0*.*\0");
+
+		// 打开文件夹对话框，返回选中的文件夹路径
+		static std::string OpenFolder();
 	};
 }

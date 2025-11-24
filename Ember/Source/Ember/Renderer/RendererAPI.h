@@ -18,6 +18,13 @@ namespace Ember
 			OpenGL
 		};
 
+		enum class CullFace
+		{
+			None = 0,
+			Back = 1,
+			Front = 2
+		};
+
 	public:
 		virtual void Init() = 0;
 		virtual void* SetupMutiThread(void* window) = 0;
@@ -28,6 +35,8 @@ namespace Ember
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray) = 0;
 		virtual void SetViewport(const uint32_t& width, const uint32_t& height) = 0;
+		virtual void SetDepthMask(bool enabled) = 0;
+		virtual void SetCullFace(CullFace face) = 0;
 
 		inline static API GetAPI() { return s_API; }
 

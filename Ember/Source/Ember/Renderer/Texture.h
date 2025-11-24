@@ -24,18 +24,32 @@ namespace Ember
 
 		// 文件路径转换为名称
 		static std::string FilePathToName(const std::string& filepath);
-	};
-
-	class Texture2D : public Texture
-	{
-	public:
-		static Ref<Texture2D> Create(const std::string& path);
-		static Ref<Texture2D> Create(const unsigned char* data, int width, int height, int channel);
 
 		// 读取图像到内存
 		static unsigned char* ReadData(const std::string& path, int& width, int& height, int& channel);
 
 		// 释放图像内存
 		static void freeImageData(unsigned char* data);
+	};
+
+	// 2D纹理类
+	class Texture2D : public Texture
+	{
+	public:
+		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const unsigned char* data, int width, int height, int channel);	
+	};
+
+	// 立方体纹理类
+	class CubemapTexture : public Texture
+	{
+	public:
+		static Ref<CubemapTexture> Create(const std::array<std::string, 6>& faces);
+		static Ref<CubemapTexture> Create(const std::string& directory);
+
+		std::array<std::string, 6> GetFaces() const { return m_Faces; }
+
+	private:
+		std::array<std::string, 6> m_Faces;
 	};
 }

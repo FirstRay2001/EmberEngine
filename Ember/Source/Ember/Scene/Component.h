@@ -11,6 +11,7 @@
 #include "Ember/Renderer/Mesh.h"
 #include "Ember/Renderer/Camera.h"
 #include "Ember/Renderer/Light.h"
+#include "Ember/Renderer/Texture.h"
 #include "ScriptableEntity.h"
 
 namespace Ember
@@ -101,6 +102,20 @@ namespace Ember
 		glm::mat4 GetProjectionMatrix() const
 		{
 			return m_Camera.GetProjectionMatrix();
+		}
+	};
+
+	// 天空盒组件
+	struct SkyboxComponent
+	{
+		Ref<CubemapTexture> m_Cubemap = nullptr;
+		Ref<Shader> m_Shader = nullptr;
+		SkyboxComponent() = default;
+		SkyboxComponent(const SkyboxComponent&) = default;
+		SkyboxComponent(const Ref<CubemapTexture>& cubemap, const Ref<Shader>& shader) :
+			m_Cubemap(cubemap),
+			m_Shader(shader)
+		{
 		}
 	};
 

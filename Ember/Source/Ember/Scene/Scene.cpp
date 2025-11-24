@@ -210,6 +210,32 @@ namespace Ember
 		
 		Renderer::BeginScene(editorCamera);
 
+		// 渲染天空盒
+		{
+			// 禁用深度写入以正确渲染天空盒
+			RenderCommand::SetDepthMask(false);
+
+			// 使用正面剔除渲染天空盒
+			RenderCommand::SetCullFace(RendererAPI::CullFace::Front);
+
+			// 渲染天空盒
+			auto skyboxView = m_Registry.view<SkyboxComponent>();
+			for (auto entity : skyboxView)
+			{
+				auto& skyboxComp = skyboxView.get<SkyboxComponent>(entity);
+				auto& transform = m_Registry.get<TransformComponent>(entity);
+				Renderer::RenderSkybox(skyboxComp.m_Shader, skyboxComp.m_Cubemap,
+					editorCamera.GetViewMatrix(), editorCamera.GetProjectionMatrix());
+			}
+
+			// 恢复面剔除设置
+			RenderCommand::SetCullFace(RendererAPI::CullFace::Back);
+
+			// 恢复深度写入
+			RenderCommand::SetDepthMask(true);
+		}
+		
+
 		// 遍历所有带有MeshComponent和TransformComponent的实体并渲染它们
 		auto meshView = m_Registry.view<TransformComponent, MeshComponent>();
 		for (auto entity : meshView)
@@ -248,6 +274,12 @@ namespace Ember
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
 		component.m_Camera.SetScreentSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SkyboxComponent>(Entity entity, SkyboxComponent& component)
+	{
+		// Nothing to do
 	}
 
 	template<>

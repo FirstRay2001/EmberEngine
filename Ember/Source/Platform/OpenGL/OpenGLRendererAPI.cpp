@@ -76,4 +76,30 @@ namespace Ember
 	{
 		glViewport(0, 0, width, height);
 	}
+
+	void OpenGLRendererAPI::SetDepthMask(bool enabled)
+	{	
+		if (enabled)
+			glDepthMask(GL_TRUE);
+		else
+			glDepthMask(GL_FALSE);
+	}
+
+	void OpenGLRendererAPI::SetCullFace(CullFace face)
+	{
+		switch (face)
+		{
+		case CullFace::None:
+			glDisable(GL_CULL_FACE);
+			break;
+		case CullFace::Back:
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+			break;
+		case CullFace::Front:
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+			break;
+		}
+	}
 }

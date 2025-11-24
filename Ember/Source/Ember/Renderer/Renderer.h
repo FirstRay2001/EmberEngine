@@ -11,6 +11,7 @@
 #include "Ember/Renderer/Material.h"
 #include "Ember/Renderer/Mesh.h"
 #include "Ember/Renderer/Light.h"
+#include "Ember/Renderer/Texture.h"
 
 namespace Ember
 {
@@ -31,7 +32,10 @@ namespace Ember
 
 		static void Submit(const Mesh& mesh, const glm::mat4& transform = glm::mat4(1.0));
 
+		// For Editor
 		static void Submit(const Mesh& mesh, int entityId = -1, const glm::mat4& transform = glm::mat4(1.0));
+
+		static void RenderSkybox(const Ref<Shader>& shader, const Ref<CubemapTexture>& cubemap, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
 
 		static void DrawLines(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0));
 
@@ -54,6 +58,7 @@ namespace Ember
 
 		static int s_PointLightCount;
 		static SceneData* s_SceneData;
+		static Ref<VertexArray> s_DefaultCube;
 	};
 }
 

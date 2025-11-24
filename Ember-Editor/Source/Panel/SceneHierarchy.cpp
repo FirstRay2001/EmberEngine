@@ -7,6 +7,8 @@
 #include "imgui/imgui_internal.h"
 #include "Ember/Scene/Component.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "Ember/Utils/PlatformUtils.h"
+#include "Ember/Renderer/Texture.h"
 
 namespace Ember
 {
@@ -294,6 +296,15 @@ namespace Ember
 				m_SelectedEntity.AddComponent<DirectionalLightComponent>();
 				ImGui::CloseCurrentPopup();
 			}
+
+			// 天空盒
+			ImGui::Separator();
+			if (ImGui::MenuItem("Skybox"))
+			{
+				m_SelectedEntity.AddComponent<SkyboxComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -471,6 +482,60 @@ namespace Ember
 					ImGui::NextColumn();
 					ImGui::Text("%d", divisions);
 				}
+				ImGui::Columns(1);
+			});
+		ImGui::PopStyleColor();
+
+		// 天空盒组件
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.2f, 0.2f, 0.8f, 1.0f });
+		DrawSingleComponent<SkyboxComponent>("Skybox", entity, [](auto& skyboxComp)
+			{
+				// 当前天空盒信息显示
+				auto cubemap = skyboxComp.m_Cubemap;
+				std::string cubemapPath = cubemap ? cubemap->GetPath() : "None";
+				std::string shaderName = skyboxComp.m_Shader ? skyboxComp.m_Shader->GetName() : "None";
+
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100);
+
+				// Cubemap路径显示和选择
+				ImGui::Text("Cubemap");
+				ImGui::NextColumn();
+				ImGui::PushItemWidth(-1);
+				ImGui::Text("%s", cubemapPath.c_str());
+
+				// 添加选择按钮
+				if (ImGui::Button("Select Cubemap", ImVec2(-1, 0)))
+				{
+					// 打开文件对话框选择天空盒目录
+					std::string newPath = FileDialog::OpenFolder();
+					if (!newPath.empty())
+					{
+						// 加载新的天空盒
+						skyboxComp.m_Cubemap = CubemapTexture::Create(newPath);
+					}
+				}
+				ImGui::PopItemWidth();
+
+				// Shader信息
+				ImGui::NextColumn();
+				ImGui::Text("Shader");
+				ImGui::NextColumn();
+				ImGui::Text("%s", shaderName.c_str());
+
+				// Shader选择按钮
+				ImGui::PushItemWidth(-1);
+				if (ImGui::Button("Select Shader", ImVec2(-1, 0)))
+				{
+					// 打开文件对话框选择Shader文件
+					std::string shaderPath = FileDialog::OpenFile("GLSL Shader (*.glsl)\0*.glsl\0");
+					if (!shaderPath.empty())
+					{
+						// 加载新的Shader
+						skyboxComp.m_Shader = ShaderLibrary::Get().LoadSync(shaderPath);
+					}
+				}
+
 				ImGui::Columns(1);
 			});
 		ImGui::PopStyleColor();
