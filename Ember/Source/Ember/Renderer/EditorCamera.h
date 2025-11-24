@@ -103,7 +103,7 @@ namespace Ember
 
 		float m_Distance = 10.0f;
 		float m_Yaw = 0.0f;
-		float m_Pitch = 0.0f;
+		float m_Pitch = glm::radians(30.0f);
 		glm::vec2 m_InitialMousePosition = {0.0f, 0.0f};
 	};
 }
