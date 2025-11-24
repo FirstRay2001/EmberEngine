@@ -84,7 +84,8 @@ in vec3 v_Normal;
 in vec2 v_TexCoord;
 in vec3 v_FragPos;
 
-out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
+
 
 vec3 CalcDirectionalLighting(vec3 albedo, vec3 specularColor, float shininess, vec3 normal)
 {

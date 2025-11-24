@@ -26,6 +26,10 @@ namespace Ember
 	{
 		// 初始化Framebuffer
 		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = {
+			FramebufferTextureSpecification(FramebufferTextureFormat::RGBA8),
+			FramebufferTextureSpecification(FramebufferTextureFormat::Depth)
+		};
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
@@ -229,7 +233,7 @@ namespace Ember
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera->SetScreenSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
 		ImGui::Image((void*)(uintptr_t)textureID, 
 			ImVec2{ (float)m_Framebuffer->GetSpecification().Width, (float)m_Framebuffer->GetSpecification().Height }, 
 			ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
