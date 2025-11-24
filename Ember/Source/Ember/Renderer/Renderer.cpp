@@ -132,7 +132,7 @@ namespace Ember
 		shader->Bind();
 		shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 		shader->SetUniformMat4("u_Transform", transform);
-		shader->SetUniformFloat3("u_Material.Albedo", glm::vec3(0.0f, 0.0f, 0.0f)); // 默认黑色
+		shader->SetUniformFloat3("u_Material.Albedo", glm::vec3(0.4f, 0.4f, 0.4f)); // 默认灰色
 		vertexArray->Bind();
 		RenderCommand::DrawLines(vertexArray);
 	}
