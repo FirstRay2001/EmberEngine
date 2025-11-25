@@ -19,5 +19,7 @@ namespace Ember
 
 		// 打开文件夹对话框，返回选中的文件夹路径
 		static std::string OpenFolder();
+
+		static std::string MakeRelativePath(const std::string& basePath, const std::string& fullPath);
 	};
 }

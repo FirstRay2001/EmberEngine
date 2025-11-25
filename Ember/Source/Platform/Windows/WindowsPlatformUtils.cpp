@@ -16,6 +16,16 @@
 
 namespace Ember
 {
+    // 浏览回调函数
+    static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
+    {
+        if (uMsg == BFFM_INITIALIZED)
+        {
+            SendMessageA(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+        }
+        return 0;
+    }
+
 	std::string FileDialog::OpenFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;       // 结构体变量
@@ -65,25 +75,64 @@ namespace Ember
 		return std::string();
 	}
 
-	std::string FileDialog::OpenFolder()
-	{	
-		BROWSEINFOA bi;
-		CHAR path[MAX_PATH];
-		ZeroMemory(&bi, sizeof(bi));
-		bi.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow());
-		bi.lpszTitle = "Select Folder";
-		bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
-		LPITEMIDLIST pidl = SHBrowseForFolderA(&bi);
-		if (pidl != nullptr)
-		{
-			// 获取选中的路径
-			if (SHGetPathFromIDListA(pidl, path))
-			{
-				CoTaskMemFree(pidl);
-				return std::string(path);
-			}
-			CoTaskMemFree(pidl);
-		}
-		return std::string();
-	}
+    std::string FileDialog::OpenFolder()
+    {
+        // 获取当前工作目录（项目目录）
+        char projectDir[MAX_PATH];
+        GetCurrentDirectoryA(MAX_PATH, projectDir);
+        std::string projectDirStr = projectDir;
+
+        BROWSEINFOA bi;
+        CHAR selectedPath[MAX_PATH];
+        ZeroMemory(&bi, sizeof(bi));
+        bi.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow());
+        bi.lpszTitle = "Select Folder";
+        bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_USENEWUI;
+
+        // 确保路径格式正确
+        std::string initialPath = projectDirStr;
+        // 如果路径不以反斜杠结尾，添加一个
+        if (!initialPath.empty() && initialPath.back() != '\\') {
+            initialPath += '\\';
+        }
+
+        bi.lParam = (LPARAM)initialPath.c_str();
+        bi.lpfn = BrowseCallbackProc;
+
+        LPITEMIDLIST pidl = SHBrowseForFolderA(&bi);
+        if (pidl != nullptr)
+        {
+            if (SHGetPathFromIDListA(pidl, selectedPath))
+            {
+                std::string fullPath = selectedPath;
+                CoTaskMemFree(pidl);
+
+                // 转换为相对路径
+                return MakeRelativePath(projectDirStr, fullPath);
+            }
+            CoTaskMemFree(pidl);
+        }
+        return std::string();
+    }
+
+    // 将完整路径转换为相对于项目目录的相对路径
+    std::string FileDialog::MakeRelativePath(const std::string& basePath, const std::string& fullPath)
+    {
+        // 如果完整路径不以基础路径开头，返回完整路径
+        if (fullPath.find(basePath) != 0) {
+            return fullPath;
+        }
+
+        // 提取相对路径部分
+        std::string relativePath = fullPath.substr(basePath.length());
+
+        // 去除开头的反斜杠
+        if (!relativePath.empty() && (relativePath[0] == '\\' || relativePath[0] == '/')) {
+            relativePath = relativePath.substr(1);
+        }
+
+        return relativePath;
+    }
+
+    
 }
