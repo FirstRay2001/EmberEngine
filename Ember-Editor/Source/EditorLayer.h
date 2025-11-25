@@ -8,6 +8,7 @@
 #include "Ember/Scene/Entity.h"
 #include "Ember/Renderer/EditorCamera.h"
 #include "Panel/SceneHierarchy.h"
+#include "Panel/ContentBrowserPanel.h"
 
 namespace Ember
 {
@@ -29,6 +30,7 @@ namespace Ember
 		void NewScene();
 		void SaveScene();
 		void LoadScene();
+		void LoadScene(const std::filesystem::path& path);
 
 	private:
 		Ref<Scene> m_ActiveScene;
@@ -41,6 +43,7 @@ namespace Ember
 		bool m_ViewportHovered = false;
 
 		SceneHierarchy m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 
 #if 0
 		Entity m_BoxEntity;

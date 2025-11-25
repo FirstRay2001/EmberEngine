@@ -10,8 +10,9 @@ namespace Ember
 	void TextureLibrary::Add(const std::string& name, const Ref<Texture2D>& texture)
 	{
 		if(Exists(name))
-			EMBER_CORE_WARN("Texture already exists! Overwriting {0}", name.c_str());
-		m_Textures[name] = texture;
+			EMBER_CORE_WARN("Texture already exists: {0}", name.c_str());
+		else
+			m_Textures[name] = texture;
 	}
 
 	Ref<Texture2D> TextureLibrary::LoadSync(const std::string& filepath)

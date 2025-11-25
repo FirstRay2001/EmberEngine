@@ -17,6 +17,8 @@
 
 namespace Ember
 {
+	extern const std::filesystem::path g_AssetPath;
+
 	EditorLayer::EditorLayer() :
 		Layer("PortalGameLayer")
 	{
@@ -258,6 +260,9 @@ namespace Ember
 		// Hierarchy面板
 		m_SceneHierarchyPanel.OnImGuiRender();
 
+		// ContentBrowser面板
+		m_ContentBrowserPanel.OnImGuiRender();
+
 		// Viewport面板
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
@@ -278,6 +283,17 @@ namespace Ember
 		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
 		m_ViewportBounds[0] = { minBound.x, minBound.y };
 		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+		// 拖拽加载
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				LoadScene(std::filesystem::path(g_AssetPath) / path);
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 
 		// Gizmo操作面板
 		static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
@@ -362,11 +378,16 @@ namespace Ember
 		if (filepath.empty())
 			return;
 
+		LoadScene(std::filesystem::path(filepath));
+	}
+
+	void EditorLayer::LoadScene(const std::filesystem::path& path)
+	{
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		SceneSerializer serilizer(m_ActiveScene);
-		serilizer.Deserialize(filepath);
+		serilizer.Deserialize(path.string());
 	}
 }

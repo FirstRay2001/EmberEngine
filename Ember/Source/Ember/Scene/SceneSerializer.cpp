@@ -8,6 +8,7 @@
 #include "Component.h"
 #include "Ember/ResourceManager/TextureLibrary.h"
 #include "Ember/ResourceManager/ShaderLibrary.h"
+#include "Ember/Core/Timer.h"
 
 #include <yaml-cpp/yaml.h>
 #include <fstream>
@@ -377,6 +378,8 @@ namespace Ember
 
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
+		Timer timer;
+
 		// 读取文件，检查文件格式
 		YAML::Node data = YAML::LoadFile(filepath);
 		if (!data["Scene"])
@@ -570,6 +573,8 @@ namespace Ember
 				skyboxComp.m_Shader = ShaderLibrary::Get().LoadSync(shaderPath);
 			}
 		}
+
+		EMBER_CORE_TRACE("Scene deserialized in {0} ms", timer.ElapsedMillis());
 
 		return true;
 	}

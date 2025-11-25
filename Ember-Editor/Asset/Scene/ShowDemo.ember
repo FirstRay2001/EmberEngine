@@ -1,17 +1,5 @@
 Scene: Untitled
 Entities:
-  - EntityID: 6
-    Tag:
-      Tag: Grid
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Grid:
-      ShaderPath: Asset/Shader/SimpleColor.glsl
-      VertexArray:
-        Size: 10
-        Divisions: 10
   - EntityID: 5
     Tag:
       Tag: PointLight
@@ -41,18 +29,18 @@ Entities:
       Constant: 1
       Linear: 0.0900000036
       Quadratic: 0.0320000015
-  - EntityID: 4
+  - EntityID: 6
     Tag:
-      Tag: DirectionalLight
+      Tag: Grid
     Transform:
       Position: [0, 0, 0]
-      Rotation: [-20, 260, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    DirectionalLight:
-      Ambient: [0.200000003, 0.200000003, 0.200000003]
-      Diffuse: [0.5, 0.5, 0.5]
-      Specular: [1, 1, 1]
-      Direction: [-0.925416589, -0.342020124, -0.163175866]
+    Grid:
+      ShaderPath: Asset/Shader/SimpleColor.glsl
+      VertexArray:
+        Size: 10
+        Divisions: 10
   - EntityID: 3
     Tag:
       Tag: EditorCamera
@@ -110,11 +98,16 @@ Entities:
       ShaderPath: Asset/Shader/BlinnPhong.glsl
   - EntityID: 0
     Tag:
-      Tag: Skybox
+      Tag: Environment
     Transform:
       Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
+      Rotation: [-32.7000008, 170, 0]
       Scale: [1, 1, 1]
+    DirectionalLight:
+      Ambient: [0.187692285, 0.179607078, 0.179607078]
+      Diffuse: [0.65882355, 0.737254918, 0]
+      Specular: [0.911355495, 1, 0.627692342]
+      Direction: [0.146126911, -0.540240347, -0.828726292]
     Skybox:
       SkyboxPath: Asset\Texture\Skybox
       ShaderPath: Asset\Shader\Skybox.glsl

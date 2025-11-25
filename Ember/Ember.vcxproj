@@ -149,6 +149,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Ember\Core\Timer.h" />
     <ClInclude Include="Source\Ember\Renderer\EditorCamera.h" />
     <ClInclude Include="Source\Ember.h" />
     <ClInclude Include="Source\Ember\Core\Application.h" />
