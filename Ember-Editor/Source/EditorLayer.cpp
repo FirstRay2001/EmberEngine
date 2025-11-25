@@ -149,7 +149,7 @@ namespace Ember
 			m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera);
 
 			// 鼠标拾取
-			if (m_ViewportHovered && !ImGuizmo::IsUsing() && Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_LEFT) && !Input::IsKeyPressed(EMBER_KEY_LEFT_ALT))
+			if (m_ViewportHovered && !ImGuizmo::IsOver() && Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_LEFT) && !Input::IsKeyPressed(EMBER_KEY_LEFT_ALT))
 			{
 				auto [mx, my] = ImGui::GetMousePos();
 				mx -= m_ViewportBounds[0].x;
