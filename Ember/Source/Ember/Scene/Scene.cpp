@@ -42,10 +42,10 @@ namespace Ember
 		RenderRuntime();
 	}
 
-	void Scene::OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera)
+	void Scene::OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera, Entity selectedEntity)
 	{
 		// 编辑器场景渲染
-		RenderEditor(editorCamera);
+		RenderEditor(editorCamera, selectedEntity);
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -172,7 +172,7 @@ namespace Ember
 		Renderer::EndScene();
 	}
 
-	void Scene::RenderEditor(EditorCamera& editorCamera)
+	void Scene::RenderEditor(EditorCamera& editorCamera, Entity selectedEntity)
 	{
 		// 获取光照组件
 		{
@@ -238,13 +238,26 @@ namespace Ember
 
 		// 遍历所有带有MeshComponent和TransformComponent的实体并渲染它们
 		auto meshView = m_Registry.view<TransformComponent, MeshComponent>();
+		RenderCommand::EnableStencilTest();
 		for (auto entity : meshView)
 		{
 			auto& transform = meshView.get<TransformComponent>(entity).GetTransform();
 			auto& meshComp = meshView.get<MeshComponent>(entity);
 			auto& mesh = meshComp.GetMesh();
+
+			if (Entity{ entity, this } == selectedEntity)
+			{
+				RenderCommand::SetStencilFunc(RendererAPI::StencilFunc::ALWAYS, 1, 0xFF);
+				RenderCommand::SetStencilOp(RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::REPLACE);
+				RenderCommand::SetStencilMask(0xFF);
+			}
+			else
+			{
+				RenderCommand::SetStencilMask(0x00);
+			}
 			Renderer::Submit(mesh, (int)entity, transform);
 		}
+		RenderCommand::DisableStencilTest();
 
 		// 遍历所有网格线框实体并渲染它们
 		auto lineView = m_Registry.view<TransformComponent, GridComponent>();
@@ -253,6 +266,24 @@ namespace Ember
 			auto& transform = lineView.get<TransformComponent>(entity).GetTransform();
 			auto& gridComp = lineView.get<GridComponent>(entity);
 			Renderer::DrawLines(gridComp.m_Shader, gridComp.m_Grid, transform);
+		}
+
+		// 渲染选中实体的轮廓
+		if (selectedEntity && m_Registry.all_of<MeshComponent>(selectedEntity))
+		{
+			auto& transform = selectedEntity.GetComponent<TransformComponent>().GetTransform();
+			auto& meshComp = selectedEntity.GetComponent<MeshComponent>();
+			auto& mesh = meshComp.GetMesh();
+
+			// 绘制轮廓
+			RenderCommand::EnableStencilTest();
+			RenderCommand::SetStencilFunc(RendererAPI::StencilFunc::NOTEQUAL, 1, 0xFF);
+			RenderCommand::SetStencilOp(RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::REPLACE);
+			RenderCommand::SetStencilMask(0xFF);
+			RenderCommand::SetDepthMask(false);
+			Renderer::DrawOutline(mesh.GetVertexArray(), transform);
+			RenderCommand::SetDepthMask(true);
+			RenderCommand::DisableStencilTest();
 		}
 
 		Renderer::EndScene();

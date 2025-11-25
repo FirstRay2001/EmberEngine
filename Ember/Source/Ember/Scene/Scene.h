@@ -26,7 +26,7 @@ namespace Ember
 		void DestroyEntity(Entity& entity);
 
 		void OnUpdateRuntime(const Timestep& timestep);
-		void OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera);
+		void OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera, Entity selectedEntity);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 	public:
@@ -35,7 +35,7 @@ namespace Ember
 	private:
 		void UpdateScripts(const Timestep& timestep);
 		void RenderRuntime();
-		void RenderEditor(EditorCamera& editorCamera);
+		void RenderEditor(EditorCamera& editorCamera, Entity selectedEntity);
 
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

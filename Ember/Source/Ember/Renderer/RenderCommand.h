@@ -70,6 +70,31 @@ namespace Ember
 			s_RendererAPI->SetCullFace(face);
 		}
 
+		inline static void SetStencilFunc(RendererAPI::StencilFunc func, int ref, uint32_t mask)
+		{
+			s_RendererAPI->SetStencilFunc(func, ref, mask);
+		}
+
+		inline static void SetStencilOp(RendererAPI::StencilOp sfail, RendererAPI::StencilOp dpfail, RendererAPI::StencilOp dppass)
+		{
+			s_RendererAPI->SetStencilOp(sfail, dpfail, dppass);
+		}
+
+		inline static void SetStencilMask(unsigned int mask)
+		{
+			s_RendererAPI->SetStencilMask(mask);
+		}
+
+		inline static void EnableStencilTest()
+		{
+			s_RendererAPI->EnableStencilTest(true);
+		}
+
+		inline static void DisableStencilTest()
+		{
+			s_RendererAPI->EnableStencilTest(false);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

@@ -22,6 +22,12 @@ namespace Ember
 		virtual void SetViewport(const uint32_t& width, const uint32_t& height) override;
 		virtual void SetDepthMask(bool enabled) override;
 		virtual void SetCullFace(CullFace face) override;
+
+		// 模板测试相关函数
+		virtual void EnableStencilTest(bool enabled) override;
+		virtual void SetStencilFunc(RendererAPI::StencilFunc func, int ref, uint32_t mask) override;
+		virtual void SetStencilOp(RendererAPI::StencilOp sfail, RendererAPI::StencilOp dpfail, RendererAPI::StencilOp dppass) override;
+		virtual void SetStencilMask(unsigned int mask) override;
 	};
 }
 

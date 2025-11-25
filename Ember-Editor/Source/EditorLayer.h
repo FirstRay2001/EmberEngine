@@ -31,6 +31,7 @@ namespace Ember
 		void SaveScene();
 		void LoadScene();
 		void LoadScene(const std::filesystem::path& path);
+		void ProcessDrag(const std::filesystem::path& path);
 
 	private:
 		Ref<Scene> m_ActiveScene;

@@ -25,6 +25,31 @@ namespace Ember
 			Front = 2
 		};
 
+		// 模板测试相关枚举
+		enum class StencilFunc
+		{
+			NEVER = 0,
+			ALWAYS,
+			LESS,
+			LEQUAL,
+			GREATER,
+			GEQUAL,
+			EQUAL,
+			NOTEQUAL
+		};
+
+		enum class StencilOp
+		{
+			KEEP = 0,
+			ZERO,
+			REPLACE,
+			INCR,
+			INCR_WRAP,
+			DECR,
+			DECR_WRAP,
+			INVERT
+		};
+
 	public:
 		virtual void Init() = 0;
 		virtual void* SetupMutiThread(void* window) = 0;
@@ -37,6 +62,10 @@ namespace Ember
 		virtual void SetViewport(const uint32_t& width, const uint32_t& height) = 0;
 		virtual void SetDepthMask(bool enabled) = 0;
 		virtual void SetCullFace(CullFace face) = 0;
+		virtual void SetStencilFunc(StencilFunc func, int ref, uint32_t mask) = 0;
+		virtual void SetStencilOp(StencilOp sfail, StencilOp dpfail, StencilOp dppass) = 0;
+		virtual void SetStencilMask(unsigned int mask) = 0;
+		virtual void EnableStencilTest(bool enabled) = 0;
 
 		inline static API GetAPI() { return s_API; }
 

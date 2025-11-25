@@ -2,6 +2,8 @@
 // 场景层级面板
 // created by FirstRay2001, Nov/13/2025
 
+#include <filesystem>
+
 #include "SceneHierarchy.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
@@ -12,6 +14,8 @@
 
 namespace Ember
 {
+	extern const std::filesystem::path g_AssetPath;
+
 	SceneHierarchy::SceneHierarchy(const Ref<Scene>& scene)
 	{
 		SetContext(scene);
@@ -435,7 +439,26 @@ namespace Ember
 				ImGui::NextColumn();
 				ImGui::Text("Shader");
 				ImGui::NextColumn();
-				ImGui::Text("%s", shaderName.c_str());
+				ImGui::Button(shaderName.c_str(), ImVec2{100.0f, 0.0f});
+				// 拖拽添加Shader
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path shaderPath = std::filesystem::path(g_AssetPath) / path;
+
+						// 检查扩展名
+						if (shaderPath.extension() == ".glsl")
+						{
+							auto shader = ShaderLibrary::Get().LoadSync(shaderPath.string());
+							meshComp.GetMesh().SetShader(shader);
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::Separator();
 
 				// Material
 				auto material = meshComp.GetMesh().GetMaterial();
@@ -444,6 +467,24 @@ namespace Ember
 				ImGui::Text("Material");
 				ImGui::NextColumn();
 				ImGui::Text("%s", materialName.c_str());
+				// 显示材质属性
+				{
+					ImGui::Button("Texture", ImVec2{ 100.0f, 0.0f });
+					// 拖拽添加纹理
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+						{
+							const wchar_t* path = (const wchar_t*)payload->Data;
+							std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+
+							// 检查扩展名
+							if (texturePath.extension() == ".png" || texturePath.extension() == ".jpg" || texturePath.extension() == ".jpeg")
+								material->SetAlbedoTexture(Texture2D::Create(texturePath.string()));
+						}
+						ImGui::EndDragDropTarget();
+					}
+				}
 
 				ImGui::Columns(1);
 		});

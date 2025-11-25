@@ -4,6 +4,7 @@
 
 #include "emberpch.h"
 #include "Renderer.h"
+#include "Ember/ResourceManager/ShaderLibrary.h"
 
 namespace Ember
 {
@@ -17,6 +18,9 @@ namespace Ember
 
 		// 创建默认立方体VAO
 		s_DefaultCube = VertexArray::CreateCube(glm::vec3(1.0f));
+
+		// 加载Shader
+		ShaderLibrary::Get().LoadAsync("Asset/shader/Outline.glsl");
 	}
 
 	void Renderer::BeginScene(Camera& camera)
@@ -135,6 +139,19 @@ namespace Ember
 		shader->SetUniformFloat3("u_Material.Albedo", glm::vec3(0.4f, 0.4f, 0.4f)); // 默认灰色
 		vertexArray->Bind();
 		RenderCommand::DrawLines(vertexArray);
+	}
+
+	void Renderer::DrawOutline(const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+	{
+		auto shader = ShaderLibrary::Get().GetShaderSync("Outline");
+		shader->Bind();
+		shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SetUniformMat4("u_Transform", transform);
+		shader->SetUniformFloat("u_OutlineThickness", 0.03f);
+		shader->SetUniformFloat4("u_OutlineColor", glm::vec4(1.0f, 0.5f, 0.0f, 1.0f)); // 橙色轮廓
+
+		vertexArray->Bind();
+		RenderCommand::DrawIndexed(vertexArray);
 	}
 
 	void Renderer::AddPointLight(const PointLight& pointLight)

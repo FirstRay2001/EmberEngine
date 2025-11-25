@@ -57,7 +57,7 @@ namespace Ember
 
 	void OpenGLRendererAPI::Clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
@@ -101,5 +101,95 @@ namespace Ember
 			glCullFace(GL_FRONT);
 			break;
 		}
+	}
+
+
+	static GLenum ConvertStencilFunc(RendererAPI::StencilFunc func)
+	{
+		switch (func)
+		{
+		case Ember::RendererAPI::StencilFunc::NEVER:
+			return GL_NEVER;
+			break;
+		case Ember::RendererAPI::StencilFunc::ALWAYS:
+			return GL_ALWAYS;
+			break;
+		case Ember::RendererAPI::StencilFunc::LESS:
+			return GL_LESS;
+			break;
+		case Ember::RendererAPI::StencilFunc::LEQUAL:
+			return GL_LEQUAL;
+			break;
+		case Ember::RendererAPI::StencilFunc::GREATER:
+			return GL_GREATER;
+			break;
+		case Ember::RendererAPI::StencilFunc::GEQUAL:
+			return GL_GEQUAL;
+			break;
+		case Ember::RendererAPI::StencilFunc::EQUAL:
+			return GL_EQUAL;
+			break;
+		case Ember::RendererAPI::StencilFunc::NOTEQUAL:
+			return GL_NOTEQUAL;
+			break;
+		default:
+			break;
+		};
+	}
+
+	static GLenum ConvertStencilOp(RendererAPI::StencilOp op)
+	{
+		switch (op)
+		{
+		case Ember::RendererAPI::StencilOp::KEEP:
+			return GL_KEEP;
+			break;
+		case Ember::RendererAPI::StencilOp::ZERO:
+			return GL_ZERO;
+			break;
+		case Ember::RendererAPI::StencilOp::REPLACE:
+			return GL_REPLACE;
+			break;
+		case Ember::RendererAPI::StencilOp::INCR:
+			return GL_INCR;
+			break;
+		case Ember::RendererAPI::StencilOp::INCR_WRAP:
+			return GL_INCR_WRAP;
+			break;
+		case Ember::RendererAPI::StencilOp::DECR:
+			return GL_DECR;
+			break;
+		case Ember::RendererAPI::StencilOp::DECR_WRAP:
+			return GL_DECR_WRAP;
+			break;
+		case Ember::RendererAPI::StencilOp::INVERT:
+			return GL_INVERT;
+			break;
+		default:
+			break;
+		};
+	}
+
+	void OpenGLRendererAPI::EnableStencilTest(bool enabled)
+	{
+		if (enabled)
+			glEnable(GL_STENCIL_TEST);
+		else
+			glDisable(GL_STENCIL_TEST);
+	}
+
+	void OpenGLRendererAPI::SetStencilFunc(RendererAPI::StencilFunc func, int ref, uint32_t mask)
+	{
+		glStencilFunc(ConvertStencilFunc(func), ref, mask);
+	}
+
+	void OpenGLRendererAPI::SetStencilOp(RendererAPI::StencilOp sfail, RendererAPI::StencilOp dpfail, RendererAPI::StencilOp dppass)
+	{
+		glStencilOp(ConvertStencilOp(sfail), ConvertStencilOp(dpfail), ConvertStencilOp(dppass));
+	}
+
+	void OpenGLRendererAPI::SetStencilMask(unsigned int mask)
+	{
+		glStencilMask(mask);
 	}
 }

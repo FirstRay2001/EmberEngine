@@ -23,6 +23,7 @@ namespace Ember
 		Ref <VertexArray> GetVertexArray() const { return m_VertexArray; }
 		Ref<Material> GetMaterial() const { return m_Material; }
 		Ref<Shader> GetShader() const { return m_Shader; }
+		void SetShader(const Ref<Shader>& shader) { m_Shader = shader; }
 
 	private:
 		Ref<VertexArray>	m_VertexArray;

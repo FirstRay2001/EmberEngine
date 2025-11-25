@@ -40,74 +40,6 @@ namespace Ember
 		// 设置活动场景
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize(fbSpec.Width, fbSpec.Height);
-#if 0
-		// 同步加载Shader
-		auto shader = ShaderLibrary::Get().LoadSync("Asset/Shader/BlinnPhong.glsl");
-
-		// 同步加载纹理
-		auto texture = TextureLibrary::Get().LoadSync("Asset/Texture/GridBox_Default.png");
-
-		// Box实体
-		auto gridMaterial = Material::Create("BoxMaterial");
-		gridMaterial->SetSpecularColor(glm::vec3(0.2f));
-		gridMaterial->SetAlbedoTexture(texture);
-		m_BoxEntity = m_ActiveScene->CreateEntity("Wall");
-		m_BoxEntity.AddComponent<MeshComponent>(VertexArray::CreateCube(glm::vec3(5.0f, 5.0f, 1.0f)), gridMaterial, shader);
-		auto& boxTransform = m_BoxEntity.GetComponent<TransformComponent>();
-		boxTransform.Position = { 1.0f, 0.0f, -5.0f };
-		boxTransform.Rotation = { 0.0f, 25.0f, 0.0f };
-
-		// Sphere实体
-		auto sphereMaterial = Material::Create("BallMateial");
-		sphereMaterial->SetAlbedo(glm::vec3(0.8f, 0.2f, 0.2f));
-		sphereMaterial->SetSpecularColor(glm::vec3(0.8f));
-		sphereMaterial->SetShininess(64.0f);
-		m_SphereEntity = m_ActiveScene->CreateEntity("Ball");
-		m_SphereEntity.AddComponent<MeshComponent>(VertexArray::CreateSphere(1.0f, 32, 32), sphereMaterial, shader);
-		auto& sphereTransform = m_SphereEntity.GetComponent<TransformComponent>();
-		sphereTransform.Position = { 2.0f, -2.0f, -2.0f };
-		sphereTransform.Rotation = { 0.0f, -15.0f, 0.0f };
-
-		// 场景相机
-		auto camera = Camera(16.0f / 9.0f, 45.0f, 0.1f, 100.0f);
-		m_EditorCamera = m_ActiveScene->CreateEntity("EditorCamera");
-		m_EditorCamera.AddComponent<CameraComponent>(camera);
-		m_EditorCamera.GetComponent<TransformComponent>().Position = { 0.0f, 0.0f, 5.0f };
-		m_EditorCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
-		// 平行光实体
-		m_DirectionalLight = m_ActiveScene->CreateEntity("DirectionalLight");
-		auto& dirLight = m_DirectionalLight.AddComponent<DirectionalLightComponent>().m_DirectionalLight;
-		dirLight.Ambient = glm::vec3(0.2f);
-		dirLight.Diffuse = glm::vec3(0.5f);
-		dirLight.Specular = glm::vec3(1.0f);
-		m_DirectionalLight.GetComponent<TransformComponent>().Rotation = glm::vec3(-20.0f, 260.0f, 0.0f);
-
-		// 点光源Mesh
-		auto pointLightVAO = VertexArray::CreateSphere(0.1f, 18, 18);
-
-		// 点光源材质
-		auto pointLightMaterial = Material::Create("PointLightMaterial");
-		pointLightMaterial->SetAlbedo(glm::vec3(1.0));
-
-		// 点光源Shader
-		auto pointLightShader = ShaderLibrary::Get().LoadSync("Asset/Shader/SimpleColor.glsl");
-
-		// 点光源实体
-		m_PointLight = m_ActiveScene->CreateEntity("PointLight");
-		m_PointLight.AddComponent<MeshComponent>(pointLightVAO, pointLightMaterial, pointLightShader);
-		auto& pointLight = m_PointLight.AddComponent<PointLightComponent>().m_PointLight;
-		pointLight.Ambient = glm::vec3(0.1f);
-		pointLight.Diffuse = glm::vec3(0.5f);
-		pointLight.Specular = glm::vec3(1.0f);
-		m_PointLight.GetComponent<TransformComponent>().Position = glm::vec3(2.0f, 0.5f, -2.0f);
-
-		// Grid实体
-		auto gridShader = ShaderLibrary::Get().LoadSync("Asset/Shader/SimpleColor.glsl");
-		auto gridVAO = VertexArray::CreateGrid(10.0f, 10);
-		auto gridEntity = m_ActiveScene->CreateEntity("Grid");
-		gridEntity.AddComponent<GridComponent>(gridVAO, gridShader);
-#endif
 		
 		// 初始化场景相机
 		m_EditorCamera = CreateRef<EditorCamera>(45.0f, 1.778f, 0.1f, 1000.0f);
@@ -146,7 +78,7 @@ namespace Ember
 			m_Framebuffer->ClearAttachment(1, -1);
 
 			// m_ActiveScene->OnUpdateRuntime(timestep);
-			m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera);
+			m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera, m_SceneHierarchyPanel.GetSelectedEntity());
 
 			// 鼠标拾取
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_LEFT) && !Input::IsKeyPressed(EMBER_KEY_LEFT_ALT))
@@ -159,11 +91,8 @@ namespace Ember
 				if (mx >= 0 && my >= 0 && mx < viewportSize.x && my < viewportSize.y)
 				{
 					int pixelData = m_Framebuffer->ReadPixel(1, (int)mx, (int)my);
-					if (pixelData != -1)
-					{
-						Entity selectedEntity((entt::entity)pixelData, m_ActiveScene.get());
-						m_SceneHierarchyPanel.SetSelectedEntity(selectedEntity);
-					}
+					Entity selectedEntity((entt::entity)pixelData, m_ActiveScene.get());
+					m_SceneHierarchyPanel.SetSelectedEntity(selectedEntity);
 				}
 			}
 		}
@@ -283,13 +212,14 @@ namespace Ember
 		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
 		m_ViewportBounds[0] = { minBound.x, minBound.y };
 		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+
 		// 拖拽加载
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				LoadScene(std::filesystem::path(g_AssetPath) / path);
+				ProcessDrag(std::filesystem::path(g_AssetPath) / path);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -389,5 +319,17 @@ namespace Ember
 
 		SceneSerializer serilizer(m_ActiveScene);
 		serilizer.Deserialize(path.string());
+	}
+	void EditorLayer::ProcessDrag(const std::filesystem::path& path)
+	{
+		// 加载场景
+		if (path.extension() == ".ember")
+		{
+			LoadScene(path);
+		}
+		else if(path.extension() == ".prefab")
+		{
+
+		}
 	}
 }
