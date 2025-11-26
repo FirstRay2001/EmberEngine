@@ -16,3 +16,6 @@
 [submodule "Ember/Vendor/ImGuizmo"]
 	path = Ember/Vendor/ImGuizmo
 	url = https://github.com/TheCherno/ImGuizmo.git
+[submodule "Ember/Vendor/assimp"]
+	path = Ember/Vendor/assimp
+	url = https://github.com/FirstRay2001/assimp.git

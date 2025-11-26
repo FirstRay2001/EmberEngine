@@ -20,6 +20,7 @@ IncludeDir["stb_image"] = "Ember/Vendor/stb_image"
 IncludeDir["entt"] = "Ember/Vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Ember/Vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Ember/Vendor/ImGuizmo"
+IncludeDir["Assimp"] = "Ember/Vendor/assimp/include"
 
 group "Dependencies"
     include "Ember/Vendor/glfw"
@@ -65,7 +66,13 @@ project "Ember"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.yaml_cpp}",
-        "%{IncludeDir.ImGuizmo}"
+        "%{IncludeDir.ImGuizmo}",
+        "%{IncludeDir.Assimp}"
+    }
+
+    libdirs
+    {
+        "Ember/Vendor/assimp/bin/Debug"
     }
 
     links
@@ -74,6 +81,7 @@ project "Ember"
         "Glad",
         "ImGui",
         "yaml-cpp",
+        "assimp-vc143-mtd",
         "opengl32.lib",
     }
 
