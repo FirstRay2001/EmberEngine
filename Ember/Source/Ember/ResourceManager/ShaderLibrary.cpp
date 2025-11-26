@@ -24,6 +24,8 @@ namespace Ember
 
 	Ref<Shader> ShaderLibrary::LoadSync(const std::string& filepath)
 	{
+		if (Exists(Shader::FilePathToName(filepath)))
+			return m_Shaders[Shader::FilePathToName(filepath)];
 		auto shader = Shader::Create(filepath);
 		Add(shader);
 		return shader;
