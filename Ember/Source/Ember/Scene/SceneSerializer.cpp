@@ -352,7 +352,6 @@ namespace Ember
 
 	void SceneSerializer::DeserializeEntity(const YAML::Node& entityNode, bool UseTransform)
 	{
-		uint64_t entityID = entityNode["EntityID"].as<uint64_t>();
 		std::string tag = "Untitled";
 
 		// 标签组件
@@ -396,6 +395,8 @@ namespace Ember
 				// TODO: 模型加载
 				vertexArray = VertexArray::CreateCube(glm::vec3(1.0f));
 			}
+
+			vertexArray->Unbind();	// 确保解绑
 
 			// 材质
 			auto matNode = entityNode["Mesh"]["Material"];
