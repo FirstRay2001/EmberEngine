@@ -297,6 +297,8 @@ namespace Ember
 		}
 
 		// 渲染选中实体的轮廓
+		// 正面剔除
+		RenderCommand::SetCullFace(RendererAPI::CullFace::Front);
 		if (selectedEntity && m_Registry.all_of<MeshComponent>(selectedEntity))
 		{
 			auto& transform = selectedEntity.GetComponent<TransformComponent>().GetTransform();
@@ -335,6 +337,8 @@ namespace Ember
 				RenderCommand::DisableStencilTest();
 			}
 		}
+		// 恢复背面剔除
+		RenderCommand::SetCullFace(RendererAPI::CullFace::Back);
 
 		Renderer::EndScene();
 	}

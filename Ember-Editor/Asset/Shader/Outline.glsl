@@ -9,9 +9,11 @@ uniform float u_OutlineThickness;
 
 void main()
 {
-    // 沿着法线方向膨胀顶点位置
-    vec3 outlinePosition = a_Position + a_Normal * u_OutlineThickness;
-    gl_Position = u_ViewProjection * u_Transform * vec4(outlinePosition, 1.0);
+    // 膨胀顶点
+    float scaleFactor = 1.0 + u_OutlineThickness;
+    vec3 scaledPosition = a_Position * scaleFactor;
+    
+    gl_Position = u_ViewProjection * u_Transform * vec4(scaledPosition.xyz, 1.0);
 }
 
 #type fragment
