@@ -22,6 +22,8 @@ namespace Ember
 		// 获取图像路径
 		virtual const std::string& GetPath() const = 0;
 
+		virtual bool IsLoaded() const = 0;
+
 		// 文件路径转换为名称
 		static std::string FilePathToName(const std::string& filepath);
 
@@ -30,6 +32,7 @@ namespace Ember
 
 		// 释放图像内存
 		static void freeImageData(unsigned char* data);
+
 	};
 
 	// 2D纹理类
@@ -37,7 +40,7 @@ namespace Ember
 	{
 	public:
 		static Ref<Texture2D> Create(const std::string& path);
-		static Ref<Texture2D> Create(const unsigned char* data, int width, int height, int channel);	
+		static Ref<Texture2D> Create(const unsigned char* data, int width, int height, int channel);
 	};
 
 	// 立方体纹理类

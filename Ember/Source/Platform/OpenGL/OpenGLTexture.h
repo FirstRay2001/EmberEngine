@@ -20,11 +20,13 @@ namespace Ember
 		virtual int GetHeight() const override { return m_Height; }
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
 		virtual const std::string& GetPath() const override { return m_Path; }
+		virtual bool IsLoaded() const override { return m_IsLoaded; }
 
 	private:
 		uint32_t m_RendererID;
 		std::string m_Path;
 		int m_Width, m_Height, m_Channels;
+		bool m_IsLoaded;
 	};
 
 	class OpenGLCubemapTexture : public CubemapTexture
@@ -37,6 +39,7 @@ namespace Ember
 		virtual int GetHeight() const override { return m_Height; }
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
 		virtual const std::string& GetPath() const override { return m_Path; }
+		virtual bool IsLoaded() const override { return true; }
 
 	private:
 		uint32_t m_RendererID;
