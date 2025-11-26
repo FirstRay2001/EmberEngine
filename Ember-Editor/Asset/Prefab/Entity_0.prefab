@@ -1,0 +1,9 @@
+EntityID: 0
+Tag:
+  Tag: Gun
+Transform:
+  Position: [0, 2.16661382, 3.12499285]
+  Rotation: [0, -87.8830719, 0]
+  Scale: [2.74000001, 2.74000001, 2.74000001]
+Model:
+  ModelPath: Asset\Model\PortalGun\blaster-l.obj

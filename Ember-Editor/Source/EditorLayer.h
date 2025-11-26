@@ -31,7 +31,11 @@ namespace Ember
 		void SaveScene();
 		void LoadScene();
 		void LoadScene(const std::filesystem::path& path);
+		void LoadPrefab(const std::filesystem::path& path);
 		void ProcessDrag(const std::filesystem::path& path);
+
+		// 设置面板上下文
+		void SetPanelsContext();
 
 	private:
 		Ref<Scene> m_ActiveScene;

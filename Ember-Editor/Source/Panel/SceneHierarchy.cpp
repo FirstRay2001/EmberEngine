@@ -73,11 +73,19 @@ namespace Ember
 		if (ImGui::IsItemClicked())
 			m_SelectedEntity = entity;
 
+		// 拖拽
+		if (ImGui::BeginDragDropSource())
+		{
+			uint32_t data = entity;
+			ImGui::SetDragDropPayload("HIERARCHY_ENTITY", (void*)&data, sizeof(uint32_t), ImGuiCond_Once);
+			ImGui::Text("%s", tag.c_str());
+			ImGui::EndDragDropSource();
+		}
+
 		// 展开节点
 		if (opened)
 		{
-			if (ImGui::TreeNodeEx((void*)(uint64_t)2141234, flags, tag.c_str()))
-				ImGui::TreePop();
+			// TODO: 绘制子实体节点
 			ImGui::TreePop();
 		}
 

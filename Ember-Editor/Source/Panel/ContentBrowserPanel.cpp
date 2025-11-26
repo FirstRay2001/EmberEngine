@@ -8,6 +8,7 @@
 #include <imgui/imgui_internal.h>
 
 #include "ContentBrowserPanel.h"
+#include "Ember/Scene/SceneSerializer.h"
 
 namespace Ember
 {
@@ -26,8 +27,9 @@ namespace Ember
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
-		// 返回上一级
 		ImGui::Begin("Content Browser");
+
+		// 返回上一级
 		float aviWidth = ImGui::GetContentRegionAvail().x;
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, aviWidth - 700.0f);
@@ -61,6 +63,9 @@ namespace Ember
 		ImGui::Columns(1);
 
 		ImGui::Separator();
+
+		// 获取文件列表的位置
+		ImVec2 fileListStartPos = ImGui::GetCursorScreenPos();
 
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		int columnCount = (int)(panelWidth / cellSize);
@@ -107,9 +112,25 @@ namespace Ember
 			ImGui::PopID();
 			ImGui::NextColumn();
 		}
-
 		ImGui::Columns(1);
 
+		// 处理空白区域的拖拽
+		ImGui::SetCursorScreenPos(fileListStartPos);
+		ImGui::InvisibleButton("##EmptySpaceTarget", ImVec2(-1, -1));
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ENTITY"))
+			{
+				const uint32_t entityId = *(const uint32_t*)payload->Data;
+				if (m_Context)
+				{
+					SceneSerializer serializer(m_Context);
+					std::filesystem::path prefabPath = m_CurrentDirectory / ("Entity_" + std::to_string(entityId) + ".prefab");
+					serializer.SerializePrefab(entityId, prefabPath.string());
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
 		ImGui::End();
 	}
 

@@ -350,6 +350,200 @@ namespace Ember
 		out << YAML::EndMap;
 	}
 
+	void SceneSerializer::DeserializeEntity(const YAML::Node& entityNode, bool UseTransform)
+	{
+		uint64_t entityID = entityNode["EntityID"].as<uint64_t>();
+		std::string tag = "Untitled";
+
+		// 标签组件
+		if (entityNode["Tag"])
+			tag = entityNode["Tag"]["Tag"].as<std::string>();
+		Entity entity = m_Scene->CreateEntity(tag);
+
+		// 变换组件
+		if (entityNode["Transform"] && UseTransform)
+		{
+			auto position = entityNode["Transform"]["Position"].as<glm::vec3>();
+			auto rotation = entityNode["Transform"]["Rotation"].as<glm::vec3>();
+			auto scale = entityNode["Transform"]["Scale"].as<glm::vec3>();
+			auto& transform = entity.GetComponent<TransformComponent>();	// 已经创建Transform
+			transform.Position = position;
+			transform.Rotation = rotation;
+			transform.Scale = scale;
+		}
+
+		// Mesh组件
+		if (entityNode["Mesh"])
+		{
+			// VertexArray
+			auto vaNode = entityNode["Mesh"]["VertexArray"];
+			std::string vaType = vaNode["Type"].as<std::string>();
+			Ref<VertexArray> vertexArray;
+			if (vaType == "Cube")
+			{
+				auto scale = vaNode["Scale"].as<glm::vec3>();
+				vertexArray = VertexArray::CreateCube(scale);
+			}
+			else if (vaType == "Sphere")
+			{
+				float radius = vaNode["Radius"].as<float>();
+				int sectorCount = vaNode["SectorCount"].as<int>();
+				int stackCount = vaNode["StackCount"].as<int>();
+				vertexArray = VertexArray::CreateSphere(radius, sectorCount, stackCount);
+			}
+			else if (vaType == "Model")
+			{
+				// TODO: 模型加载
+				vertexArray = VertexArray::CreateCube(glm::vec3(1.0f));
+			}
+
+			// 材质
+			auto matNode = entityNode["Mesh"]["Material"];
+			auto material = Material::Create(matNode["Name"].as<std::string>());
+			std::string shadingModel = matNode["ShadingModel"].as<std::string>();
+			if (shadingModel == "BlinnPhong")
+			{
+				// 漫反射颜色
+				material->SetAlbedo(matNode["Albedo"].as<glm::vec3>());
+				if (matNode["AlbedoTexturePath"])
+				{
+					std::string albedoTexPath = matNode["AlbedoTexturePath"].as<std::string>();
+					auto albedoTexture = TextureLibrary::Get().LoadSync(albedoTexPath);
+					material->SetAlbedoTexture(albedoTexture);
+				}
+
+				// 高光色
+				material->SetSpecularColor(matNode["SpecularColor"].as<glm::vec3>());
+				if (matNode["SpecularTexturePath"])
+				{
+					std::string specularTexPath = matNode["SpecularTexturePath"].as<std::string>();
+					auto specularTexture = TextureLibrary::Get().LoadSync(specularTexPath);
+					material->SetSpecularTexture(specularTexture);
+				}
+
+				// 高光强度
+				material->SetShininess(matNode["Shininess"].as<float>());
+				if (matNode["ShininessTexturePath"])
+				{
+					std::string shininessTexPath = matNode["ShininessTexturePath"].as<std::string>();
+					auto shininessTexture = TextureLibrary::Get().LoadSync(shininessTexPath);
+					material->SetShininessTexture(shininessTexture);
+				}
+
+				// 法线贴图
+				if (matNode["NormalMapPath"])
+				{
+					std::string normalMapPath = matNode["NormalMapPath"].as<std::string>();
+					auto normalMap = TextureLibrary::Get().LoadSync(normalMapPath);
+					material->SetNormalMap(normalMap);
+				}
+
+				// 自发光
+				material->SetEmissive(matNode["Emissive"].as<glm::vec3>());
+				if (matNode["EmissiveTexturePath"])
+				{
+					std::string emissiveTexPath = matNode["EmissiveTexturePath"].as<std::string>();
+					auto emissiveTexture = TextureLibrary::Get().LoadSync(emissiveTexPath);
+					material->SetEmissiveTexture(emissiveTexture);
+				}
+
+				// 透明度
+				material->SetOpacity(matNode["Opacity"].as<float>());
+			}
+			else if (shadingModel == "PBR")
+			{
+				// TODO: PBR
+			}
+			else
+			{
+				// TODO: Unlit
+			}
+
+			// Shader
+			std::string shaderPath = entityNode["Mesh"]["ShaderPath"].as<std::string>();
+			auto shader = ShaderLibrary::Get().LoadSync(shaderPath);
+
+			// 添加Mesh组件
+			entity.AddComponent<MeshComponent>(vertexArray, material, shader);
+		}
+
+		// Model组件
+		if (entityNode["Model"])
+		{
+			std::string modelPath = entityNode["Model"]["ModelPath"].as<std::string>();
+			auto& modelComp = entity.AddComponent<ModelComponent>(modelPath);
+		}
+
+		// Grid组件
+		if (entityNode["Grid"])
+		{
+			auto& gridNode = entityNode["Grid"];
+
+			// Shader
+			std::string shaderPath = gridNode["ShaderPath"].as<std::string>();
+			auto shader = ShaderLibrary::Get().LoadSync(shaderPath);
+
+			// VertexArray
+			auto vaNode = gridNode["VertexArray"];
+			float size = vaNode["Size"].as<float>();
+			int divisions = vaNode["Divisions"].as<int>();
+			auto gridVAO = VertexArray::CreateGrid(size, divisions);
+
+			// 添加Grid组件
+			auto& gridComp = entity.AddComponent<GridComponent>();
+			gridComp.m_Shader = shader;
+			gridComp.m_Grid = gridVAO;
+		}
+
+		// Camera组件
+		if (entityNode["Camera"])
+		{
+			auto& cameraComp = entity.AddComponent<CameraComponent>();
+			float aspect = entityNode["Camera"]["Aspect"].as<float>();
+			float fov = entityNode["Camera"]["FOV"].as<float>();
+			float nearClip = entityNode["Camera"]["NearClip"].as<float>();
+			float farClip = entityNode["Camera"]["FarClip"].as<float>();
+			//cameraComp.m_Camera.SetAspectRatio(aspect);
+			cameraComp.m_Camera.SetFov(fov);
+			cameraComp.m_Camera.SetNearClip(nearClip);
+			cameraComp.m_Camera.SetFarClip(farClip);
+		}
+
+		// 点光源组件
+		if (entityNode["PointLight"])
+		{
+			auto& pointLightComp = entity.AddComponent<PointLightComponent>();
+			auto& pointLight = pointLightComp.m_PointLight;
+			pointLight.Ambient = entityNode["PointLight"]["Ambient"].as<glm::vec3>();
+			pointLight.Diffuse = entityNode["PointLight"]["Diffuse"].as<glm::vec3>();
+			pointLight.Specular = entityNode["PointLight"]["Specular"].as<glm::vec3>();
+			pointLight.Constant = entityNode["PointLight"]["Constant"].as<float>();
+			pointLight.Linear = entityNode["PointLight"]["Linear"].as<float>();
+			pointLight.Quadratic = entityNode["PointLight"]["Quadratic"].as<float>();
+		}
+
+		// 平行光组件
+		if (entityNode["DirectionalLight"])
+		{
+			auto& dirLightComp = entity.AddComponent<DirectionalLightComponent>();
+			auto& dirLight = dirLightComp.m_DirectionalLight;
+			dirLight.Ambient = entityNode["DirectionalLight"]["Ambient"].as<glm::vec3>();
+			dirLight.Diffuse = entityNode["DirectionalLight"]["Diffuse"].as<glm::vec3>();
+			dirLight.Specular = entityNode["DirectionalLight"]["Specular"].as<glm::vec3>();
+			dirLight.Direction = entityNode["DirectionalLight"]["Direction"].as<glm::vec3>();
+		}
+
+		// 天空盒组件
+		if (entityNode["Skybox"])
+		{
+			auto& skyboxComp = entity.AddComponent<SkyboxComponent>();
+			std::string skyboxPath = entityNode["Skybox"]["SkyboxPath"].as<std::string>();
+			skyboxComp.m_Cubemap = CubemapTexture::Create(skyboxPath);
+			std::string shaderPath = entityNode["Skybox"]["ShaderPath"].as<std::string>();
+			skyboxComp.m_Shader = ShaderLibrary::Get().LoadSync(shaderPath);
+		}
+	}
+
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
 		YAML::Emitter out;
@@ -391,196 +585,7 @@ namespace Ember
 		auto entities = data["Entities"];
 		for (auto entityNode : entities)
 		{
-			uint64_t entityID = entityNode["EntityID"].as<uint64_t>();
-			std::string tag = "Untitled";
-
-			// 标签组件
-			if (entityNode["Tag"])
-				tag = entityNode["Tag"]["Tag"].as<std::string>();
-			Entity entity = m_Scene->CreateEntity(tag);
-
-			// 变换组件
-			if (entityNode["Transform"])
-			{
-				auto position = entityNode["Transform"]["Position"].as<glm::vec3>();
-				auto rotation = entityNode["Transform"]["Rotation"].as<glm::vec3>();
-				auto scale = entityNode["Transform"]["Scale"].as<glm::vec3>();
-				auto& transform = entity.GetComponent<TransformComponent>();	// 已经创建Transform
-				transform.Position = position;
-				transform.Rotation = rotation;
-				transform.Scale = scale;
-			}
-
-			// Mesh组件
-			if (entityNode["Mesh"])
-			{
-				// VertexArray
-				auto vaNode = entityNode["Mesh"]["VertexArray"];
-				std::string vaType = vaNode["Type"].as<std::string>();
-				Ref<VertexArray> vertexArray;
-				if (vaType == "Cube")
-				{
-					auto scale = vaNode["Scale"].as<glm::vec3>();
-					vertexArray = VertexArray::CreateCube(scale);
-				}
-				else if (vaType == "Sphere")
-				{
-					float radius = vaNode["Radius"].as<float>();
-					int sectorCount = vaNode["SectorCount"].as<int>();
-					int stackCount = vaNode["StackCount"].as<int>();
-					vertexArray = VertexArray::CreateSphere(radius, sectorCount, stackCount);
-				}
-				else if (vaType == "Model")
-				{
-					// TODO: 模型加载
-					vertexArray = VertexArray::CreateCube(glm::vec3(1.0f));
-				}
-
-				// 材质
-				auto matNode = entityNode["Mesh"]["Material"];
-				auto material = Material::Create(matNode["Name"].as<std::string>());
-				std::string shadingModel = matNode["ShadingModel"].as<std::string>();
-				if (shadingModel == "BlinnPhong")
-				{
-					// 漫反射颜色
-					material->SetAlbedo(matNode["Albedo"].as<glm::vec3>());
-					if (matNode["AlbedoTexturePath"])
-					{
-						std::string albedoTexPath = matNode["AlbedoTexturePath"].as<std::string>();
-						auto albedoTexture = TextureLibrary::Get().LoadSync(albedoTexPath);
-						material->SetAlbedoTexture(albedoTexture);
-					}
-
-					// 高光色
-					material->SetSpecularColor(matNode["SpecularColor"].as<glm::vec3>());
-					if (matNode["SpecularTexturePath"])
-					{
-						std::string specularTexPath = matNode["SpecularTexturePath"].as<std::string>();
-						auto specularTexture = TextureLibrary::Get().LoadSync(specularTexPath);
-						material->SetSpecularTexture(specularTexture);
-					}
-
-					// 高光强度
-					material->SetShininess(matNode["Shininess"].as<float>());
-					if (matNode["ShininessTexturePath"])
-					{
-						std::string shininessTexPath = matNode["ShininessTexturePath"].as<std::string>();
-						auto shininessTexture = TextureLibrary::Get().LoadSync(shininessTexPath);
-						material->SetShininessTexture(shininessTexture);
-					}
-
-					// 法线贴图
-					if (matNode["NormalMapPath"])
-					{
-						std::string normalMapPath = matNode["NormalMapPath"].as<std::string>();
-						auto normalMap = TextureLibrary::Get().LoadSync(normalMapPath);
-						material->SetNormalMap(normalMap);
-					}
-
-					// 自发光
-					material->SetEmissive(matNode["Emissive"].as<glm::vec3>());
-					if (matNode["EmissiveTexturePath"])
-					{
-						std::string emissiveTexPath = matNode["EmissiveTexturePath"].as<std::string>();
-						auto emissiveTexture = TextureLibrary::Get().LoadSync(emissiveTexPath);
-						material->SetEmissiveTexture(emissiveTexture);
-					}
-
-					// 透明度
-					material->SetOpacity(matNode["Opacity"].as<float>());
-				}
-				else if (shadingModel == "PBR")
-				{
-					// TODO: PBR
-				}
-				else
-				{
-					// TODO: Unlit
-				}
-
-				// Shader
-				std::string shaderPath = entityNode["Mesh"]["ShaderPath"].as<std::string>();
-				auto shader = ShaderLibrary::Get().LoadSync(shaderPath);
-
-				// 添加Mesh组件
-				entity.AddComponent<MeshComponent>(vertexArray, material, shader);
-			}
-
-			// Model组件
-			if (entityNode["Model"])
-			{
-				std::string modelPath = entityNode["Model"]["ModelPath"].as<std::string>();
-				auto& modelComp = entity.AddComponent<ModelComponent>(modelPath);
-			}
-
-			// Grid组件
-			if (entityNode["Grid"])
-			{
-				auto& gridNode = entityNode["Grid"];
-
-				// Shader
-				std::string shaderPath = gridNode["ShaderPath"].as<std::string>();
-				auto shader = ShaderLibrary::Get().LoadSync(shaderPath);
-
-				// VertexArray
-				auto vaNode = gridNode["VertexArray"];
-				float size = vaNode["Size"].as<float>();
-				int divisions = vaNode["Divisions"].as<int>();
-				auto gridVAO = VertexArray::CreateGrid(size, divisions);
-
-				// 添加Grid组件
-				auto& gridComp = entity.AddComponent<GridComponent>();
-				gridComp.m_Shader = shader;
-				gridComp.m_Grid = gridVAO;
-			}
-
-			// Camera组件
-			if (entityNode["Camera"])
-			{
-				auto& cameraComp = entity.AddComponent<CameraComponent>();
-				float aspect = entityNode["Camera"]["Aspect"].as<float>();
-				float fov = entityNode["Camera"]["FOV"].as<float>();
-				float nearClip = entityNode["Camera"]["NearClip"].as<float>();
-				float farClip = entityNode["Camera"]["FarClip"].as<float>();
-				//cameraComp.m_Camera.SetAspectRatio(aspect);
-				cameraComp.m_Camera.SetFov(fov);
-				cameraComp.m_Camera.SetNearClip(nearClip);
-				cameraComp.m_Camera.SetFarClip(farClip);
-			}
-
-			// 点光源组件
-			if (entityNode["PointLight"])
-			{
-				auto& pointLightComp = entity.AddComponent<PointLightComponent>();
-				auto& pointLight = pointLightComp.m_PointLight;
-				pointLight.Ambient = entityNode["PointLight"]["Ambient"].as<glm::vec3>();
-				pointLight.Diffuse = entityNode["PointLight"]["Diffuse"].as<glm::vec3>();
-				pointLight.Specular = entityNode["PointLight"]["Specular"].as<glm::vec3>();
-				pointLight.Constant = entityNode["PointLight"]["Constant"].as<float>();
-				pointLight.Linear = entityNode["PointLight"]["Linear"].as<float>();
-				pointLight.Quadratic = entityNode["PointLight"]["Quadratic"].as<float>();
-			}
-
-			// 平行光组件
-			if (entityNode["DirectionalLight"])
-			{
-				auto& dirLightComp = entity.AddComponent<DirectionalLightComponent>();
-				auto& dirLight = dirLightComp.m_DirectionalLight;
-				dirLight.Ambient = entityNode["DirectionalLight"]["Ambient"].as<glm::vec3>();
-				dirLight.Diffuse = entityNode["DirectionalLight"]["Diffuse"].as<glm::vec3>();
-				dirLight.Specular = entityNode["DirectionalLight"]["Specular"].as<glm::vec3>();
-				dirLight.Direction = entityNode["DirectionalLight"]["Direction"].as<glm::vec3>();
-			}
-
-			// 天空盒组件
-			if (entityNode["Skybox"])
-			{
-				auto& skyboxComp = entity.AddComponent<SkyboxComponent>();
-				std::string skyboxPath = entityNode["Skybox"]["SkyboxPath"].as<std::string>();
-				skyboxComp.m_Cubemap = CubemapTexture::Create(skyboxPath);
-				std::string shaderPath = entityNode["Skybox"]["ShaderPath"].as<std::string>();
-				skyboxComp.m_Shader = ShaderLibrary::Get().LoadSync(shaderPath);
-			}
+			DeserializeEntity(entityNode);
 		}
 
 		EMBER_CORE_TRACE("Scene deserialized in {0} ms", timer.ElapsedMillis());
@@ -594,4 +599,28 @@ namespace Ember
 		return false;
 	}
 
+	void SceneSerializer::SerializePrefab(const uint32_t entityID, const std::string& filepath)
+	{
+		YAML::Emitter out;
+		Entity entity((entt::entity)entityID, m_Scene.get());
+		SerializeEntity(out, entity);
+
+		// 输出到文件
+		std::ofstream ofs(filepath);
+		ofs << out.c_str();
+
+	}
+
+	bool SceneSerializer::DeserializePrefab(const std::string& filepath)
+	{
+		// 读取文件，检查文件格式
+		YAML::Node data = YAML::LoadFile(filepath);
+		if (!data["EntityID"])
+			return false;
+
+		bool bUseTransform = false;	// 不使用Prefab的Transform
+		DeserializeEntity(data, bUseTransform);
+
+		return true;
+	}
 }

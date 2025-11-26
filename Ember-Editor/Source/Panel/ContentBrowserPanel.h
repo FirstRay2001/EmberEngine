@@ -10,11 +10,16 @@
 
 namespace Ember
 {
+	class Scene;
+
 	class ContentBrowserPanel
 	{
 	public:
 		ContentBrowserPanel();
 		void OnImGuiRender();
+
+	public:
+		void SetContext(const Ref<Scene>& context) { m_Context = context; }
 
 	private:
 		// 根据文件类型获取图标
@@ -22,6 +27,7 @@ namespace Ember
 
 	private:
 		std::filesystem::path m_CurrentDirectory;
+		Ref<Scene> m_Context;
 
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;
