@@ -114,6 +114,9 @@
     <ClInclude Include="Source\Ember\Core\Log.h">
       <Filter>Source\Ember\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Core\Timer.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Core\Timestep.h">
       <Filter>Source\Ember\Core</Filter>
     </ClInclude>
@@ -147,6 +150,9 @@
     <ClInclude Include="Source\Ember\Renderer\Camera.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\EditorCamera.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\Framebuffer.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
@@ -160,6 +166,9 @@
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\Mesh.h">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Model.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\RenderCommand.h">
@@ -1533,8 +1542,6 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Renderer\EditorCamera.h" />
-    <ClInclude Include="Source\Ember\Core\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1567,6 +1574,9 @@
     <ClCompile Include="Source\Ember\Renderer\Camera.cpp">
       <Filter>Source\Ember\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\EditorCamera.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Ember\Renderer\Framebuffer.cpp">
       <Filter>Source\Ember\Renderer</Filter>
     </ClCompile>
@@ -1574,6 +1584,12 @@
       <Filter>Source\Ember\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Renderer\Material.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Mesh.cpp">
+      <Filter>Source\Ember\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Model.cpp">
       <Filter>Source\Ember\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Renderer\RenderCommand.cpp">
@@ -1675,6 +1691,5 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Ember\Renderer\EditorCamera.cpp" />
   </ItemGroup>
 </Project>

@@ -288,6 +288,14 @@ namespace Ember
 				ImGui::CloseCurrentPopup();
 			}
 
+			// 模型组件
+			ImGui::Separator();
+			if (ImGui::MenuItem("Model Renderer"))
+			{
+				m_SelectedEntity.AddComponent<ModelComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
 			// 光源组件
 			ImGui::Separator();
 			if (ImGui::MenuItem("Point Light"))
@@ -488,6 +496,39 @@ namespace Ember
 
 				ImGui::Columns(1);
 		});
+		ImGui::PopStyleColor();
+
+		// Model Component
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.2f, 0.8f, 0.8f, 1.0f });
+		DrawSingleComponent<ModelComponent>("Model Renderer", entity, [](auto& modelComp)
+			{
+				auto model = modelComp.m_Model;
+				std::string modelPath = model ? model->GetPath() : "None";
+				ImGui::Columns(2);
+				ImGui::SetColumnWidth(0, 100);
+				ImGui::Text("Model");
+				ImGui::NextColumn();
+				ImGui::Button(modelPath.c_str(), ImVec2{ ImGui::GetContentRegionAvail().x, 0.0f });
+
+				// 拖拽添加Model
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path modelPath = std::filesystem::path(g_AssetPath) / path;
+
+						// 检查扩展名
+						if (modelPath.extension() == ".obj" || modelPath.extension() == ".fbx")
+						{
+							auto model = Model::CreateFromFile(modelPath.string());
+							modelComp.m_Model = model;
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::Columns(1);
+			});
 		ImGui::PopStyleColor();
 
 		// Grid Component

@@ -269,6 +269,16 @@ namespace Ember
 			out << YAML::EndMap;
 		}
 
+		// Model组件
+		if (entity.HasComponent<ModelComponent>())
+		{
+			out << YAML::Key << "Model";
+			out << YAML::BeginMap;
+			auto& model = entity.GetComponent<ModelComponent>().m_Model;
+			out << YAML::Key << "ModelPath" << YAML::Value << (model ? model->GetPath() : "None");
+			out << YAML::EndMap;
+		}
+
 		// Grid组件
 		if (entity.HasComponent<GridComponent>())
 		{
@@ -502,6 +512,13 @@ namespace Ember
 
 				// 添加Mesh组件
 				entity.AddComponent<MeshComponent>(vertexArray, material, shader);
+			}
+
+			// Model组件
+			if (entityNode["Model"])
+			{
+				std::string modelPath = entityNode["Model"]["ModelPath"].as<std::string>();
+				auto& modelComp = entity.AddComponent<ModelComponent>(modelPath);
 			}
 
 			// Grid组件

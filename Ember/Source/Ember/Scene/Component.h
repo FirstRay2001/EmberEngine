@@ -9,6 +9,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 #include "Ember/Renderer/Mesh.h"
+#include "Ember/Renderer/Model.h"
 #include "Ember/Renderer/Camera.h"
 #include "Ember/Renderer/Light.h"
 #include "Ember/Renderer/Texture.h"
@@ -68,7 +69,23 @@ namespace Ember
 		Ember::Mesh& GetMesh() { return Mesh; }
 	};
 
-	// 网格组件
+	// Model组件
+	struct ModelComponent
+	{
+		Ref<Model> m_Model = nullptr;
+		ModelComponent() = default;
+		ModelComponent(const ModelComponent&) = default;
+		ModelComponent(const std::string& modelPath) :
+			m_Model(Model::CreateFromFile(modelPath))
+		{
+		}
+		ModelComponent(const Ref<Model>& model) :
+			m_Model(model)
+		{
+		}
+	};
+
+	// Grid组件
 	struct GridComponent
 	{
 		Ref<VertexArray> m_Grid;

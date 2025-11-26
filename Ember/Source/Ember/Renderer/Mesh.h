@@ -7,6 +7,10 @@
 #include "VertexArray.h"
 #include "Material.h"
 #include "Shader.h"
+#include "Ember/Core/Core.h"
+
+struct aiMesh;
+struct aiScene;
 
 namespace Ember
 {
@@ -24,6 +28,9 @@ namespace Ember
 		Ref<Material> GetMaterial() const { return m_Material; }
 		Ref<Shader> GetShader() const { return m_Shader; }
 		void SetShader(const Ref<Shader>& shader) { m_Shader = shader; }
+
+	public:
+		static Ref<Mesh> CreateFromAssimpMesh(const aiMesh* mesh, const aiScene* scene, const std::string& modelPath);
 
 	private:
 		Ref<VertexArray>	m_VertexArray;

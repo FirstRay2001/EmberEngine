@@ -1,17 +1,26 @@
 Scene: Untitled
 Entities:
+  - EntityID: 6
+    Tag:
+      Tag: Gun
+    Transform:
+      Position: [0, 2.16661382, 3.12499285]
+      Rotation: [0, -87.8830719, 0]
+      Scale: [2.74000001, 2.74000001, 2.74000001]
+    Model:
+      ModelPath: Asset\Model\PortalGun\blaster-l.obj
   - EntityID: 5
     Tag:
       Tag: Environment
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [-32.7000008, 170, 0]
-      Scale: [1, 1, 1]
+      Position: [0, -1.33599212e-08, 0.0010661335]
+      Rotation: [-32.4000015, -172.100006, 180]
+      Scale: [1.00000143, 1, 1.00000048]
     DirectionalLight:
       Ambient: [0.187692285, 0.179607078, 0.179607078]
       Diffuse: [0.952838302, 0.978461564, 0.737609506]
       Specular: [0.911355495, 1, 0.627692342]
-      Direction: [0.146126911, -0.540240347, -0.828726292]
+      Direction: [-0.116048224, -0.535826862, -0.836314797]
     Skybox:
       SkyboxPath: Asset\Texture\Skybox
       ShaderPath: Asset\Shader\Skybox.glsl
@@ -19,7 +28,7 @@ Entities:
     Tag:
       Tag: Wall
     Transform:
-      Position: [-2.4000001, 2.4000001, -0.800000012]
+      Position: [-2.4000001, 2.4000001, -0.80000025]
       Rotation: [0, 55.5999985, 0]
       Scale: [1, 1, 1]
     Mesh:
@@ -40,7 +49,7 @@ Entities:
     Tag:
       Tag: Ball
     Transform:
-      Position: [2.31565666, 1.73344731, 2.10430193]
+      Position: [2.31565666, 1.04154551, 2.10430193]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     Mesh:
@@ -86,7 +95,7 @@ Entities:
     Tag:
       Tag: PointLight
     Transform:
-      Position: [1.11321759, 3.4000001, 1.29999995]
+      Position: [0.842849016, 3.39999914, 1.14513564]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     Mesh:

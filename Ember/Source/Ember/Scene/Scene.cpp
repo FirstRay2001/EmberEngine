@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "Component.h"
 #include "Ember/Renderer/Renderer.h"
+#include "Ember/Renderer/Model.h"
 
 namespace Ember
 {
@@ -259,6 +260,33 @@ namespace Ember
 		}
 		RenderCommand::DisableStencilTest();
 
+		// 遍历所有带有ModelComponent和TransformComponent的实体并渲染它们
+		auto modelView = m_Registry.view<TransformComponent, ModelComponent>();
+		for (auto entity : modelView)
+		{
+			auto& transform = modelView.get<TransformComponent>(entity).GetTransform();
+			auto& modelComp = modelView.get<ModelComponent>(entity);
+			auto& model = modelComp.m_Model;
+			if (!model)
+				continue;
+			for (const auto& mesh : model->GetMeshes())
+			{
+				if (Entity{ entity, this } == selectedEntity)
+				{
+					RenderCommand::EnableStencilTest();
+					RenderCommand::SetStencilFunc(RendererAPI::StencilFunc::ALWAYS, 1, 0xFF);
+					RenderCommand::SetStencilOp(RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::REPLACE);
+					RenderCommand::SetStencilMask(0xFF);
+				}
+				else
+				{
+					RenderCommand::SetStencilMask(0x00);
+				}
+				Renderer::Submit(*mesh, (int)entity, transform);
+				RenderCommand::DisableStencilTest();
+			}
+		}
+
 		// 遍历所有网格线框实体并渲染它们
 		auto lineView = m_Registry.view<TransformComponent, GridComponent>();
 		for (auto entity : lineView)
@@ -284,6 +312,28 @@ namespace Ember
 			Renderer::DrawOutline(mesh.GetVertexArray(), transform);
 			RenderCommand::SetDepthMask(true);
 			RenderCommand::DisableStencilTest();
+		}
+
+		if (selectedEntity && m_Registry.all_of<ModelComponent>(selectedEntity))
+		{
+			auto& transform = selectedEntity.GetComponent<TransformComponent>().GetTransform();
+			auto& modelComp = selectedEntity.GetComponent<ModelComponent>();
+			auto& model = modelComp.m_Model;
+			if (model)
+			{
+				// 绘制轮廓
+				RenderCommand::EnableStencilTest();
+				RenderCommand::SetStencilFunc(RendererAPI::StencilFunc::NOTEQUAL, 1, 0xFF);
+				RenderCommand::SetStencilOp(RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::KEEP, RendererAPI::StencilOp::REPLACE);
+				RenderCommand::SetStencilMask(0xFF);
+				RenderCommand::SetDepthMask(false);
+				for (const auto& mesh : model->GetMeshes())
+				{
+					Renderer::DrawOutline(mesh->GetVertexArray(), transform);
+				}
+				RenderCommand::SetDepthMask(true);
+				RenderCommand::DisableStencilTest();
+			}
 		}
 
 		Renderer::EndScene();
@@ -321,6 +371,12 @@ namespace Ember
 
 	template<>
 	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ModelComponent>(Entity entity, ModelComponent& component)
 	{
 		// Nothing to do
 	}
