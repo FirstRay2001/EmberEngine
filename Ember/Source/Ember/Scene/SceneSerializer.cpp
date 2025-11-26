@@ -142,9 +142,6 @@ namespace Ember
 				case VertexArray::PrimitiveType::Sphere:
 					primitiveTypeName = "Sphere";
 					break;
-				case VertexArray::PrimitiveType::Model:
-					primitiveTypeName = "Model";
-					break;
 				default:
 					primitiveTypeName = "None";
 					break;
@@ -166,14 +163,9 @@ namespace Ember
 					auto stackCount = mesh.GetVertexArray()->GetSphereStackCount();
 					out << YAML::Key << "StackCount" << YAML::Value << stackCount;
 				}
-				else if (primitiveType == VertexArray::PrimitiveType::Model)
-				{
-					out << YAML::Key << "ModelPath" << YAML::Value << "None (Not Implement)";
-				}
 				out << YAML::EndMap;
 			}
 			
-
 			// 材质参数序列化
 			{
 				out << YAML::Key << "Material";

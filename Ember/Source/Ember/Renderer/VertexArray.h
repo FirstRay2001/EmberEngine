@@ -15,10 +15,9 @@ namespace Ember
 		enum class PrimitiveType
 		{
 			None = 0,
-			Model = 1,
-			Cube = 2,
-			Sphere = 3,
-			Grid = 4
+			Cube,
+			Sphere,
+			Grid,
 		};
 
 	public:

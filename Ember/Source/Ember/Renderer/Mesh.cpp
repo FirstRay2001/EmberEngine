@@ -24,19 +24,9 @@ namespace Ember
 		std::vector<uint32_t> indices;
 		vertices.resize(mesh->mNumVertices * 8); // 3位置 + 3法线 + 2纹理坐标
 
-		if (mesh->mNumVertices == 23253)
-		{
-			EMBER_CORE_WARN("23253");
-		}
-
 		// 提取顶点数据
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 		{
-			if (i == 7625)
-			{
-				EMBER_CORE_WARN("Processing vertex 7625");
-			}
-
 			Vertex& vertex = *(Vertex*)&vertices[i * 8];
 			vertex.Position = {
 				mesh->mVertices[i].x,

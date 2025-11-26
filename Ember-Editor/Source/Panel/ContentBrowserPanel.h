@@ -17,6 +17,7 @@ namespace Ember
 		void OnImGuiRender();
 
 	private:
+		// 根据文件类型获取图标
 		Ref<Texture2D> GetIconForFile(const std::filesystem::path& path);
 
 	private:
@@ -25,6 +26,8 @@ namespace Ember
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
+		Ref<Texture2D> m_SceneIcon;
 		Ref<Texture2D> m_PrefabIcon;
+		Ref<Texture2D> m_ModelIcon;
 	};
 }

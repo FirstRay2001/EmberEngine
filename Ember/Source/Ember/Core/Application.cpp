@@ -44,6 +44,7 @@ Application::Application()
 	{
 		void* nativeWindow = m_Window->GetNativeWindow();
 		void* sharedWindow = RenderCommand::SetupMutithread(nativeWindow);	// 生成共享窗口上下文,用于资源异步加载
+
 		// 初始化资源管理器
 		std::function injectInit = [sharedWindow]()
 			{
@@ -126,23 +127,6 @@ bool Ember::Application::OnWindowResize(WindowResizeEvent& e)
 
 bool Ember::Application::OnKeyPressed(KeyPressedEvent& e)
 {
-	if (e.GetKeyCode() == EMBER_KEY_ESCAPE)
-	{
-		Close();
-		return true;
-	}
-	//if (e.GetKeyCode() == EMBER_KEY_M)
-	//{
-	//	// 捕获鼠标
-	//	GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
-	//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	//}
-	//if (e.GetKeyCode() == EMBER_KEY_N)
-	//{
-	//	// 释放鼠标
-	//	GLFWwindow* window = (GLFWwindow*)m_Window->GetNativeWindow();
-	//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	//}
 	return false;
 }
 

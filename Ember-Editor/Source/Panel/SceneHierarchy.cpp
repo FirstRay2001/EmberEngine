@@ -267,12 +267,10 @@ namespace Ember
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, tag.c_str());
-			//ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
 			}
-			//ImGui::PopStyleVar();
 		}
 
 		// 添加组件按钮
@@ -397,9 +395,6 @@ namespace Ember
 				case VertexArray::PrimitiveType::Sphere:
 					primitiveTypeName = "Sphere";
 					break;
-				case VertexArray::PrimitiveType::Model:
-					primitiveTypeName = "Model";
-					break;
 				default:
 					primitiveTypeName = "None";
 					break;
@@ -448,6 +443,7 @@ namespace Ember
 				ImGui::Text("Shader");
 				ImGui::NextColumn();
 				ImGui::Button(shaderName.c_str(), ImVec2{100.0f, 0.0f});
+
 				// 拖拽添加Shader
 				if (ImGui::BeginDragDropTarget())
 				{
@@ -475,9 +471,11 @@ namespace Ember
 				ImGui::Text("Material");
 				ImGui::NextColumn();
 				ImGui::Text("%s", materialName.c_str());
+
 				// 显示材质属性
 				{
 					ImGui::Button("Texture", ImVec2{ 100.0f, 0.0f });
+
 					// 拖拽添加纹理
 					if (ImGui::BeginDragDropTarget())
 					{

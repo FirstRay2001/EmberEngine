@@ -77,7 +77,7 @@ namespace Ember
 			// 清除颜色附件
 			m_Framebuffer->ClearAttachment(1, -1);
 
-			// m_ActiveScene->OnUpdateRuntime(timestep);
+			// 更新Editor场景
 			m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera, m_SceneHierarchyPanel.GetSelectedEntity());
 
 			// 鼠标拾取
