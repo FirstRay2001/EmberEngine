@@ -135,6 +135,7 @@ namespace Ember
 		default:
 			break;
 		};
+		return GL_ALWAYS;
 	}
 
 	static GLenum ConvertStencilOp(RendererAPI::StencilOp op)
@@ -168,6 +169,7 @@ namespace Ember
 		default:
 			break;
 		};
+		return GL_KEEP;
 	}
 
 	void OpenGLRendererAPI::EnableStencilTest(bool enabled)
