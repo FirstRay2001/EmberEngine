@@ -37,6 +37,10 @@ namespace Ember
 		void OnScenePlay();
 		void OnSceneStop();
 
+		void UI_MenuBar();
+
+		void UI_Viewport(ImGuiIO& io);
+
 		void UI_Toolbar();
 
 

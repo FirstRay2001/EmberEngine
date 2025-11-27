@@ -172,30 +172,8 @@ namespace Ember
 
 		style.WindowMinSize.x = minWinSizeX;
 
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("New"))
-					NewScene();
-
-				if (ImGui::MenuItem("Open..."))
-					LoadScene();
-
-				if (ImGui::MenuItem("Save As..."))
-					SaveScene();
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("Exit")) Application::Get().Close();
-
-				ImGui::EndMenu();
-			}
-
-			
-
-			ImGui::EndMenuBar();
-		}
+		// 菜单栏
+		UI_MenuBar();
 
 		// ImGui Demo
 		// ImGui::ShowDemoWindow();
@@ -207,98 +185,7 @@ namespace Ember
 		m_ContentBrowserPanel.OnImGuiRender();
 
 		// Viewport面板
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-		ImGui::Begin("Viewport");
-		auto viewportOffset = ImGui::GetCursorPos();
-		m_ViewportFocused = ImGui::IsWindowFocused();
-		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
-		ImGui::Image((void*)(uintptr_t)textureID, 
-			ImVec2{ (float)m_Framebuffer->GetSpecification().Width, (float)m_Framebuffer->GetSpecification().Height }, 
-			ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-		auto windowSize = ImGui::GetWindowSize();
-		ImVec2 minBound = ImGui::GetWindowPos();
-		minBound.x += viewportOffset.x;
-		minBound.y += viewportOffset.y;
-		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
-		m_ViewportBounds[0] = { minBound.x, minBound.y };
-		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
-
-		// 仅在编辑模式下启用拖拽加载
-		if (m_SceneState == SceneState::Edit)
-		{
-			// 拖拽加载
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					ProcessDrag(std::filesystem::path(g_AssetPath) / path);
-				}
-				ImGui::EndDragDropTarget();
-			}
-		}
-
-		// Gizmo操作面板
-		static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
-		ImVec2 windowPos = ImVec2(io.DisplaySize.x - 260.0f, 10.0f);
-		ImGui::SetNextWindowPos(windowPos, ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(250, 0), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Gizmo Operation", nullptr,
-			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
-			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize);
-		if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::TRANSLATE))
-			gizmoOperation = ImGuizmo::TRANSLATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::ROTATE))
-			gizmoOperation = ImGuizmo::ROTATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::SCALE))
-			gizmoOperation = ImGuizmo::SCALE;
-		ImGui::End();
-
-		// 仅在编辑模式下启用Gizmo
-		if (m_SceneState == SceneState::Edit)
-		{
-			// Gizmo
-			Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-			if (selectedEntity)
-			{
-				ImGuizmo::SetOrthographic(false);
-				ImGuizmo::SetDrawlist();
-				float windowWidth = ImGui::GetWindowWidth();
-				float windowHeight = ImGui::GetWindowHeight();
-				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
-
-				// 获取相机矩阵
-				const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
-				glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
-
-				// 获取实体矩阵
-				auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();
-				glm::mat4 entityTransform = transformComponent.GetTransform();
-
-				// 使用ImGuizmo
-				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-					gizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransform));
-
-				// 如果被修改，更新Transform组件
-				if (ImGuizmo::IsUsing())
-				{
-					glm::vec3 translation, rotation, scale;
-					Math::DecomposeTransform(entityTransform, translation, rotation, scale);
-					transformComponent.Position = translation;
-					transformComponent.Rotation = rotation;
-					transformComponent.Scale = scale;
-				}
-			}
-		}
-		
-		ImGui::End();
-		ImGui::PopStyleVar();
+		UI_Viewport(io);
 
 		// Toolbar
 		UI_Toolbar();
@@ -394,6 +281,128 @@ namespace Ember
 	void EditorLayer::OnSceneStop()
 	{
 		m_SceneState = SceneState::Edit;
+	}
+
+	void EditorLayer::UI_MenuBar()
+	{
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New"))
+					NewScene();
+
+				if (ImGui::MenuItem("Open..."))
+					LoadScene();
+
+				if (ImGui::MenuItem("Save As..."))
+					SaveScene();
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Exit")) Application::Get().Close();
+
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+	}
+
+	void EditorLayer::UI_Viewport(ImGuiIO& io)
+	{
+		// Viewport面板
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+		ImGui::Begin("Viewport");
+		auto viewportOffset = ImGui::GetCursorPos();
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
+		ImGui::Image((void*)(uintptr_t)textureID,
+			ImVec2{ (float)m_Framebuffer->GetSpecification().Width, (float)m_Framebuffer->GetSpecification().Height },
+			ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		auto windowSize = ImGui::GetWindowSize();
+		ImVec2 minBound = ImGui::GetWindowPos();
+		minBound.x += viewportOffset.x;
+		minBound.y += viewportOffset.y;
+		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+		m_ViewportBounds[0] = { minBound.x, minBound.y };
+		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+
+		// 仅在编辑模式下启用拖拽加载
+		if (m_SceneState == SceneState::Edit)
+		{
+			// 拖拽加载
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					ProcessDrag(std::filesystem::path(g_AssetPath) / path);
+				}
+				ImGui::EndDragDropTarget();
+			}
+		}
+
+		// Gizmo操作面板
+		static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
+		ImVec2 windowPos = ImVec2(io.DisplaySize.x - 260.0f, 10.0f);
+		ImGui::SetNextWindowPos(windowPos, ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(250, 0), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Gizmo Operation", nullptr,
+			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize);
+		if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::TRANSLATE))
+			gizmoOperation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::ROTATE))
+			gizmoOperation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::SCALE))
+			gizmoOperation = ImGuizmo::SCALE;
+		ImGui::End();
+
+		// 仅在编辑模式下启用Gizmo
+		if (m_SceneState == SceneState::Edit)
+		{
+			// Gizmo
+			Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+			if (selectedEntity)
+			{
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+				float windowWidth = ImGui::GetWindowWidth();
+				float windowHeight = ImGui::GetWindowHeight();
+				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+				// 获取相机矩阵
+				const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
+				glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
+
+				// 获取实体矩阵
+				auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();
+				glm::mat4 entityTransform = transformComponent.GetTransform();
+
+				// 使用ImGuizmo
+				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+					gizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransform));
+
+				// 如果被修改，更新Transform组件
+				if (ImGuizmo::IsUsing())
+				{
+					glm::vec3 translation, rotation, scale;
+					Math::DecomposeTransform(entityTransform, translation, rotation, scale);
+					transformComponent.Position = translation;
+					transformComponent.Rotation = rotation;
+					transformComponent.Scale = scale;
+				}
+			}
+		}
+
+		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 
 	void EditorLayer::UI_Toolbar()
