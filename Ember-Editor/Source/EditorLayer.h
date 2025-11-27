@@ -9,6 +9,7 @@
 #include "Ember/Renderer/EditorCamera.h"
 #include "Panel/SceneHierarchy.h"
 #include "Panel/ContentBrowserPanel.h"
+#include "Panel/ToastPanel.h"
 
 namespace Ember
 {
@@ -59,6 +60,7 @@ namespace Ember
 
 		SceneHierarchy m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+		ToastPanel m_ToastPanel;
 
 		enum class SceneState
 		{

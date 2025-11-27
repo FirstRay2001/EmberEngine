@@ -184,6 +184,12 @@ namespace Ember
 		// ContentBrowser面板
 		m_ContentBrowserPanel.OnImGuiRender();
 
+		// 同步Toast面板位置
+		m_ToastPanel.SetViewportBounds({ m_ViewportBounds[0].x, m_ViewportBounds[0].y }, { m_ViewportBounds[1].x, m_ViewportBounds[1].y });
+
+		// Toast面板
+		m_ToastPanel.OnImGuiRender();
+
 		// Viewport面板
 		UI_Viewport(io);
 
@@ -191,6 +197,8 @@ namespace Ember
 		UI_Toolbar();
 
 		ImGui::End();
+
+		
 	}
 
 	void EditorLayer::NewScene()
@@ -208,7 +216,7 @@ namespace Ember
 		// 非Edit模式下禁止保存
 		if (m_SceneState != SceneState::Edit)
 		{
-			// TODO: 浮窗提示
+			m_ToastPanel.AddToast_Error("Cannot save scene in Play mode!");
 			return;
 		}
 
@@ -252,7 +260,7 @@ namespace Ember
 		// 非Edit模式下禁止加载
 		if (m_SceneState != SceneState::Edit)
 		{
-			// TODO: 浮窗提示
+			m_ToastPanel.AddToast_Error("Cannot load prefab in Play mode!");
 			return;
 		}
 
@@ -312,7 +320,7 @@ namespace Ember
 	{
 		// Viewport面板
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-		ImGui::Begin("Viewport");
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar);
 		auto viewportOffset = ImGui::GetCursorPos();
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
