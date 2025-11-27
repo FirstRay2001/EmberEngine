@@ -29,7 +29,6 @@ namespace Ember
 
 	void Scene::DestroyEntity(Entity& entity)
 	{
-		
 		m_Registry.destroy(entity);
 		entity.Invalidate();
 	}
@@ -161,6 +160,22 @@ namespace Ember
 			Renderer::Submit(mesh, transform);
 		}
 
+		// 遍历所有带有ModelComponent和TransformComponent的实体并渲染它们
+		auto modelView = m_Registry.view<TransformComponent, ModelComponent>();
+		for (auto entity : modelView)
+		{
+			auto& transform = modelView.get<TransformComponent>(entity).GetTransform();
+			auto& modelComp = modelView.get<ModelComponent>(entity);
+			auto& model = modelComp.m_Model;
+			if (!model)
+				continue;
+			for (const auto& mesh : model->GetMeshes())
+			{
+				Renderer::Submit(*mesh, transform);
+			}
+		}
+
+#if 0
 		// 遍历所有网格线框实体并渲染它们
 		auto lineView = m_Registry.view<TransformComponent, GridComponent>();
 		for (auto entity : lineView)
@@ -169,6 +184,7 @@ namespace Ember
 			auto& gridComp = lineView.get<GridComponent>(entity);
 			Renderer::DrawLines(gridComp.m_Shader, gridComp.m_Grid, transform);
 		}
+#endif
 
 		Renderer::EndScene();
 	}

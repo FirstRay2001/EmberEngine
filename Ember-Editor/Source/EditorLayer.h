@@ -34,6 +34,12 @@ namespace Ember
 		void LoadPrefab(const std::filesystem::path& path);
 		void ProcessDrag(const std::filesystem::path& path);
 
+		void OnScenePlay();
+		void OnSceneStop();
+
+		void UI_Toolbar();
+
+
 		// 设置面板上下文
 		void SetPanelsContext();
 
@@ -50,13 +56,13 @@ namespace Ember
 		SceneHierarchy m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
 
-#if 0
-		Entity m_BoxEntity;
-		Entity m_SphereEntity;
-		Entity m_EditorCamera;
-		Entity m_GameCamera;
-		Entity m_DirectionalLight;
-		Entity m_PointLight;
-#endif
+		enum class SceneState
+		{
+			Edit,
+			Play
+		};
+		SceneState m_SceneState = SceneState::Edit;
+
+		Ref<Texture2D> m_IconPlay, m_IconStop;
 	};
 }

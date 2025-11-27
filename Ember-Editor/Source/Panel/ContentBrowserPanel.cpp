@@ -17,12 +17,12 @@ namespace Ember
 	ContentBrowserPanel::ContentBrowserPanel() :
 		m_CurrentDirectory(g_AssetPath)
 	{
-		m_FolderIcon = Texture2D::Create("Asset/Icon/icon_folder.png");
-		m_FileIcon = Texture2D::Create("Asset/Icon/icon_file.png");
-		m_ImageIcon = Texture2D::Create("Asset/Icon/icon_image.png");
-		m_SceneIcon = Texture2D::Create("Asset/Icon/icon_scene.png");
-		m_PrefabIcon = Texture2D::Create("Asset/Icon/icon_prefab.png");
-		m_ModelIcon = Texture2D::Create("Asset/Icon/icon_model.png");
+		m_FolderIcon = Texture2D::Create("Asset/Icon/ContentBrowser/icon_folder.png");
+		m_FileIcon = Texture2D::Create("Asset/Icon/ContentBrowser/icon_file.png");
+		m_ImageIcon = Texture2D::Create("Asset/Icon/ContentBrowser/icon_image.png");
+		m_SceneIcon = Texture2D::Create("Asset/Icon/ContentBrowser/icon_scene.png");
+		m_PrefabIcon = Texture2D::Create("Asset/Icon/ContentBrowser/icon_prefab.png");
+		m_ModelIcon = Texture2D::Create("Asset/Icon/ContentBrowser/icon_model.png");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()

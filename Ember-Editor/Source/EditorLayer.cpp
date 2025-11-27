@@ -47,6 +47,10 @@ namespace Ember
 
 		// 设置面板上下文
 		SetPanelsContext();
+
+		// 加载icon
+		m_IconPlay = Texture2D::Create("Asset/Icon/PIE/PlayButton.png");
+		m_IconStop = Texture2D::Create("Asset/Icon/PIE/StopButton.png");
 	}
 
 	void EditorLayer::OnDetach()
@@ -77,24 +81,34 @@ namespace Ember
 			// 清除颜色附件
 			m_Framebuffer->ClearAttachment(1, -1);
 
-			// 更新Editor场景
-			m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera, m_SceneHierarchyPanel.GetSelectedEntity());
 
-			// 鼠标拾取
-			if (m_ViewportHovered && !ImGuizmo::IsOver() && Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_LEFT) && !Input::IsKeyPressed(EMBER_KEY_LEFT_ALT))
+			if (m_SceneState == SceneState::Edit)
 			{
-				auto [mx, my] = ImGui::GetMousePos();
-				mx -= m_ViewportBounds[0].x;
-				my -= m_ViewportBounds[0].y;
-				my = m_ViewportSize.y - my;
-				glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-				if (mx >= 0 && my >= 0 && mx < viewportSize.x && my < viewportSize.y)
+				// 更新Editor场景
+				m_ActiveScene->OnUpdateEditor(timestep, *m_EditorCamera, m_SceneHierarchyPanel.GetSelectedEntity());
+
+				// 鼠标拾取
+				if (m_ViewportHovered && !ImGuizmo::IsOver() && Input::IsMouseButtonPressed(EMBER_MOUSE_BUTTON_LEFT) && !Input::IsKeyPressed(EMBER_KEY_LEFT_ALT))
 				{
-					int pixelData = m_Framebuffer->ReadPixel(1, (int)mx, (int)my);
-					Entity selectedEntity((entt::entity)pixelData, m_ActiveScene.get());
-					m_SceneHierarchyPanel.SetSelectedEntity(selectedEntity);
+					auto [mx, my] = ImGui::GetMousePos();
+					mx -= m_ViewportBounds[0].x;
+					my -= m_ViewportBounds[0].y;
+					my = m_ViewportSize.y - my;
+					glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+					if (mx >= 0 && my >= 0 && mx < viewportSize.x && my < viewportSize.y)
+					{
+						int pixelData = m_Framebuffer->ReadPixel(1, (int)mx, (int)my);
+						Entity selectedEntity((entt::entity)pixelData, m_ActiveScene.get());
+						m_SceneHierarchyPanel.SetSelectedEntity(selectedEntity);
+					}
 				}
 			}
+			else if (m_SceneState == SceneState::Play)
+			{
+				// 更新运行时场景
+				m_ActiveScene->OnUpdateRuntime(timestep);
+			}
+			
 		}
 		m_Framebuffer->Unbind();
 	}
@@ -213,17 +227,20 @@ namespace Ember
 		m_ViewportBounds[0] = { minBound.x, minBound.y };
 		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 
-		// 拖拽加载
-		if (ImGui::BeginDragDropTarget())
+		// 仅在编辑模式下启用拖拽加载
+		if (m_SceneState == SceneState::Edit)
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			// 拖拽加载
+			if (ImGui::BeginDragDropTarget())
 			{
-				const wchar_t* path = (const wchar_t*)payload->Data;
-				ProcessDrag(std::filesystem::path(g_AssetPath) / path);
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					ProcessDrag(std::filesystem::path(g_AssetPath) / path);
+				}
+				ImGui::EndDragDropTarget();
 			}
-			ImGui::EndDragDropTarget();
 		}
-
 
 		// Gizmo操作面板
 		static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
@@ -243,40 +260,48 @@ namespace Ember
 			gizmoOperation = ImGuizmo::SCALE;
 		ImGui::End();
 
-		// Gizmo
-		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		if (selectedEntity)
+		// 仅在编辑模式下启用Gizmo
+		if (m_SceneState == SceneState::Edit)
 		{
-			ImGuizmo::SetOrthographic(false);
-			ImGuizmo::SetDrawlist();
-			float windowWidth = ImGui::GetWindowWidth();
-			float windowHeight = ImGui::GetWindowHeight();
-			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
-
-			// 获取相机矩阵
-			const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
-			glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
-
-			// 获取实体矩阵
-			auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();
-			glm::mat4 entityTransform = transformComponent.GetTransform();
-
-			// 使用ImGuizmo
-			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				gizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransform));
-
-			// 如果被修改，更新Transform组件
-			if (ImGuizmo::IsUsing())
+			// Gizmo
+			Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+			if (selectedEntity)
 			{
-				glm::vec3 translation, rotation, scale;
-				Math::DecomposeTransform(entityTransform, translation, rotation, scale);
-				transformComponent.Position = translation;
-				transformComponent.Rotation = rotation;
-				transformComponent.Scale = scale;
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+				float windowWidth = ImGui::GetWindowWidth();
+				float windowHeight = ImGui::GetWindowHeight();
+				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+				// 获取相机矩阵
+				const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
+				glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
+
+				// 获取实体矩阵
+				auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();
+				glm::mat4 entityTransform = transformComponent.GetTransform();
+
+				// 使用ImGuizmo
+				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+					gizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransform));
+
+				// 如果被修改，更新Transform组件
+				if (ImGuizmo::IsUsing())
+				{
+					glm::vec3 translation, rotation, scale;
+					Math::DecomposeTransform(entityTransform, translation, rotation, scale);
+					transformComponent.Position = translation;
+					transformComponent.Rotation = rotation;
+					transformComponent.Scale = scale;
+				}
 			}
 		}
+		
 		ImGui::End();
 		ImGui::PopStyleVar();
+
+		// Toolbar
+		UI_Toolbar();
 
 		ImGui::End();
 	}
@@ -286,10 +311,20 @@ namespace Ember
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		SetPanelsContext();
+
+		// 重置场景状态
+		m_SceneState = SceneState::Edit;
 	}
 
 	void EditorLayer::SaveScene()
 	{
+		// 非Edit模式下禁止保存
+		if (m_SceneState != SceneState::Edit)
+		{
+			// TODO: 浮窗提示
+			return;
+		}
+
 		std::string filepath = FileDialog::SaveFile("Ember Scene (*.ember)\0*.ember\0");
 
 		// 用户取消
@@ -320,10 +355,20 @@ namespace Ember
 
 		SceneSerializer serilizer(m_ActiveScene);
 		serilizer.Deserialize(path.string());
+
+		// 重置场景状态
+		m_SceneState = SceneState::Edit;
 	}
 
 	void EditorLayer::LoadPrefab(const std::filesystem::path& path)
 	{
+		// 非Edit模式下禁止加载
+		if (m_SceneState != SceneState::Edit)
+		{
+			// TODO: 浮窗提示
+			return;
+		}
+
 		SceneSerializer serilizer(m_ActiveScene);
 		serilizer.DeserializePrefab(path.string());
 	}
@@ -339,6 +384,44 @@ namespace Ember
 		{
 			LoadPrefab(path);
 		}
+	}
+
+	void EditorLayer::OnScenePlay()
+	{
+		m_SceneState = SceneState::Play;
+	}
+
+	void EditorLayer::OnSceneStop()
+	{
+		m_SceneState = SceneState::Edit;
+	}
+
+	void EditorLayer::UI_Toolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		auto& colors = ImGui::GetStyle().Colors;
+		const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+		ImGui::Begin("Toolbar", nullptr,  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		float size = ImGui::GetWindowHeight() - 4.0f;
+		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+		{
+			if (m_SceneState == SceneState::Edit)
+				OnScenePlay();
+			else if (m_SceneState == SceneState::Play)
+				OnSceneStop();
+		}
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+		ImGui::End();
 	}
 
 	void EditorLayer::SetPanelsContext()
