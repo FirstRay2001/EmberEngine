@@ -50,6 +50,7 @@ namespace Ember
 
 	private:
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
 		Ref<EditorCamera> m_EditorCamera;
 		Ref<Framebuffer> m_Framebuffer;
 

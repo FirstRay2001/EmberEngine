@@ -366,6 +366,53 @@ namespace Ember
 		Renderer::EndScene();
 	}
 
+	template<typename Comp>
+	static void CopySingleComp(Entity dstEntity, Entity srcEntity)
+	{
+		if (srcEntity.HasComponent<Comp>())
+			dstEntity.AddOrReplaceComponent<Comp>(srcEntity.GetComponent<Comp>());
+	}
+
+	static void CopyComponents(Entity dstEntity, Entity srcEntity)
+	{
+		// 复制除IDComponent外的所有组件
+		CopySingleComp<TagComponent>(dstEntity, srcEntity);
+		CopySingleComp<TransformComponent>(dstEntity, srcEntity);
+		CopySingleComp<MeshComponent>(dstEntity, srcEntity);
+		CopySingleComp<ModelComponent>(dstEntity, srcEntity);
+		CopySingleComp<GridComponent>(dstEntity, srcEntity);
+		CopySingleComp<CameraComponent>(dstEntity, srcEntity);
+		CopySingleComp<SkyboxComponent>(dstEntity, srcEntity);
+		CopySingleComp<NativeScriptComponent>(dstEntity, srcEntity);
+		CopySingleComp<PointLightComponent>(dstEntity, srcEntity);
+		CopySingleComp<DirectionalLightComponent>(dstEntity, srcEntity);
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> src)
+	{
+		Ref<Scene> dst = CreateRef<Scene>();
+
+		// 同步视口大小
+		dst->m_ViewportWidth = src->m_ViewportWidth;
+		dst->m_ViewportHeight = src->m_ViewportHeight;
+
+		auto idView = src->m_Registry.view<IDComponent>();
+		for (auto e : idView)
+		{
+			// 获取源Entity
+			Entity srcEntity{e, src.get()};
+
+			// 创建目标Entity
+			UUID uuid = srcEntity.GetUUID();
+			Entity dstEntity = dst->CreateEntityWithUUID(uuid);	// 保持UUID不变
+
+			// 复制组件
+			CopyComponents(dstEntity, srcEntity);
+		}
+
+		return dst;
+	}
+
 	template<typename T>
 	void OnComponentAdded(Entity entity, T& component)
 	{

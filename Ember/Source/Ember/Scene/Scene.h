@@ -31,6 +31,8 @@ namespace Ember
 		void OnUpdateEditor(const Timestep& timestep, EditorCamera& editorCamera, Entity selectedEntity);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		static Ref<Scene> Copy(Ref<Scene> src);
+
 	public:
 		Entity GetPrimaryCameraEntity();
 

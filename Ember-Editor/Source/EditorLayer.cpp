@@ -37,25 +37,16 @@ namespace Ember
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
-		// 设置活动场景
-		m_ActiveScene = CreateRef<Scene>();
-		m_ActiveScene->OnViewportResize(fbSpec.Width, fbSpec.Height);
+		// 初始化场景
+		NewScene();
 		
 		// 初始化场景相机
 		m_EditorCamera = CreateRef<EditorCamera>(45.0f, 1.778f, 0.1f, 1000.0f);
 		m_EditorCamera->SetScreenSize(fbSpec.Width, fbSpec.Height);
 
-		// 设置面板上下文
-		SetPanelsContext();
-
 		// 加载icon
 		m_IconPlay = Texture2D::Create("Asset/Icon/PIE/PlayButton.png");
 		m_IconStop = Texture2D::Create("Asset/Icon/PIE/StopButton.png");
-
-		// 添加一个相机控制器
-		Entity player = m_ActiveScene->CreateEntity("Player");
-		player.AddComponent<CameraComponent>();
-		player.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 	}
 
 	void EditorLayer::OnDetach()
@@ -208,8 +199,9 @@ namespace Ember
 
 	void EditorLayer::NewScene()
 	{
-		m_ActiveScene = CreateRef<Scene>();
-		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_EditorScene = CreateRef<Scene>();
+		m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_ActiveScene = m_EditorScene;
 		SetPanelsContext();
 
 		// 重置场景状态
@@ -231,7 +223,7 @@ namespace Ember
 		if (filepath.empty())
 			return;
 
-		SceneSerializer serilizer(m_ActiveScene);
+		SceneSerializer serilizer(m_EditorScene);
 		serilizer.Serialize(filepath);
 	}
 
@@ -248,16 +240,10 @@ namespace Ember
 
 	void EditorLayer::LoadScene(const std::filesystem::path& path)
 	{
-		m_ActiveScene = CreateRef<Scene>();
-		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-		
-		SetPanelsContext();
+		NewScene();
 
-		SceneSerializer serilizer(m_ActiveScene);
+		SceneSerializer serilizer(m_EditorScene);
 		serilizer.Deserialize(path.string());
-
-		// 重置场景状态
-		m_SceneState = SceneState::Edit;
 	}
 
 	void EditorLayer::LoadPrefab(const std::filesystem::path& path)
@@ -269,7 +255,7 @@ namespace Ember
 			return;
 		}
 
-		SceneSerializer serilizer(m_ActiveScene);
+		SceneSerializer serilizer(m_EditorScene);
 		serilizer.DeserializePrefab(path.string());
 	}
 
@@ -289,11 +275,15 @@ namespace Ember
 	void EditorLayer::OnScenePlay()
 	{
 		m_SceneState = SceneState::Play;
+		m_ActiveScene = Scene::Copy(m_EditorScene);
+		SetPanelsContext();
 	}
 
 	void EditorLayer::OnSceneStop()
 	{
 		m_SceneState = SceneState::Edit;
+		m_ActiveScene = m_EditorScene;
+		SetPanelsContext();
 	}
 
 	void EditorLayer::UI_MenuBar()
