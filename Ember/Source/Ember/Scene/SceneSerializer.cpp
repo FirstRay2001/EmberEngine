@@ -95,7 +95,11 @@ namespace Ember
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap;
-		out << YAML::Key << "EntityID" << YAML::Value << (uint64_t)(uint32_t)entity;
+
+		// ID组件
+		EMBER_CORE_ASSERT(entity.HasComponent<IDComponent>(), "Entity don't have UUID!");
+		UUID uuid = entity.GetUUID();
+		out << YAML::Key << "EntityID" << YAML::Value << (uint64_t)uuid;
 
 		// 标签组件
 		if (entity.HasComponent<TagComponent>())
@@ -350,17 +354,24 @@ namespace Ember
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::DeserializeEntity(const YAML::Node& entityNode, bool UseTransform)
+	void SceneSerializer::DeserializeEntity(const YAML::Node& entityNode, DeserializeParams params)
 	{
 		std::string tag = "Untitled";
+		UUID uuid(entityNode["EntityID"].as<std::uint64_t>());
+
+		// Prefab不使用原有UUID
+		if (params.bUseUUID == false)
+			uuid = UUID();
 
 		// 标签组件
 		if (entityNode["Tag"])
 			tag = entityNode["Tag"]["Tag"].as<std::string>();
-		Entity entity = m_Scene->CreateEntity(tag);
+
+		// 创建Entity
+		Entity entity = m_Scene->CreateEntityWithUUID(uuid, tag);
 
 		// 变换组件
-		if (entityNode["Transform"] && UseTransform)
+		if (entityNode["Transform"] && params.bUseTransform)
 		{
 			auto position = entityNode["Transform"]["Position"].as<glm::vec3>();
 			auto rotation = entityNode["Transform"]["Rotation"].as<glm::vec3>();
@@ -619,8 +630,10 @@ namespace Ember
 		if (!data["EntityID"])
 			return false;
 
-		bool bUseTransform = false;	// 不使用Prefab的Transform
-		DeserializeEntity(data, bUseTransform);
+		DeserializeParams params;
+		params.bUseTransform = false;
+		params.bUseUUID = false;
+		DeserializeEntity(data, params);
 
 		return true;
 	}

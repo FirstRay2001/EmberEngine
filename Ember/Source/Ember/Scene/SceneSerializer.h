@@ -26,8 +26,14 @@ namespace Ember
 		// 序列化运行时场景到文件
 		void SerializeRuntime(const std::string& filepath);
 
+		struct DeserializeParams
+		{
+			bool bUseTransform = true;
+			bool bUseUUID = true;
+		};
+
 		// 反序列化实体
-		void DeserializeEntity(const YAML::Node& entityNode, bool UseTransform = true);
+		void DeserializeEntity(const YAML::Node& entityNode, DeserializeParams params = {});
 
 		// 从文件反序列化场景
 		bool Deserialize(const std::string& filepath);

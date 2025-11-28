@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - EntityID: 6
+  - EntityID: 17888694787313131070
     Tag:
       Tag: MainCamera
     Transform:
@@ -8,11 +8,11 @@ Entities:
       Rotation: [154.369995, 24.0400009, 180.839996]
       Scale: [1.00000155, 0.999999881, 1.00000191]
     Camera:
-      Aspect: 2.1216023
+      Aspect: 2.12607455
       FOV: 45
       NearClip: 0.100000001
       FarClip: 100
-  - EntityID: 5
+  - EntityID: 4787207547649071955
     Tag:
       Tag: Grid
     Transform:
@@ -24,7 +24,7 @@ Entities:
       VertexArray:
         Size: 10
         Divisions: 10
-  - EntityID: 4
+  - EntityID: 15716301495388413402
     Tag:
       Tag: Wall
     Transform:
@@ -45,7 +45,7 @@ Entities:
         Emissive: [0, 0, 0]
         Opacity: 1
       ShaderPath: Asset/Shader/BlinnPhong.glsl
-  - EntityID: 3
+  - EntityID: 18278326804215896459
     Tag:
       Tag: Ball
     Transform:
@@ -67,7 +67,7 @@ Entities:
         Emissive: [0, 0, 0]
         Opacity: 1
       ShaderPath: Asset/Shader/BlinnPhong.glsl
-  - EntityID: 2
+  - EntityID: 10918884597280119351
     Tag:
       Tag: Gun
     Transform:
@@ -76,7 +76,7 @@ Entities:
       Scale: [2.74000001, 2.74000001, 2.74000001]
     Model:
       ModelPath: Asset\Model\PortalGun\blaster-l.obj
-  - EntityID: 1
+  - EntityID: 12120275012368185050
     Tag:
       Tag: Environment
     Transform:
@@ -91,7 +91,7 @@ Entities:
     Skybox:
       SkyboxPath: Asset\Texture\Skybox
       ShaderPath: Asset\Shader\Skybox.glsl
-  - EntityID: 0
+  - EntityID: 13383258091595370868
     Tag:
       Tag: PointLight
     Transform:

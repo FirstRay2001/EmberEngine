@@ -12,6 +12,7 @@ namespace Ember
 {
 	class VertexArray;
 	class Material;
+	class UUID;
 
 	class Scene
 	{
@@ -23,6 +24,7 @@ namespace Ember
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = "Entity_Default_Name");
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = "Entity_Default_Name");
 		void DestroyEntity(Entity& entity);
 
 		void OnUpdateRuntime(const Timestep& timestep);

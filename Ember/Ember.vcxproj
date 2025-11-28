@@ -165,6 +165,7 @@
     <ClInclude Include="Source\Ember\Core\Log.h" />
     <ClInclude Include="Source\Ember\Core\Timer.h" />
     <ClInclude Include="Source\Ember\Core\Timestep.h" />
+    <ClInclude Include="Source\Ember\Core\UUID.h" />
     <ClInclude Include="Source\Ember\Core\Window.h" />
     <ClInclude Include="Source\Ember\Events\ApplicationEvent.h" />
     <ClInclude Include="Source\Ember\Events\Event.h" />
@@ -646,6 +647,7 @@
     <ClCompile Include="Source\Ember\Core\Layer.cpp" />
     <ClCompile Include="Source\Ember\Core\LayerStack.cpp" />
     <ClCompile Include="Source\Ember\Core\Log.cpp" />
+    <ClCompile Include="Source\Ember\Core\UUID.cpp" />
     <ClCompile Include="Source\Ember\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Ember\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Source\Ember\Math\Math.cpp" />

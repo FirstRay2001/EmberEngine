@@ -51,6 +51,11 @@ namespace Ember
 		// 加载icon
 		m_IconPlay = Texture2D::Create("Asset/Icon/PIE/PlayButton.png");
 		m_IconStop = Texture2D::Create("Asset/Icon/PIE/StopButton.png");
+
+		// 添加一个相机控制器
+		Entity player = m_ActiveScene->CreateEntity("Player");
+		player.AddComponent<CameraComponent>();
+		player.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 	}
 
 	void EditorLayer::OnDetach()

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "Component.h"
 
 namespace Ember
 {
@@ -65,6 +66,9 @@ namespace Ember
 
 		// 获取实体ID
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
+
+		// 获取UUID
+		UUID GetUUID() { return GetComponent<IDComponent>().m_ID; }
 
 		// 无效化
 		void Invalidate() { m_EntityHandle = entt::null; m_Scene = nullptr; }

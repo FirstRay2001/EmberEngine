@@ -13,10 +13,22 @@
 #include "Ember/Renderer/Camera.h"
 #include "Ember/Renderer/Light.h"
 #include "Ember/Renderer/Texture.h"
-#include "ScriptableEntity.h"
+#include "Ember/Core/UUID.h"
 
 namespace Ember
 {
+	// ID组件
+	struct IDComponent
+	{
+		UUID m_ID;
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+		IDComponent(UUID uuid) :
+			m_ID(uuid)
+		{
+		}
+	};
+
 	// 变换组件
 	struct TransformComponent
 	{
@@ -137,6 +149,7 @@ namespace Ember
 	};
 
 	// 原生脚本组件
+	class ScriptableEntity;
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* Instance = nullptr;
@@ -174,4 +187,8 @@ namespace Ember
 		{
 		}
 	};
+
+	//////// 物理组件 ////////
+
+	
 }

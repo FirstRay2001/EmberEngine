@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "Component.h"
+#include "ScriptableEntity.h"
 #include "Ember/Renderer/Renderer.h"
 #include "Ember/Renderer/Model.h"
 
@@ -21,8 +22,14 @@ namespace Ember
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+	{
 		Entity entity(m_Registry.create(), this);
 		entity.AddComponent<TransformComponent>();
+		entity.AddComponent<IDComponent>(uuid);
 		auto& tag = entity.AddComponent<TagComponent>(name);
 		return entity;
 	}
@@ -363,6 +370,12 @@ namespace Ember
 	void OnComponentAdded(Entity entity, T& component)
 	{
 		static_assert(false);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
+		// Nothing to do
 	}
 
 	template<>
