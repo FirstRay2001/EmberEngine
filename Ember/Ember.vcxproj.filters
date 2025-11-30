@@ -28,6 +28,9 @@
     <Filter Include="Source\Ember\Math">
       <UniqueIdentifier>{A9DE206C-15F5-1E02-5E6C-AA23CAC1EF89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Ember\Physcis">
+      <UniqueIdentifier>{82D2DDE9-6E61-67B3-1780-7BAE03EE7759}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Ember\Renderer">
       <UniqueIdentifier>{762576FC-E291-31F7-AB85-C95417B1535F}</UniqueIdentifier>
     </Filter>
@@ -36,6 +39,9 @@
     </Filter>
     <Filter Include="Source\Ember\Scene">
       <UniqueIdentifier>{ED20AAF0-D904-6B46-4265-65992E6855C8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Ember\Scripting">
+      <UniqueIdentifier>{D2908E67-BE8A-B7B9-A7F7-4DCA93901D26}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Ember\Utils">
       <UniqueIdentifier>{30B5D7F0-1C99-9846-85F9-929971FC82C8}</UniqueIdentifier>
@@ -120,6 +126,9 @@
     <ClInclude Include="Source\Ember\Core\Timestep.h">
       <Filter>Source\Ember\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Core\UUID.h">
+      <Filter>Source\Ember\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Core\Window.h">
       <Filter>Source\Ember\Core</Filter>
     </ClInclude>
@@ -143,6 +152,9 @@
     </ClInclude>
     <ClInclude Include="Source\Ember\Math\Math.h">
       <Filter>Source\Ember\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Physcis\PhysicsWorld.h">
+      <Filter>Source\Ember\Physcis</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\Buffer.h">
       <Filter>Source\Ember\Renderer</Filter>
@@ -215,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="Source\Ember\Scene\ScriptableEntity.h">
       <Filter>Source\Ember\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Scripting\ScriptEngine.h">
+      <Filter>Source\Ember\Scripting</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Utils\PlatformUtils.h">
       <Filter>Source\Ember\Utils</Filter>
@@ -1542,7 +1557,6 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Core\UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1558,6 +1572,9 @@
       <Filter>Source\Ember\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Core\Log.cpp">
+      <Filter>Source\Ember\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Core\UUID.cpp">
       <Filter>Source\Ember\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\ImGui\ImGuiBuild.cpp">
@@ -1632,6 +1649,9 @@
     <ClCompile Include="Source\Ember\Scene\SceneSerializer.cpp">
       <Filter>Source\Ember\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Scripting\ScriptEngine.cpp">
+      <Filter>Source\Ember\Scripting</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1692,6 +1712,5 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Ember\Core\UUID.cpp" />
   </ItemGroup>
 </Project>

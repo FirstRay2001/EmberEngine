@@ -21,6 +21,7 @@ IncludeDir["entt"] = "Ember/Vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Ember/Vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Ember/Vendor/ImGuizmo"
 IncludeDir["Assimp"] = "Ember/Vendor/assimp/include"
+IncludeDir["mono"] = "Ember/Vendor/mono/include"
 
 group "Dependencies"
     include "Ember/Vendor/glfw"
@@ -29,13 +30,13 @@ group "Dependencies"
     include "Ember/Vendor/yaml-cpp"
 group ""
 
-
 project "Ember"
     location "Ember"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
+    staticruntime "off"
+
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -67,12 +68,14 @@ project "Ember"
         "%{IncludeDir.entt}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.ImGuizmo}",
-        "%{IncludeDir.Assimp}"
+        "%{IncludeDir.Assimp}",
+        "%{IncludeDir.mono}"
     }
 
     libdirs
     {
-        "Ember/Vendor/assimp/bin/Debug"
+        "Ember/Vendor/assimp/lib/%{cfg.buildcfg}",
+        "Ember/Vendor/mono/lib/%{cfg.buildcfg}"
     }
 
     links
@@ -81,8 +84,8 @@ project "Ember"
         "Glad",
         "ImGui",
         "yaml-cpp",
-        "assimp-vc143-mtd",
-        "opengl32.lib",
+        "libmono-static-sgen.lib",
+        "opengl32.lib"
     }
 
     defines
@@ -110,6 +113,14 @@ project "Ember"
             "EMEBR_BUILD_DLL"
         }
 
+        links
+		{
+			"Ws2_32.lib",
+			"Winmm.lib",
+			"Version.lib",
+			"Bcrypt.lib",
+		}
+
     filter "configurations:Debug"
         defines 
         {
@@ -118,22 +129,34 @@ project "Ember"
         runtime "Debug"
         symbols "on"
 
+        links
+        {
+            "assimp-vc143-mtd"
+        }
+
     filter "configurations:Release"
         defines "EMBER_RELEASE"
         runtime "Release"
         optimize "on"
+
+        links
+        {
+            "assimp-vc143-mt"
+        }
 
     filter "configurations:Dist"
         defines "EMBER_DIST"
         runtime "Release"
         optimize "on"
 
+include "Ember-ScriptCore"
+
 project "Ember-Editor"
     location "Ember-Editor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -195,7 +218,7 @@ project "Client"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")

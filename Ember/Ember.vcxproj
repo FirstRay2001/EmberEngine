@@ -78,10 +78,10 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;Vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;Vendor\assimp\include;Vendor\mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
@@ -91,8 +91,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Vendor\assimp\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmono-static-sgen.lib;opengl32.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Vendor\assimp\lib\Debug;Vendor\mono\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -102,13 +102,13 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;Vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;Vendor\assimp\include;Vendor\mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
@@ -119,8 +119,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Vendor\assimp\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmono-static-sgen.lib;opengl32.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Vendor\assimp\lib\Release;Vendor\mono\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -130,13 +130,13 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;EMBER_PLATFORM_WINDOWS;EMEBR_BUILD_DLL;EMBER_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;Vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\glfw\include;Vendor\glad\include;Vendor\imgui;Vendor\glm;Vendor\stb_image;Vendor\entt\include;Vendor\yaml-cpp\include;Vendor\ImGuizmo;Vendor\assimp\include;Vendor\mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
@@ -147,8 +147,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Vendor\assimp\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmono-static-sgen.lib;opengl32.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Vendor\assimp\lib\Dist;Vendor\mono\lib\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -174,6 +174,7 @@
     <ClInclude Include="Source\Ember\Gameplay\Controller\Controller.h" />
     <ClInclude Include="Source\Ember\ImGui\ImGuiLayer.h" />
     <ClInclude Include="Source\Ember\Math\Math.h" />
+    <ClInclude Include="Source\Ember\Physcis\PhysicsWorld.h" />
     <ClInclude Include="Source\Ember\Renderer\Buffer.h" />
     <ClInclude Include="Source\Ember\Renderer\Camera.h" />
     <ClInclude Include="Source\Ember\Renderer\EditorCamera.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Source\Ember\Scene\Scene.h" />
     <ClInclude Include="Source\Ember\Scene\SceneSerializer.h" />
     <ClInclude Include="Source\Ember\Scene\ScriptableEntity.h" />
+    <ClInclude Include="Source\Ember\Scripting\ScriptEngine.h" />
     <ClInclude Include="Source\Ember\Utils\PlatformUtils.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
@@ -672,6 +674,7 @@
     <ClCompile Include="Source\Ember\Scene\Entity.cpp" />
     <ClCompile Include="Source\Ember\Scene\Scene.cpp" />
     <ClCompile Include="Source\Ember\Scene\SceneSerializer.cpp" />
+    <ClCompile Include="Source\Ember\Scripting\ScriptEngine.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLFramebuffer.cpp" />
