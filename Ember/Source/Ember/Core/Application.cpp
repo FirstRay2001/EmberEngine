@@ -8,6 +8,7 @@
 #include "Ember/Events/KeyEvent.h"
 #include "Ember/ImGui/ImGuiLayer.h"
 #include "Ember/Renderer/Renderer.h"
+#include "Ember/Scripting/ScriptEngine.h"
 #include "Ember/Core/Timestep.h"
 #include "Ember/ResourceManager/ResourceManager.h"
 
@@ -59,6 +60,9 @@ Application::Application()
 
 	// 初始化Renderer
 	Renderer::Init();
+
+	// 初始化ScriptEngine
+	ScriptEngine::Init();
 
 	// 初始化ImGui
 	m_ImGuiLayer = new ImGuiLayer();
