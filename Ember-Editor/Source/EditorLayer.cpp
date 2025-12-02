@@ -277,10 +277,12 @@ namespace Ember
 		m_SceneState = SceneState::Play;
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		SetPanelsContext();
+		m_ActiveScene->OnStartRuntime();
 	}
 
 	void EditorLayer::OnSceneStop()
 	{
+		m_ActiveScene->OnStopRuntime();
 		m_SceneState = SceneState::Edit;
 		m_ActiveScene = m_EditorScene;
 		SetPanelsContext();

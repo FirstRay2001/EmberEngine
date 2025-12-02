@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "Component.h"
 #include "ScriptableEntity.h"
+#include "Ember/Scripting/ScriptEngine.h"
 #include "Ember/Renderer/Renderer.h"
 #include "Ember/Renderer/Model.h"
 
@@ -31,13 +32,25 @@ namespace Ember
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<IDComponent>(uuid);
 		auto& tag = entity.AddComponent<TagComponent>(name);
+		m_EntityMap[uuid] = entity;
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity& entity)
 	{
+		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 		entity.Invalidate();
+	}
+
+	void Scene::OnStartRuntime()
+	{
+		ScriptEngine::OnRuntimeStart(this);
+	}
+
+	void Scene::OnStopRuntime()
+	{
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnUpdateRuntime(const Timestep& timestep)
@@ -79,8 +92,17 @@ namespace Ember
 		return Entity{};
 	}
 
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		auto it = m_EntityMap.find(uuid);
+		if (it != m_EntityMap.end())
+			return it->second;
+		return Entity{};
+	}
+
 	void Scene::UpdateScripts(const Timestep& timestep)
 	{
+		// 原生脚本
 		auto view = m_Registry.view<NativeScriptComponent>();
 		for (auto entity : view)
 		{
@@ -96,6 +118,14 @@ namespace Ember
 
 			// 调用脚本的OnUpdate方法
 			scriptComp.Instance->OnUpdate(timestep);
+		}
+
+		// C#脚本
+		auto scriptView = m_Registry.view<ScriptComponent>();
+		for (auto entity : scriptView)
+		{
+			Entity scriptEntity{ entity, this };
+			ScriptEngine::OnUpdateEntity(scriptEntity, (float)timestep);
 		}
 	}
 
@@ -383,6 +413,7 @@ namespace Ember
 		CopySingleComp<GridComponent>(dstEntity, srcEntity);
 		CopySingleComp<CameraComponent>(dstEntity, srcEntity);
 		CopySingleComp<SkyboxComponent>(dstEntity, srcEntity);
+		CopySingleComp<ScriptComponent>(dstEntity, srcEntity);
 		CopySingleComp<NativeScriptComponent>(dstEntity, srcEntity);
 		CopySingleComp<PointLightComponent>(dstEntity, srcEntity);
 		CopySingleComp<DirectionalLightComponent>(dstEntity, srcEntity);
@@ -463,6 +494,12 @@ namespace Ember
 
 	template<>
 	void Scene::OnComponentAdded<GridComponent>(Entity entity, GridComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
 	{
 		// Nothing to do
 	}

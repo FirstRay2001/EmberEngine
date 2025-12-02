@@ -93,7 +93,13 @@ namespace Ember
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
 
-		ScriptClass MonoBehaviourClass;
+		ScriptClass EntityClass;
+
+		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
+		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+
+		// Scene上下文
+		Scene* SceneContext = nullptr;
 	};
 
 	static ScriptEngineData* s_Data = nullptr;
@@ -101,12 +107,21 @@ namespace Ember
 	void ScriptEngine::Init()
 	{
 		s_Data = new ScriptEngineData();
+
+		// 初始化Mono环境
 		InitMono();
+
+		// 加载核心程序集
 		LoadAssembly("Resources/Scripts/Ember-ScriptCore.dll");
 		
+		// 加载Entity类
+		LoadAssemblyClasses(s_Data->CoreAssembly);
+
 		// 注册胶水代码
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
+#if 0
 		// 加载MonoBehaviour类
 		s_Data->MonoBehaviourClass = ScriptClass("Ember", "MonoBehaviour");
 
@@ -114,12 +129,89 @@ namespace Ember
 		auto* instance = s_Data->MonoBehaviourClass.Instantiate();
 		auto* method = s_Data->MonoBehaviourClass.GetMethod("OnStart", 0);
 		s_Data->MonoBehaviourClass.InvokeMethod(instance, method);
+#endif
 	}
 
 	void ScriptEngine::Shutdown()
 	{
 		ShutdownMono();
 		delete s_Data;
+	}
+
+	void ScriptEngine::OnRuntimeStart(Scene* scene)
+	{
+		// 设置场景上下文
+		s_Data->SceneContext = scene;
+
+		// 注册脚本实例
+		auto view = s_Data->SceneContext->m_Registry.view<ScriptComponent>();
+		for (auto entity : view)
+		{
+			Entity scriptEntity{ entity, s_Data->SceneContext };
+			OnCreateEntity(scriptEntity);
+		}
+	}
+
+	void ScriptEngine::OnRuntimeStop()
+	{
+		// 清理场景上下文
+		s_Data->SceneContext = nullptr;
+
+		// 清理实体实例
+		s_Data->EntityInstances.clear();
+	}
+
+	bool ScriptEngine::EntityClassExists(const std::string& fullClassName)
+	{
+		return s_Data->EntityClasses.find(fullClassName) != s_Data->EntityClasses.end();
+	}
+
+	void ScriptEngine::OnCreateEntity(Entity entity)
+	{
+		const auto& scriptComp = entity.GetComponent<ScriptComponent>();
+
+		// 检查脚本类是否存在
+		if (!EntityClassExists(scriptComp.Name))
+			return;
+
+		// 创建脚本实例
+		Ref<ScriptClass> scriptClass = s_Data->EntityClasses[scriptComp.Name];
+		Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(scriptClass, entity);
+		s_Data->EntityInstances[entity.GetUUID()] = instance;
+
+		// 调用OnCreate方法
+		instance->InvokeOnCreate();
+	}
+
+	void ScriptEngine::OnUpdateEntity(Entity entity, float deltaTime)
+	{
+		auto it = s_Data->EntityInstances.find(entity.GetUUID());
+		if (it == s_Data->EntityInstances.end())
+		{
+			EMBER_CORE_ASSERT(false, "Script instance not found for entity!");
+			return;
+		}
+
+		// 获取脚本实例
+		Ref<ScriptInstance> instance = it->second;
+
+		// 调用OnUpdate方法
+		instance->InvokeOnUpdate(deltaTime);
+	}
+
+	Scene* ScriptEngine::GetSceneContext()
+	{
+		return s_Data->SceneContext;
+	}
+
+	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetEntityClasses()
+	{
+		return s_Data->EntityClasses;
+	}
+
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
 	}
 
 	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
@@ -170,6 +262,55 @@ namespace Ember
 		return instance;
 	}
 
+	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	{
+		// 清理现有类
+		s_Data->EntityClasses.clear();
+
+		// 获取程序集镜像
+		MonoImage* image = mono_assembly_get_image(assembly);
+		const MonoTableInfo* typeDefTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		int rows = mono_table_info_get_rows(typeDefTable);
+		MonoClass* entityClass = mono_class_from_name(image, "Ember", "Entity");
+		s_Data->EntityClass = ScriptClass("Ember", "Entity");
+
+		// 遍历类型定义表
+		for (int i = 0; i < rows; ++i)
+		{
+			uint32_t cols[MONO_TYPEDEF_SIZE];
+			mono_metadata_decode_row(typeDefTable, i, cols, MONO_TYPEDEF_SIZE);
+
+			// 获取类名和命名空间
+			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+
+			// 获取MonoClass
+			MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
+
+			// 跳过Entity类本身
+			if(monoClass == entityClass)
+				continue;
+
+			// 检查是否是Entity的子类
+			if (monoClass && mono_class_is_subclass_of(monoClass, entityClass, false))
+			{
+				// 组合完整类名
+				std::string fullClassName = std::string(nameSpace) + "." + std::string(name);
+
+				// 处理无命名空间的类
+				if(strlen(nameSpace) == 0)
+					fullClassName = name;
+
+				// 创建ScriptClass
+				Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nameSpace, name);
+
+				// 存储类
+				s_Data->EntityClasses[fullClassName] = scriptClass;
+				EMBER_CORE_INFO("Loaded Script Class: {}", fullClassName);
+			}
+		}
+	}
+
 	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className) :
 		m_ClassNamespace(classNamespace),
 		m_ClassName(className)
@@ -190,5 +331,36 @@ namespace Ember
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
 		return mono_runtime_invoke(method, instance, params, nullptr);
+	}
+
+	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity)
+	{
+		m_ScriptClass = scriptClass;
+		m_Instance = m_ScriptClass->Instantiate();
+
+		// 获取构造函数
+		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
+		UUID uuid = entity.GetUUID();
+		void* param = &uuid;	// 通过UUID构造
+		m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &param);
+
+		// 获取生命周期方法
+		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);
+		m_OnUpdateMethod = m_ScriptClass->GetMethod("OnUpdate", 1);
+	}
+
+	void ScriptInstance::InvokeOnCreate()
+	{
+		if (m_OnCreateMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+	}
+
+	void ScriptInstance::InvokeOnUpdate(float deltaTime)
+	{
+		if (m_OnUpdateMethod)
+		{
+			void* param = &deltaTime;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
+		}
 	}
 }

@@ -351,6 +351,16 @@ namespace Ember
 			out << YAML::EndMap;
 		}
 
+		// 脚本组件
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			out << YAML::Key << "Script";
+			out << YAML::BeginMap;
+			auto& scriptComp = entity.GetComponent<ScriptComponent>();
+			out << YAML::Key << "ScriptName" << YAML::Value << scriptComp.Name;
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap;
 	}
 
@@ -553,6 +563,13 @@ namespace Ember
 			skyboxComp.m_Cubemap = CubemapTexture::Create(skyboxPath);
 			std::string shaderPath = entityNode["Skybox"]["ShaderPath"].as<std::string>();
 			skyboxComp.m_Shader = ShaderLibrary::Get().LoadSync(shaderPath);
+		}
+
+		// 脚本组件
+		if (entityNode["Script"])
+		{
+			auto& scriptComp = entity.AddComponent<ScriptComponent>();
+			scriptComp.Name = entityNode["Script"]["ScriptName"].as<std::string>();
 		}
 	}
 

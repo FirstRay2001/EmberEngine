@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <xhash>
-
 namespace Ember
 {
 	class UUID
@@ -22,15 +20,18 @@ namespace Ember
 	};
 }
 
-namespace std
+namespace std 
 {
-	// 指定hash
+	template <typename T> struct hash;
+
+	// 显示专有化
 	template<>
 	struct hash<Ember::UUID>
 	{
 		std::size_t operator()(const Ember::UUID& uuid) const
 		{
-			return hash<uint64_t>()((uint64_t)uuid);
+			return (uint64_t)uuid;
 		}
 	};
+
 }

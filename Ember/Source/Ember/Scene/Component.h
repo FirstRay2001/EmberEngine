@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Ember/Core/UUID.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -13,7 +14,6 @@
 #include "Ember/Renderer/Camera.h"
 #include "Ember/Renderer/Light.h"
 #include "Ember/Renderer/Texture.h"
-#include "Ember/Core/UUID.h"
 
 namespace Ember
 {
@@ -144,6 +144,18 @@ namespace Ember
 		SkyboxComponent(const Ref<CubemapTexture>& cubemap, const Ref<Shader>& shader) :
 			m_Cubemap(cubemap),
 			m_Shader(shader)
+		{
+		}
+	};
+
+	// 脚本组件
+	struct ScriptComponent
+	{
+		std::string Name;
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+		ScriptComponent(const std::string& name) :
+			Name(name)
 		{
 		}
 	};

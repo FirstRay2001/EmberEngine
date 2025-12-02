@@ -2,16 +2,18 @@ Scene: Untitled
 Entities:
   - EntityID: 17888694787313131070
     Tag:
-      Tag: MainCamera
+      Tag: FirstPersonPlayer
     Transform:
-      Position: [8.85000038, 5.53999996, -7.38999987]
-      Rotation: [154.369995, 24.0400009, 180.839996]
+      Position: [0, 3, 5]
+      Rotation: [-20, 0, 0]
       Scale: [1.00000155, 0.999999881, 1.00000191]
     Camera:
       Aspect: 2.12607455
       FOV: 45
       NearClip: 0.100000001
       FarClip: 100
+    Script:
+      ScriptName: Client.Player
   - EntityID: 4787207547649071955
     Tag:
       Tag: Grid

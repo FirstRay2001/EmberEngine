@@ -231,6 +231,9 @@
     <ClInclude Include="Source\Ember\Scripting\ScriptEngine.h">
       <Filter>Source\Ember\Scripting</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Scripting\ScriptGlue.h">
+      <Filter>Source\Ember\Scripting</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Utils\PlatformUtils.h">
       <Filter>Source\Ember\Utils</Filter>
     </ClInclude>
@@ -1557,7 +1560,6 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Ember\Scripting\ScriptGlue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1653,6 +1655,9 @@
     <ClCompile Include="Source\Ember\Scripting\ScriptEngine.cpp">
       <Filter>Source\Ember\Scripting</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Scripting\ScriptGlue.cpp">
+      <Filter>Source\Ember\Scripting</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1713,6 +1718,5 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Ember\Scripting\ScriptGlue.cpp" />
   </ItemGroup>
 </Project>

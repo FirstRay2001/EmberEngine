@@ -7,6 +7,9 @@
 #include <string>
 #include <filesystem>
 
+#include "Ember/Scene/Entity.h"
+#include "Ember/Scene/Scene.h"
+
 extern "C" {
 	typedef struct _MonoClass MonoClass;
 	typedef struct _MonoObject MonoObject;
@@ -34,12 +37,41 @@ namespace Ember
 		MonoClass* m_MonoClass = nullptr;
 	};
 
+	class ScriptInstance
+	{
+	public:
+		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity);
+
+	public:
+		void InvokeOnCreate();
+		void InvokeOnUpdate(float deltaTime);
+
+	private:
+		Ref<ScriptClass> m_ScriptClass;
+		MonoObject* m_Instance = nullptr;
+		MonoMethod* m_Constructor = nullptr;
+		MonoMethod* m_OnCreateMethod = nullptr;
+		MonoMethod* m_OnUpdateMethod = nullptr;
+	};
+
 
 	class ScriptEngine
 	{
 	public:
 		static void Init();
 		static void Shutdown();
+
+		static void OnRuntimeStart(Scene* scene);
+		static void OnRuntimeStop();
+
+		static bool EntityClassExists(const std::string& fullClassName);
+		static void OnCreateEntity(Entity entity);
+		static void OnUpdateEntity(Entity entity, float deltaTime);
+
+		static Scene* GetSceneContext();
+		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
+
+		static MonoImage* GetCoreAssemblyImage();
 
 		static void LoadAssembly(const std::filesystem::path& filepath);
 
@@ -48,7 +80,9 @@ namespace Ember
 		static void ShutdownMono();
 
 		static MonoObject* InstantiateClass(MonoClass* scriptClass);
+		static void LoadAssemblyClasses(MonoAssembly* assembly);
 
 		friend ScriptClass;
+		friend class ScriptGlue;
 	};
 }
