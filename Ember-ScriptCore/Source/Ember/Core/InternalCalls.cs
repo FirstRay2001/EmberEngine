@@ -9,6 +9,9 @@ namespace Ember
         public extern static void NativeLog(string message);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Window_CaptureMouse(bool capture);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool Input_IsKeyPressed(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

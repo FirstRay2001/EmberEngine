@@ -27,8 +27,13 @@ namespace Ember
 
 		// 设置事件回调函数
 		void SetEventCallback(const EventCallbackFn& callback) override;
+
+		// 垂直同步
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
+
+		// 鼠标捕获
+		void SetMouseCapture(bool capture) override;
 
 		virtual void* GetNativeWindow() const override { return m_Window; }
 

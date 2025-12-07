@@ -2,6 +2,9 @@
 
 namespace Ember
 {
+    /// <summary>
+    /// 实体
+    /// </summary>
     public class Entity
     {
         protected Entity() { ID = 0; }
@@ -11,8 +14,14 @@ namespace Ember
             ID = id;
         }
 
+        /// <summary>
+        /// UUID
+        /// </summary>
         public readonly ulong ID;
 
+        /// <summary>
+        /// 位置
+        /// </summary>
         public Vector3 Position
         {
             get

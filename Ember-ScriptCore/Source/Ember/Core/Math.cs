@@ -1,5 +1,8 @@
 ﻿namespace Ember
 {
+    /// <summary>
+    /// 三维向量
+    /// </summary>
     public struct Vector3
     {
         public float X, Y, Z;

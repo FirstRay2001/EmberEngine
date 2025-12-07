@@ -8,6 +8,7 @@
 #include "Ember/Core/Input.h"
 #include "Ember/Core/KeyCode.h"
 #include "Ember/Core/UUID.h"
+#include "Ember/Core/Application.h"
 #include "Ember/Scene/Scene.h"
 
 #include "mono/metadata/object.h"
@@ -22,6 +23,11 @@ namespace Ember
 		char* msg = mono_string_to_utf8(message);
 		EMBER_CORE_INFO("[C#]: {0}", msg);
 		mono_free(msg);
+	}
+
+	static void Window_CaptureMouse(bool capture)
+	{
+		Application::Get().GetWindow().SetMouseCapture(capture);
 	}
 
 	static bool Input_IsKeyPressed(KeyCode key)
@@ -50,6 +56,7 @@ namespace Ember
 	void ScriptGlue::RegisterFunctions()
 	{
 		EMBER_ADD_INTERNAL_CALL(NativeLog);
+		EMBER_ADD_INTERNAL_CALL(Window_CaptureMouse);
 		EMBER_ADD_INTERNAL_CALL(Input_IsKeyPressed);
 		EMBER_ADD_INTERNAL_CALL(Transform_GetPosition);
 		EMBER_ADD_INTERNAL_CALL(Transform_SetPosition);

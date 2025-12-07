@@ -180,6 +180,7 @@ namespace Ember
 		s_Data->EntityInstances[entity.GetUUID()] = instance;
 
 		// 调用OnCreate方法
+		instance->SetState(ScriptInstance::LifecycleState::Created);
 		instance->InvokeOnCreate();
 	}
 
@@ -194,6 +195,13 @@ namespace Ember
 
 		// 获取脚本实例
 		Ref<ScriptInstance> instance = it->second;
+
+		// 当第一次调用
+		if (instance->GetState() == ScriptInstance::LifecycleState::Created)
+		{
+			instance->SetState(ScriptInstance::LifecycleState::Running);
+			instance->InvokeOnStart();
+		}
 
 		// 调用OnUpdate方法
 		instance->InvokeOnUpdate(deltaTime);
@@ -346,6 +354,7 @@ namespace Ember
 
 		// 获取生命周期方法
 		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);
+		m_OnStartMethod = m_ScriptClass->GetMethod("OnStart", 0);
 		m_OnUpdateMethod = m_ScriptClass->GetMethod("OnUpdate", 1);
 	}
 
@@ -362,5 +371,11 @@ namespace Ember
 			void* param = &deltaTime;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
 		}
+	}
+
+	void ScriptInstance::InvokeOnStart()
+	{
+		if (m_OnStartMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnStartMethod);
 	}
 }

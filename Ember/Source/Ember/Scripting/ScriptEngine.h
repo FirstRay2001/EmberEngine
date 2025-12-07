@@ -40,18 +40,35 @@ namespace Ember
 	class ScriptInstance
 	{
 	public:
+		// 生命周期状态
+		enum class LifecycleState
+		{
+			None,
+			Created,
+			Running,
+			Destroyed
+		};
+
+	public:
 		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity);
 
 	public:
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float deltaTime);
+		void InvokeOnStart();
+
+		LifecycleState GetState() const { return m_State; }
+		void SetState(LifecycleState state) { m_State = state; }
 
 	private:
 		Ref<ScriptClass> m_ScriptClass;
 		MonoObject* m_Instance = nullptr;
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
+		MonoMethod* m_OnStartMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
+
+		LifecycleState m_State = LifecycleState::None;
 	};
 
 

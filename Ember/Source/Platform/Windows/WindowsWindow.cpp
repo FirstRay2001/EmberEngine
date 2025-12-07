@@ -81,6 +81,14 @@ namespace Ember
 		return m_Data.VSync;
 	}
 
+	void WindowsWindow::SetMouseCapture(bool capture)
+	{
+		if (capture)
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		else
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
