@@ -15,9 +15,12 @@ namespace Ember
         public extern static bool Input_IsKeyPressed(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform_GetPosition(ulong entityID, out Vector3 position);
+        public extern static bool Entity_HasComponent(ulong entityID, Type componentType);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform_SetPosition(ulong entityID, ref Vector3 position);
+        public extern static void TransformComponent_GetPosition(ulong entityID, out Vector3 position);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void TransformComponent_SetPosition(ulong entityID, ref Vector3 position);
     }
 }

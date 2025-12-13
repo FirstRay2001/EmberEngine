@@ -2,37 +2,35 @@
 
 namespace Ember
 {
-    /// <summary>
-    /// 实体
-    /// </summary>
     public class Entity
     {
-        protected Entity() { ID = 0; }
+        protected Entity() 
+        { 
+            ID = 0;
+        }
 
         internal Entity(ulong id)
         {
             ID = id;
         }
 
-        /// <summary>
-        /// UUID
-        /// </summary>
         public readonly ulong ID;
 
-        /// <summary>
-        /// 位置
-        /// </summary>
-        public Vector3 Position
+        public bool HasComponent<T>() where T : Component, new()
         {
-            get
+            Type componentType = typeof(T);
+            return InternalCalls.Entity_HasComponent(ID, componentType);
+        }
+
+        public T GetComponent<T>() where T : Component, new()
+        {
+            if (!HasComponent<T>())
             {
-                InternalCalls.Transform_GetPosition(ID, out Vector3 position);
-                return position;
+                throw new Exception($"Entity does not have component of type {typeof(T)}");
             }
-            set
-            {
-                InternalCalls.Transform_SetPosition(ID, ref value);
-            }
+            T component = new T();
+            component.Entity = this;
+            return component;
         }
     }
 }

@@ -12,10 +12,12 @@
 #include "Ember/Scene/Scene.h"
 
 #include "mono/metadata/object.h"
-
+#include "mono/metadata/reflection.h"
 
 namespace Ember
 {
+	static std::unordered_map<MonoType*, std::function<bool(Entity)>> s_HasComponentFuncs;
+
 #define EMBER_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Ember.InternalCalls::" #Name, Name);
 
 	static void NativeLog(MonoString* message)
@@ -35,22 +37,64 @@ namespace Ember
 		return Input::IsKeyPressed(key);
 	}
 
-	static void Transform_GetPosition(UUID uuid, glm::vec3* outPosition)
+	static bool Entity_HasComponent(UUID uuid, MonoReflectionType* componentType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		MonoType* monoType = mono_reflection_type_get_type(componentType);
+
+		// 查找对应的HasComponent函数
+		auto it = s_HasComponentFuncs.find(monoType);
+		if (it == s_HasComponentFuncs.end())
+		{
+			EMBER_CORE_ERROR("No HasComponent function registered for the given MonoType!");
+			return false;
+		}
+		return it->second(entity);
+	}
+
+	static void TransformComponent_GetPosition(UUID uuid, glm::vec3* outPosition)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outPosition = entity.GetComponent<TransformComponent>().Position;
 	}
 
-	static void Transform_SetPosition(UUID uuid, glm::vec3* inPosition)
+	static void TransformComponent_SetPosition(UUID uuid, glm::vec3* inPosition)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<TransformComponent>().Position = *inPosition;
 	}
 
+	template<typename TComponent>
+	static void RegisterComponent()
+	{
+		std::string_view typeName = typeid(TComponent).name();
+		size_t pos = typeName.find_last_of(":");
+		std::string_view structName = typeName.substr(pos + 1);
+		std::string fullName = fmt::format("Ember.{}", structName);
+		MonoType* monoType = mono_reflection_type_from_name((char*)fullName.c_str(), ScriptEngine::GetCoreAssemblyImage());
+		if (!monoType)
+		{
+			EMBER_CORE_ERROR("Failed to find MonoType for component: {}", fullName);
+			return;
+		}
+
+		s_HasComponentFuncs[monoType] = [](Entity entity)
+		{
+			return entity.HasComponent<TComponent>();
+		};
+	}
+
 	void ScriptGlue::RegisterComponents()
 	{
+		RegisterComponent<TransformComponent>();
+		RegisterComponent<CameraComponent>();
+		// RegisterComponent<NativeScriptComponent>();
+		// RegisterComponent<DirectionalLightComponent>();
+		// RegisterComponent<SkyboxComponent>();
+		// RegisterComponent<ScriptComponent>();
 	}
 
 	void ScriptGlue::RegisterFunctions()
@@ -58,7 +102,8 @@ namespace Ember
 		EMBER_ADD_INTERNAL_CALL(NativeLog);
 		EMBER_ADD_INTERNAL_CALL(Window_CaptureMouse);
 		EMBER_ADD_INTERNAL_CALL(Input_IsKeyPressed);
-		EMBER_ADD_INTERNAL_CALL(Transform_GetPosition);
-		EMBER_ADD_INTERNAL_CALL(Transform_SetPosition);
+		EMBER_ADD_INTERNAL_CALL(Entity_HasComponent);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_GetPosition);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_SetPosition);
 	}
 }

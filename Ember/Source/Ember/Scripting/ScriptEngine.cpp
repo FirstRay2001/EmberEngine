@@ -237,7 +237,7 @@ namespace Ember
 
 	void ScriptEngine::InitMono()
 	{
-		// 设置Mono路径
+		// Mono路径
 		mono_set_assemblies_path("mono/lib");
 
 		// 创建根域
