@@ -5,9 +5,15 @@
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
+layout(location = 3) in ivec4 a_BoneIDs;
+layout(location = 4) in vec4 a_Weights;
 
 uniform mat4 u_ViewProjection;
 uniform mat4 u_Transform;
+
+const int MAX_BONES = 200;
+const int MAX_BONE_INFLUENCE = 4;
+uniform mat4 u_BonesMatrices[MAX_BONES];
 
 out vec3 v_Normal;
 out vec2 v_TexCoord;
@@ -15,7 +21,24 @@ out vec3 v_FragPos;
 
 void main()
 {
-	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+	// 蒙皮网格动画
+    mat4 boneTransform = mat4(1.0);
+
+    if(a_BoneIDs[0] != -1)
+	{
+        boneTransform = mat4(0.0);
+
+		// 累加影响当前Mesh的骨骼权重
+		for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
+		{
+			if(a_BoneIDs[i] != -1)
+			{
+				boneTransform += a_Weights[i] * u_BonesMatrices[a_BoneIDs[i]];
+			}
+		}
+	}
+
+	gl_Position = u_ViewProjection * u_Transform * boneTransform * vec4(a_Position, 1.0);
 
 	v_Normal = mat3(transpose(inverse(u_Transform))) * a_Normal;
 	v_TexCoord = a_TexCoord;

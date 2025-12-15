@@ -1,98 +1,5 @@
 Scene: Untitled
 Entities:
-  - EntityID: 17888694787313131070
-    Tag:
-      Tag: FirstPersonPlayer
-    Transform:
-      Position: [0, 3, 5]
-      Rotation: [-20, 0, 0]
-      Scale: [1.00000155, 0.999999881, 1.00000191]
-    Camera:
-      Aspect: 2.12607455
-      FOV: 45
-      NearClip: 0.100000001
-      FarClip: 100
-    Script:
-      ScriptName: Client.Player
-  - EntityID: 4787207547649071955
-    Tag:
-      Tag: Grid
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Grid:
-      ShaderPath: Asset/Shader/SimpleColor.glsl
-      VertexArray:
-        Size: 10
-        Divisions: 10
-  - EntityID: 15716301495388413402
-    Tag:
-      Tag: Wall
-    Transform:
-      Position: [-2.82482958, 1.9334228, 0]
-      Rotation: [0, 49.1865463, 0]
-      Scale: [1, 1, 1]
-    Mesh:
-      VertexArray:
-        Type: Cube
-        Scale: [5, 5, 1]
-      Material:
-        Name: BoxMaterial
-        ShadingModel: BlinnPhong
-        Albedo: [0.800000012, 0.800000012, 0.800000012]
-        AlbedoTexturePath: Asset/Texture/GridBox_Default.png
-        SpecularColor: [0.200000003, 0.200000003, 0.200000003]
-        Shininess: 32
-        Emissive: [0, 0, 0]
-        Opacity: 1
-      ShaderPath: Asset/Shader/BlinnPhong.glsl
-  - EntityID: 18278326804215896459
-    Tag:
-      Tag: Ball
-    Transform:
-      Position: [2.31565666, 1.04154551, 2.10430193]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-    Mesh:
-      VertexArray:
-        Type: Sphere
-        Radius: 1
-        SectorCount: 32
-        StackCount: 32
-      Material:
-        Name: BallMateial
-        ShadingModel: BlinnPhong
-        Albedo: [0.800000012, 0.200000003, 0.200000003]
-        SpecularColor: [0.800000012, 0.800000012, 0.800000012]
-        Shininess: 64
-        Emissive: [0, 0, 0]
-        Opacity: 1
-      ShaderPath: Asset/Shader/BlinnPhong.glsl
-  - EntityID: 10918884597280119351
-    Tag:
-      Tag: Gun
-    Transform:
-      Position: [0, 2.16661382, 3.12499285]
-      Rotation: [0, -87.8830719, 0]
-      Scale: [2.74000001, 2.74000001, 2.74000001]
-    Model:
-      ModelPath: Asset\Model\PortalGun\blaster-l.obj
-  - EntityID: 12120275012368185050
-    Tag:
-      Tag: Environment
-    Transform:
-      Position: [0, -1.33599212e-08, 0.0010661335]
-      Rotation: [-32.4000015, -172.100006, 180]
-      Scale: [1.00000143, 1, 1.00000048]
-    DirectionalLight:
-      Ambient: [0.187692285, 0.179607078, 0.179607078]
-      Diffuse: [0.952838302, 0.978461564, 0.737609506]
-      Specular: [0.911355495, 1, 0.627692342]
-      Direction: [-0.116048224, -0.535826862, -0.836314797]
-    Skybox:
-      SkyboxPath: Asset\Texture\Skybox
-      ShaderPath: Asset\Shader\Skybox.glsl
   - EntityID: 13383258091595370868
     Tag:
       Tag: PointLight
@@ -122,3 +29,96 @@ Entities:
       Constant: 1
       Linear: 0.0900000036
       Quadratic: 0.0320000015
+  - EntityID: 12120275012368185050
+    Tag:
+      Tag: Environment
+    Transform:
+      Position: [0, -1.33599212e-08, 0.0010661335]
+      Rotation: [-32.4000015, -172.100006, 180]
+      Scale: [1.00000143, 1, 1.00000048]
+    DirectionalLight:
+      Ambient: [0.187692285, 0.179607078, 0.179607078]
+      Diffuse: [0.952838302, 0.978461564, 0.737609506]
+      Specular: [0.911355495, 1, 0.627692342]
+      Direction: [-0.116048224, -0.535826862, -0.836314797]
+    Skybox:
+      SkyboxPath: Asset\Texture\Skybox
+      ShaderPath: Asset\Shader\Skybox.glsl
+  - EntityID: 10918884597280119351
+    Tag:
+      Tag: Gun
+    Transform:
+      Position: [0, -0.157412648, 1.89358592]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      ModelPath: Asset\Model\Lenna\root.fbx
+  - EntityID: 18278326804215896459
+    Tag:
+      Tag: Ball
+    Transform:
+      Position: [2.31565666, 1.04154551, 2.10430193]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    Mesh:
+      VertexArray:
+        Type: Sphere
+        Radius: 1
+        SectorCount: 32
+        StackCount: 32
+      Material:
+        Name: BallMateial
+        ShadingModel: BlinnPhong
+        Albedo: [0.800000012, 0.200000003, 0.200000003]
+        SpecularColor: [0.800000012, 0.800000012, 0.800000012]
+        Shininess: 64
+        Emissive: [0, 0, 0]
+        Opacity: 1
+      ShaderPath: Asset/Shader/BlinnPhong.glsl
+  - EntityID: 15716301495388413402
+    Tag:
+      Tag: Wall
+    Transform:
+      Position: [-2.82482958, 1.9334228, 0]
+      Rotation: [0, 49.1865463, 0]
+      Scale: [1, 1, 1]
+    Mesh:
+      VertexArray:
+        Type: Cube
+        Scale: [5, 5, 1]
+      Material:
+        Name: BoxMaterial
+        ShadingModel: BlinnPhong
+        Albedo: [0.800000012, 0.800000012, 0.800000012]
+        AlbedoTexturePath: Asset/Texture/GridBox_Default.png
+        SpecularColor: [0.200000003, 0.200000003, 0.200000003]
+        Shininess: 32
+        Emissive: [0, 0, 0]
+        Opacity: 1
+      ShaderPath: Asset/Shader/BlinnPhong.glsl
+  - EntityID: 4787207547649071955
+    Tag:
+      Tag: Grid
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Grid:
+      ShaderPath: Asset/Shader/SimpleColor.glsl
+      VertexArray:
+        Size: 10
+        Divisions: 10
+  - EntityID: 17888694787313131070
+    Tag:
+      Tag: FirstPersonPlayer
+    Transform:
+      Position: [0, 3, 5]
+      Rotation: [-20, 0, 0]
+      Scale: [1.00000155, 0.999999881, 1.00000191]
+    Camera:
+      Aspect: 2.12607455
+      FOV: 45
+      NearClip: 0.100000001
+      FarClip: 100
+    Script:
+      ScriptName: Client.Player
