@@ -296,6 +296,10 @@ namespace Ember
 			ImGui::Separator();
 			DisplayAddComponentEntry<ModelComponent>("Model Renderer");
 
+			// 动画状态机
+			ImGui::Separator();
+			DisplayAddComponentEntry<AnimatorComponent>("Animator");
+
 			// 光源组件
 			ImGui::Separator();
 			DisplayAddComponentEntry<PointLightComponent>("Point Light");
@@ -520,6 +524,33 @@ namespace Ember
 					ImGui::EndDragDropTarget();
 				}
 				ImGui::Columns(1);
+			});
+		ImGui::PopStyleColor();
+
+		// Animator Component
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.8f, 0.5f, 0.2f, 1.0f });
+		DrawSingleComponent<AnimatorComponent>("Animator", entity, [](auto& animatorComp)
+			{
+				std::string animationName = animatorComp.m_Animations.size() > 0 ? animatorComp.m_Animations[0]->GetName() : "None";
+
+				// 拖拽添加Animation
+				ImGui::Button(animationName.c_str(), ImVec2{ 100.0f, 0.0f });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path animationPath = std::filesystem::path(g_AssetPath) / path;
+
+						// 检查扩展名
+						if (animationPath.extension() == ".fbx")
+						{
+							Ref<Animation> animation = Animation::CreateFromFile(animationPath.string());
+							animatorComp.AddAnimation(animation);
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
 			});
 		ImGui::PopStyleColor();
 

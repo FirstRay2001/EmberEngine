@@ -21,28 +21,48 @@ out vec3 v_FragPos;
 
 void main()
 {
-	// 蒙皮网格动画
-    mat4 boneTransform = mat4(1.0);
-
+    // 蒙皮网格动画
+    vec4 totalPosition = vec4(0.0);
+    vec3 totalNormal = vec3(0.0);
+    
     if(a_BoneIDs[0] != -1)
-	{
-        boneTransform = mat4(0.0);
-
-		// 累加影响当前Mesh的骨骼权重
-		for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
-		{
-			if(a_BoneIDs[i] != -1)
-			{
-				boneTransform += a_Weights[i] * u_BonesMatrices[a_BoneIDs[i]];
-			}
-		}
-	}
-
-	gl_Position = u_ViewProjection * u_Transform * boneTransform * vec4(a_Position, 1.0);
-
-	v_Normal = mat3(transpose(inverse(u_Transform))) * a_Normal;
-	v_TexCoord = a_TexCoord;
-	v_FragPos = vec3(u_Transform * vec4(a_Position, 1));
+    {
+        // 对有骨骼影响的顶点进行混合
+        for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
+        {
+            if(a_BoneIDs[i] != -1)
+            {
+                // 获取骨骼变换矩阵
+                mat4 boneMatrix = u_BonesMatrices[a_BoneIDs[i]];
+                float weight = a_Weights[i];
+                
+                // 变换顶点位置
+                totalPosition += weight * (boneMatrix * vec4(a_Position, 1.0));
+                
+                // 变换法线（使用boneMatrix的左上3x3部分）
+                // 注意：如果骨骼变换包含非均匀缩放，需要改用逆转置矩阵
+                totalNormal += weight * mat3(boneMatrix) * a_Normal;
+            }
+        }
+    }
+    else
+    {
+        // 没有骨骼影响的顶点
+        totalPosition = vec4(a_Position, 1.0);
+        totalNormal = a_Normal;
+    }
+    
+    // 应用模型变换
+    vec4 worldPosition = u_Transform * totalPosition;
+    vec3 worldNormal = normalize(mat3(transpose(inverse(u_Transform))) * totalNormal);
+    
+    // 最终变换
+    gl_Position = u_ViewProjection * worldPosition;
+    
+    // 传递到片段着色器
+    v_Normal = worldNormal;
+    v_TexCoord = a_TexCoord;
+    v_FragPos = vec3(worldPosition);
 }
 
 

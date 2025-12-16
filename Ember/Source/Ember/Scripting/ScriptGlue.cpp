@@ -37,6 +37,18 @@ namespace Ember
 		return Input::IsKeyPressed(key);
 	}
 
+	static bool Input_IsMouseButtonPressed(int button)
+	{
+		return Input::IsMouseButtonPressed(button);
+	}
+
+	static void Input_GetMousePosition(glm::vec2* outPosition)
+	{
+		auto [x, y] = Input::GetMousePosition();
+		outPosition->x = x;
+		outPosition->y = y;
+	}
+
 	static bool Entity_HasComponent(UUID uuid, MonoReflectionType* componentType)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -65,6 +77,48 @@ namespace Ember
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<TransformComponent>().Position = *inPosition;
+	}
+
+	static void TransformComponent_GetRotation(UUID uuid, glm::vec3* outRotation)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outRotation = entity.GetComponent<TransformComponent>().Rotation;
+	}
+
+	static void TransformComponent_SetRotation(UUID uuid, glm::vec3* inRotation)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<TransformComponent>().Rotation = *inRotation;
+	}
+
+	static void TransformComponent_GetScale(UUID uuid, glm::vec3* outScale)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outScale = entity.GetComponent<TransformComponent>().Scale;
+	}
+
+	static void TransformComponent_SetScale(UUID uuid, glm::vec3* inScale)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<TransformComponent>().Scale = *inScale;
+	}
+
+	static void TransformComponent_GetForward(UUID uuid, glm::vec3* outForward)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outForward = entity.GetComponent<TransformComponent>().GetForward();
+	}
+
+	static void TransformComponent_GetRight(UUID uuid, glm::vec3* outRight)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outRight = entity.GetComponent<TransformComponent>().GetRight();
 	}
 
 	template<typename TComponent>
@@ -102,8 +156,16 @@ namespace Ember
 		EMBER_ADD_INTERNAL_CALL(NativeLog);
 		EMBER_ADD_INTERNAL_CALL(Window_CaptureMouse);
 		EMBER_ADD_INTERNAL_CALL(Input_IsKeyPressed);
+		EMBER_ADD_INTERNAL_CALL(Input_IsMouseButtonPressed);
+		EMBER_ADD_INTERNAL_CALL(Input_GetMousePosition);
 		EMBER_ADD_INTERNAL_CALL(Entity_HasComponent);
 		EMBER_ADD_INTERNAL_CALL(TransformComponent_GetPosition);
 		EMBER_ADD_INTERNAL_CALL(TransformComponent_SetPosition);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_GetRotation);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_GetScale);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_SetScale);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_GetForward);
+		EMBER_ADD_INTERNAL_CALL(TransformComponent_GetRight);
 	}
 }

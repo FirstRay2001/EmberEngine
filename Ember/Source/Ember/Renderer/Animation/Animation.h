@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <filesystem>
 
 namespace Ember
 {
@@ -62,8 +63,20 @@ namespace Ember
 	public:
 		Animation(const Ref<Skeleton>& skeleton, const std::vector<AnimationClip>& clips, float duration, float ticksPerSecond = 30.0f);
 
+		void SetBindingSkeleton(const Ref<Skeleton>& skeleton) { m_Skeleton = skeleton; }
+
 		void Update(float deltaTime);
+
+		std::string GetName() const { return m_Name; }
+
+	public:
+		static Ref<Animation> LoadFromFBX(const std::filesystem::path& filepath);
+
+		// 从磁盘读取动画
+		static Ref<Animation> CreateFromFile(const std::filesystem::path& filepath);
+
 	private:
+		std::string					m_Name;
 		Ref<Skeleton>				m_Skeleton;
 		std::vector<AnimationClip>	m_Clips;
 		int							m_CurrentClipIndex = 0;

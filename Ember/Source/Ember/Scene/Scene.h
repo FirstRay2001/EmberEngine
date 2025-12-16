@@ -42,6 +42,7 @@ namespace Ember
 
 	private:
 		void UpdateScripts(const Timestep& timestep);
+		void UpdateAnimation(const Timestep& timestep);
 		void RenderRuntime();
 		void RenderEditor(EditorCamera& editorCamera, Entity selectedEntity);
 

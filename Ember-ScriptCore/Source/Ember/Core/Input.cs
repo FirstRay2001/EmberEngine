@@ -6,6 +6,18 @@
         {
             return InternalCalls.Input_IsKeyPressed(key);
         }
+
+        public static bool IsMouseButtonPressed(MouseButton button)
+        {
+            return InternalCalls.Input_IsMouseButtonPressed(button);
+        }
+
+        public static Vector2 GetMousePosition()
+        {
+            Vector2 position;
+            InternalCalls.Input_GetMousePosition(out position);
+            return position;
+        }
     }
 
     public enum KeyCode
@@ -141,5 +153,12 @@
         RightAlt = 346,
         RightSuper = 347,
         Menu = 348
+    }
+
+    public enum MouseButton
+    {
+        Left = 1,
+        Right = 2,
+        Middle = 3
     }
 }

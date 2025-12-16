@@ -176,10 +176,12 @@
     <ClInclude Include="Source\Ember\Math\Math.h" />
     <ClInclude Include="Source\Ember\Physcis\PhysicsWorld.h" />
     <ClInclude Include="Source\Ember\Renderer\Animation\Animation.h" />
+    <ClInclude Include="Source\Ember\Renderer\Animation\assimp_glm_helpers.h" />
     <ClInclude Include="Source\Ember\Renderer\Animation\Bone.h" />
     <ClInclude Include="Source\Ember\Renderer\Animation\Skeleton.h" />
     <ClInclude Include="Source\Ember\Renderer\Buffer.h" />
     <ClInclude Include="Source\Ember\Renderer\Camera.h" />
+    <ClInclude Include="Source\Ember\Renderer\Debug\DebugRenderer.h" />
     <ClInclude Include="Source\Ember\Renderer\EditorCamera.h" />
     <ClInclude Include="Source\Ember\Renderer\Framebuffer.h" />
     <ClInclude Include="Source\Ember\Renderer\GraphicsContext.h" />
@@ -662,6 +664,7 @@
     <ClCompile Include="Source\Ember\Renderer\Animation\Skeleton.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Buffer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Camera.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Debug\DebugRenderer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\EditorCamera.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Framebuffer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Light.cpp" />

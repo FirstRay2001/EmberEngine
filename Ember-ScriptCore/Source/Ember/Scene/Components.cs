@@ -26,5 +26,50 @@ namespace Ember
                 InternalCalls.TransformComponent_SetPosition(Entity.ID, ref value);
             }
         }
+
+        public Vector3 Rotation
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetRotation(Entity.ID, out Vector3 rotation);
+                return rotation;
+            }
+
+            set
+            {
+                InternalCalls.TransformComponent_SetRotation(Entity.ID, ref value);
+            }
+        }
+
+        public Vector3 Scale
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetScale(Entity.ID, out Vector3 scale);
+                return scale;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetScale(Entity.ID, ref value);
+            }
+        }
+
+        public Vector3 Forward
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetForward(Entity.ID, out Vector3 forward);
+                return forward;
+            }
+        }
+
+        public Vector3 Right
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetRight(Entity.ID, out Vector3 right);
+                return right;
+            }
+        }
     }
 }
