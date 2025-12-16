@@ -5,9 +5,15 @@
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
+layout(location = 3) in ivec4 a_BoneIDs;
+layout(location = 4) in vec4 a_Weights;
 
 uniform mat4 u_ViewProjection;
 uniform mat4 u_Transform;
+
+const int MAX_BONES = 200;
+const int MAX_BONE_INFLUENCE = 4;
+uniform mat4 u_BonesMatrices[MAX_BONES];
 
 out vec3 v_Normal;
 out vec2 v_TexCoord;
@@ -15,11 +21,48 @@ out vec3 v_FragPos;
 
 void main()
 {
-	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-
-	v_Normal = mat3(transpose(inverse(u_Transform))) * a_Normal;
-	v_TexCoord = a_TexCoord;
-	v_FragPos = vec3(u_Transform * vec4(a_Position, 1));
+    // 蒙皮网格动画
+    vec4 totalPosition = vec4(0.0);
+    vec3 totalNormal = vec3(0.0);
+    
+    if(a_BoneIDs[0] != -1)
+    {
+        // 对有骨骼影响的顶点进行混合
+        for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
+        {
+            if(a_BoneIDs[i] != -1)
+            {
+                // 获取骨骼变换矩阵
+                mat4 boneMatrix = u_BonesMatrices[a_BoneIDs[i]];
+                float weight = a_Weights[i];
+                
+                // 变换顶点位置
+                totalPosition += weight * (boneMatrix * vec4(a_Position, 1.0));
+                
+                // 变换法线（使用boneMatrix的左上3x3部分）
+                // 注意：如果骨骼变换包含非均匀缩放，需要改用逆转置矩阵
+                totalNormal += weight * mat3(boneMatrix) * a_Normal;
+            }
+        }
+    }
+    else
+    {
+        // 没有骨骼影响的顶点
+        totalPosition = vec4(a_Position, 1.0);
+        totalNormal = a_Normal;
+    }
+    
+    // 应用模型变换
+    vec4 worldPosition = u_Transform * totalPosition;
+    vec3 worldNormal = normalize(mat3(transpose(inverse(u_Transform))) * totalNormal);
+    
+    // 最终变换
+    gl_Position = u_ViewProjection * worldPosition;
+    
+    // 传递到片段着色器
+    v_Normal = worldNormal;
+    v_TexCoord = a_TexCoord;
+    v_FragPos = vec3(worldPosition);
 }
 
 

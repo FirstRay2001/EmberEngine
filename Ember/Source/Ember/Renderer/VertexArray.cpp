@@ -25,114 +25,198 @@ namespace Ember
 		return nullptr;
 	}
 
-	Ref<VertexArray> VertexArray::CreateCube(glm::vec3 scale)
-	{
+    Ref<VertexArray> VertexArray::CreateCube(glm::vec3 scale)
+    {
+        // 使用联合体来处理int到float的转换
+        union FloatIntConverter {
+            int32_t i;
+            float f;
+        };
+
+        // 准备-1的转换值
+        FloatIntConverter minusOne;
+        minusOne.i = -1;
+
         float vertices[] = {
             // 前面 (Z负方向)
             // 右前下
             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,  // Bone IDs
+            0.0f, 0.0f, 0.0f, 0.0f,  // Weights
             // 左前下
             -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  scale.x, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右前上
             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右前上
             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前下
             -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  scale.x, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前上
             -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  scale.x, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
 
             // 后面 (Z正方向)
             // 右后上
             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  scale.x, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后下
             -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后下
             0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  scale.x, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后上
             -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后下
             -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后上
             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  scale.x, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
 
             // 左面 (X负方向)
             // 左前下
             -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后下
             -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  scale.z, 0,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后上
             -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  scale.z, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前下
             -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后上
             -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  scale.z, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前上
-            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  scale.y,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
 
             // 右面 (X正方向)
             // 右前下
             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  scale.z, 0,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右前上
             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  scale.z, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后上
             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右前下
             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  scale.z, 0,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后上
             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0, scale.y,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后下
             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0, 0,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
 
             // 底面 (Y负方向)
             // 右后下
             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前下
             -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  scale.x, scale.z,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右前下
             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0, scale.z,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后下
             -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  scale.x, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前下
             -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  scale.x, scale.z,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后下
             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
 
             // 顶面 (Y正方向)
             // 右前上
-            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  scale.x,   scale.z,
+            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  scale.x, scale.z,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前上
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,      scale.z,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, scale.z,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后上
-            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  scale.x,   0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  scale.x, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 右后上
-            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  scale.x,   0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  scale.x, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左前上
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,      scale.z,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, scale.z,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
             // 左后上
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,      0.0f
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+            minusOne.f, minusOne.f, minusOne.f, minusOne.f,
+            0.0f, 0.0f, 0.0f, 0.0f,
         };
 
         // 应用缩放到顶点位置
-        for (int i = 0; i < sizeof(vertices) / sizeof(float); i += 8) {
+        for (int i = 0; i < sizeof(vertices) / sizeof(float); i += 16) {
             vertices[i] *= scale.x;     // X坐标
             vertices[i + 1] *= scale.y; // Y坐标  
             vertices[i + 2] *= scale.z; // Z坐标
         }
 
-		// 创建顶点数组对象
+        // 创建顶点数组对象
         auto vertexArray = Create();
-		vertexArray->m_PrimitiveType = PrimitiveType::Cube;
-		vertexArray->m_CubeScale = scale;
+        vertexArray->m_PrimitiveType = PrimitiveType::Cube;
+        vertexArray->m_CubeScale = scale;
 
-		// 创建顶点缓冲区
+        // 创建顶点缓冲区
         auto vertexBuffer(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		// 设置缓冲区布局
+        // 设置缓冲区布局
         BufferLayout layout = {
-            { Ember::ShaderDataType::Float3, "a_Position" },
-            { Ember::ShaderDataType::Float3, "a_Normal" },
-            { Ember::ShaderDataType::Float2, "a_TexCoord" }
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float3, "a_Normal" },
+            { ShaderDataType::Float2, "a_TexCoord" },
+            { ShaderDataType::Int4,   "a_BoneIDs" },
+            { ShaderDataType::Float4, "a_Weights" }
         };
         vertexBuffer->SetLayout(layout);
         vertexArray->AddVertexBuffer(vertexBuffer);
@@ -149,10 +233,19 @@ namespace Ember
         vertexArray->SetIndexBuffer(indexBuffer);
 
         return vertexArray;
-	}
+    }
 
     Ref<VertexArray> VertexArray::CreateSphere(float radius, uint32_t sectorCount, uint32_t stackCount)
     {
+        // 使用联合体来处理int到float的转换
+        union FloatIntConverter {
+            int32_t i;
+            float f;
+        };
+
+        FloatIntConverter minusOne;
+        minusOne.i = -1;
+
         std::vector<float> vertices;
         std::vector<uint32_t> indices;
 
@@ -183,6 +276,16 @@ namespace Ember
                 float t = (float)i / stackCount;
                 vertices.push_back(s);
                 vertices.push_back(t);
+
+                // 骨骼ID和权重（默认值）
+                vertices.push_back(minusOne.f);
+                vertices.push_back(minusOne.f);
+                vertices.push_back(minusOne.f);
+                vertices.push_back(minusOne.f);
+                vertices.push_back(0.0f);
+                vertices.push_back(0.0f);
+                vertices.push_back(0.0f);
+                vertices.push_back(0.0f);
             }
         }
 
@@ -210,10 +313,10 @@ namespace Ember
 
         // 创建顶点数组对象
         auto vertexArray = VertexArray::Create();
-		vertexArray->m_PrimitiveType = PrimitiveType::Sphere;
-		vertexArray->m_SphereRadius = radius;
-		vertexArray->m_SphereSectorCount = sectorCount;
-		vertexArray->m_SphereStackCount = stackCount;
+        vertexArray->m_PrimitiveType = PrimitiveType::Sphere;
+        vertexArray->m_SphereRadius = radius;
+        vertexArray->m_SphereSectorCount = sectorCount;
+        vertexArray->m_SphereStackCount = stackCount;
 
         // 创建顶点缓冲区
         auto vertexBuffer = VertexBuffer::Create(vertices.data(), (uint32_t)vertices.size() * sizeof(float));
@@ -222,7 +325,9 @@ namespace Ember
         BufferLayout layout = {
             { ShaderDataType::Float3, "a_Position" },
             { ShaderDataType::Float3, "a_Normal" },
-            { ShaderDataType::Float2, "a_TexCoord" }
+            { ShaderDataType::Float2, "a_TexCoord" },
+            { ShaderDataType::Int4,   "a_BoneIDs" },
+            { ShaderDataType::Float4, "a_Weights" }
         };
         vertexBuffer->SetLayout(layout);
         vertexArray->AddVertexBuffer(vertexBuffer);
@@ -236,6 +341,15 @@ namespace Ember
 
     Ref<VertexArray> VertexArray::CreateGrid(float size, uint32_t divisions)
     {
+        // 使用联合体来处理int到float的转换
+        union FloatIntConverter {
+            int32_t i;
+            float f;
+        };
+
+        FloatIntConverter minusOne;
+        minusOne.i = -1;
+
         std::vector<float> vertices;
         std::vector<uint32_t> indices;
 
@@ -244,7 +358,9 @@ namespace Ember
         float divisionSize = size / divisions;
         for (uint32_t i = 0; i <= divisions; ++i) {
             float position = -halfSize + i * divisionSize;
+
             // 水平线
+            // 第一个顶点
             vertices.push_back(-halfSize); // x
             vertices.push_back(0.0f);      // y
             vertices.push_back(position);   // z
@@ -253,7 +369,18 @@ namespace Ember
             vertices.push_back(0.0f);      // 法线 z
             vertices.push_back(0.0f);      // 纹理坐标 u
             vertices.push_back((float)i / divisions); // 纹理坐标 v
+            // 骨骼ID
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            // 权重
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
 
+            // 第二个顶点
             vertices.push_back(halfSize);  // x
             vertices.push_back(0.0f);      // y
             vertices.push_back(position);   // z
@@ -262,8 +389,19 @@ namespace Ember
             vertices.push_back(0.0f);      // 法线 z
             vertices.push_back(1.0f);      // 纹理坐标 u
             vertices.push_back((float)i / divisions); // 纹理坐标 v
+            // 骨骼ID
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            // 权重
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
 
             // 垂直线
+            // 第三个顶点
             vertices.push_back(position);   // x
             vertices.push_back(0.0f);      // y
             vertices.push_back(-halfSize);  // z
@@ -272,7 +410,18 @@ namespace Ember
             vertices.push_back(0.0f);      // 法线 z
             vertices.push_back((float)i / divisions); // 纹理坐标 u
             vertices.push_back(0.0f);      // 纹理坐标 v
+            // 骨骼ID
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            // 权重
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
 
+            // 第四个顶点
             vertices.push_back(position);   // x
             vertices.push_back(0.0f);      // y
             vertices.push_back(halfSize);   // z
@@ -281,6 +430,16 @@ namespace Ember
             vertices.push_back(0.0f);      // 法线 z
             vertices.push_back((float)i / divisions); // 纹理坐标 u
             vertices.push_back(1.0f);      // 纹理坐标 v
+            // 骨骼ID
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            vertices.push_back(minusOne.f);
+            // 权重
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
         }
 
         // 生成索引数据
@@ -300,7 +459,9 @@ namespace Ember
         BufferLayout layout = {
             { ShaderDataType::Float3, "a_Position" },
             { ShaderDataType::Float3, "a_Normal" },
-            { ShaderDataType::Float2, "a_TexCoord" }
+            { ShaderDataType::Float2, "a_TexCoord" },
+            { ShaderDataType::Int4,   "a_BoneIDs" },
+            { ShaderDataType::Float4, "a_Weights" }
         };
         vertexBuffer->SetLayout(layout);
         vertexArray->AddVertexBuffer(vertexBuffer);

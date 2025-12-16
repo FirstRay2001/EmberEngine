@@ -7,8 +7,11 @@
 #include "Entity.h"
 #include "Component.h"
 #include "ScriptableEntity.h"
+#include "Ember/Scripting/ScriptEngine.h"
 #include "Ember/Renderer/Renderer.h"
 #include "Ember/Renderer/Model.h"
+#include "Ember/Renderer/Animation/Skeleton.h"
+#include "Ember/Renderer/Debug/DebugRenderer.h"
 
 namespace Ember
 {
@@ -31,19 +34,34 @@ namespace Ember
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<IDComponent>(uuid);
 		auto& tag = entity.AddComponent<TagComponent>(name);
+		m_EntityMap[uuid] = entity;
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity& entity)
 	{
+		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 		entity.Invalidate();
+	}
+
+	void Scene::OnStartRuntime()
+	{
+		ScriptEngine::OnRuntimeStart(this);
+	}
+
+	void Scene::OnStopRuntime()
+	{
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnUpdateRuntime(const Timestep& timestep)
 	{
 		// 更新脚本组件
 		UpdateScripts(timestep);
+
+		// 更新动画状态
+		UpdateAnimation(timestep);
 
 		// 运行时场景渲染
 		RenderRuntime();
@@ -79,8 +97,17 @@ namespace Ember
 		return Entity{};
 	}
 
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		auto it = m_EntityMap.find(uuid);
+		if (it != m_EntityMap.end())
+			return it->second;
+		return Entity{};
+	}
+
 	void Scene::UpdateScripts(const Timestep& timestep)
 	{
+		// 原生脚本
 		auto view = m_Registry.view<NativeScriptComponent>();
 		for (auto entity : view)
 		{
@@ -96,6 +123,31 @@ namespace Ember
 
 			// 调用脚本的OnUpdate方法
 			scriptComp.Instance->OnUpdate(timestep);
+		}
+
+		// C#脚本
+		auto scriptView = m_Registry.view<ScriptComponent>();
+		for (auto entity : scriptView)
+		{
+			Entity scriptEntity{ entity, this };
+			ScriptEngine::OnUpdateEntity(scriptEntity, (float)timestep);
+		}
+	}
+
+	void Scene::UpdateAnimation(const Timestep& timestep)
+	{
+		// 遍历所有带有AnimationComponent的实体并更新它们的动画状态
+		auto animView = m_Registry.view<AnimatorComponent>();
+
+		for (auto entity : animView)
+		{
+			auto& animatorComp = animView.get<AnimatorComponent>(entity);
+			int playingAnimationIndex = animatorComp.m_CurrentAnimationIndex;
+			if (playingAnimationIndex < 0 || playingAnimationIndex >= animatorComp.m_Animations.size())
+				continue;
+
+			Ref<Animation> playingAnimation = animatorComp.m_Animations[playingAnimationIndex];
+			playingAnimation->Update((float)timestep);
 		}
 	}
 
@@ -176,6 +228,15 @@ namespace Ember
 			auto& model = modelComp.m_Model;
 			if (!model)
 				continue;
+
+			if (model->UseSkeleton())
+			{
+				auto skeleton = model->GetSkeleton();
+				skeleton->SetUseInitialPose(false);
+				skeleton->Update();
+				Renderer::SetupSkeleton(skeleton);
+			}
+
 			for (const auto& mesh : model->GetMeshes())
 			{
 				Renderer::Submit(*mesh, transform);
@@ -191,6 +252,13 @@ namespace Ember
 			auto& gridComp = lineView.get<GridComponent>(entity);
 			Renderer::DrawLines(gridComp.m_Shader, gridComp.m_Grid, transform);
 		}
+#endif
+
+#if 1
+		// Debug绘制
+		RenderCommand::SetDepthMask(false);
+		DebugRenderer::Get().FlushLines();
+		RenderCommand::SetDepthMask(true);
 #endif
 
 		Renderer::EndScene();
@@ -292,6 +360,15 @@ namespace Ember
 			auto& model = modelComp.m_Model;
 			if (!model)
 				continue;
+
+			if (model->UseSkeleton())
+			{
+				auto skeleton = model->GetSkeleton();
+				skeleton->SetUseInitialPose(true);
+				skeleton->Update();
+				Renderer::SetupSkeleton(skeleton);
+			}
+
 			for (const auto& mesh : model->GetMeshes())
 			{
 				if (Entity{ entity, this } == selectedEntity)
@@ -380,9 +457,11 @@ namespace Ember
 		CopySingleComp<TransformComponent>(dstEntity, srcEntity);
 		CopySingleComp<MeshComponent>(dstEntity, srcEntity);
 		CopySingleComp<ModelComponent>(dstEntity, srcEntity);
+		CopySingleComp<AnimatorComponent>(dstEntity, srcEntity);
 		CopySingleComp<GridComponent>(dstEntity, srcEntity);
 		CopySingleComp<CameraComponent>(dstEntity, srcEntity);
 		CopySingleComp<SkyboxComponent>(dstEntity, srcEntity);
+		CopySingleComp<ScriptComponent>(dstEntity, srcEntity);
 		CopySingleComp<NativeScriptComponent>(dstEntity, srcEntity);
 		CopySingleComp<PointLightComponent>(dstEntity, srcEntity);
 		CopySingleComp<DirectionalLightComponent>(dstEntity, srcEntity);
@@ -458,11 +537,47 @@ namespace Ember
 	template<>
 	void Scene::OnComponentAdded<ModelComponent>(Entity entity, ModelComponent& component)
 	{
-		// Nothing to do
+		// 向Animator注册Skeleton
+		if (entity.HasComponent<AnimatorComponent>())
+		{
+			auto& animatorComp = entity.GetComponent<AnimatorComponent>();
+			if (component.m_Model && component.m_Model->UseSkeleton())
+			{
+				animatorComp.m_BindingSkeleton = component.m_Model->GetSkeleton();
+				for (auto& animation : animatorComp.m_Animations)
+				{
+					animation->SetBindingSkeleton(animatorComp.m_BindingSkeleton);
+				}
+			}
+		}
+	}
+
+	template<>
+	void Scene::OnComponentAdded<AnimatorComponent>(Entity entity, AnimatorComponent& component)
+	{
+		// 引用Model的Skeleton
+		if (entity.HasComponent<ModelComponent>())
+		{
+			auto& modelComp = entity.GetComponent<ModelComponent>();
+			if (modelComp.m_Model && modelComp.m_Model->UseSkeleton())
+			{
+				component.m_BindingSkeleton = modelComp.m_Model->GetSkeleton();
+				for (auto& animation : component.m_Animations)
+				{
+					animation->SetBindingSkeleton(component.m_BindingSkeleton);
+				}
+			}
+		}
 	}
 
 	template<>
 	void Scene::OnComponentAdded<GridComponent>(Entity entity, GridComponent& component)
+	{
+		// Nothing to do
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
 	{
 		// Nothing to do
 	}

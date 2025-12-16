@@ -15,6 +15,8 @@
 
 namespace Ember
 {
+	class Skeleton;
+
 	class Renderer
 	{
 	public:
@@ -44,6 +46,9 @@ namespace Ember
 		static void AddPointLight(const PointLight& pointLight);
 		static void AddDirectionalLight(const DirectionalLight& dirLight);
 
+		// 绑定一个骨骼
+		static void SetupSkeleton(Ref<Skeleton> skeleton);
+
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
@@ -56,6 +61,7 @@ namespace Ember
 			glm::mat4 ViewProjectionMatrix;
 			PointLight PointLights[4];
 			DirectionalLight DirectionalLight;
+			Ref<Skeleton> BindingSkeleton;
 		};
 
 		static int s_PointLightCount;

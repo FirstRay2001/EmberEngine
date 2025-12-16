@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Scene.h"
 #include "Component.h"
+#include "Scene.h"
 
 namespace Ember
 {

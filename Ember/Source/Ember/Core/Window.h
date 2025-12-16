@@ -43,8 +43,13 @@ namespace Ember
 
 		// 设置事件回调函数
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+
+		// 垂直同步
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
+
+		// 鼠标捕获
+		virtual void SetMouseCapture(bool capture) = 0;
 
 		static Window* Create(const WindowProps& props = WindowProps());
 

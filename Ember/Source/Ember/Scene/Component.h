@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Ember/Core/UUID.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -13,7 +14,7 @@
 #include "Ember/Renderer/Camera.h"
 #include "Ember/Renderer/Light.h"
 #include "Ember/Renderer/Texture.h"
-#include "Ember/Core/UUID.h"
+#include "Ember/Renderer/Animation/Animation.h"
 
 namespace Ember
 {
@@ -48,6 +49,16 @@ namespace Ember
 			glm::mat4 rotation = glm::toMat4(glm::quat(glm::radians(Rotation)));
 			glm::mat4 scale = glm::scale(glm::mat4(1.0f), Scale);
 			return translation * rotation * scale;
+		}
+
+		glm::vec3 GetForward() const
+		{
+			return glm::normalize(glm::rotate(glm::quat(glm::radians(Rotation)), glm::vec3(0.0f, 0.0f, -1.0f)));
+		}
+
+		glm::vec3 GetRight() const
+		{
+			return glm::normalize(glm::rotate(glm::quat(glm::radians(Rotation)), glm::vec3(1.0f, 0.0f, 0.0f)));
 		}
 	};
 
@@ -94,6 +105,30 @@ namespace Ember
 		ModelComponent(const Ref<Model>& model) :
 			m_Model(model)
 		{
+		}
+	};
+
+	// Animator组件
+	struct AnimatorComponent
+	{
+		Ref<Skeleton> m_BindingSkeleton = nullptr;
+		std::vector<Ref<Animation>> m_Animations;
+		int m_CurrentAnimationIndex = -1;
+
+		AnimatorComponent() = default;
+		AnimatorComponent(const AnimatorComponent&) = default;
+		AnimatorComponent(const std::vector<Ref<Animation>>& animations) :
+			m_Animations(animations)
+		{
+		}
+
+		void AddAnimation(Ref<Animation>& animation)
+		{
+			animation->SetBindingSkeleton(m_BindingSkeleton);
+			m_Animations.push_back(animation);
+
+			// TEST 临时动画播放
+			m_CurrentAnimationIndex = 0;
 		}
 	};
 
@@ -144,6 +179,18 @@ namespace Ember
 		SkyboxComponent(const Ref<CubemapTexture>& cubemap, const Ref<Shader>& shader) :
 			m_Cubemap(cubemap),
 			m_Shader(shader)
+		{
+		}
+	};
+
+	// 脚本组件
+	struct ScriptComponent
+	{
+		std::string Name;
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+		ScriptComponent(const std::string& name) :
+			Name(name)
 		{
 		}
 	};

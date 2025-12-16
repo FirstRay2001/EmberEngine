@@ -12,6 +12,8 @@ struct aiScene;
 
 namespace Ember
 {
+	class Skeleton;
+
 	class Model
 	{
 	public:
@@ -25,14 +27,20 @@ namespace Ember
 
 		static Ref<Model> CreateFromFile(const std::filesystem::path& filepath);
 
+		bool UseSkeleton() const { return m_Skeleton != nullptr; }
+		Ref<Skeleton> GetSkeleton() const { return m_Skeleton; }
+		Ref<Skeleton> GetSkeleton() { return m_Skeleton; }
+
 	private:
 		static Ref<Model> LoadOBJModel(const std::filesystem::path& filepath);
 		static Ref<Model> LoadFBXModel(const std::filesystem::path& filepath);
 
-		static void ProcessNode(aiNode* node, const aiScene* scene, Ref<Model> model, const std::string& modelPath);
+		static void ProcessNode_OBJ(aiNode* node, const aiScene* scene, Ref<Model> model, const std::string& modelPath);
+		static void ProcessNode_FBX(aiNode* node, const aiScene* scene, Ref<Model> model, const std::string& modelPath);
 
 	private:
 		std::vector<Ref<Mesh>> m_Meshes;
 		std::string m_Path;
+		Ref<Skeleton> m_Skeleton = nullptr;
 	};
 }

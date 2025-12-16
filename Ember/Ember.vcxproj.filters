@@ -34,6 +34,9 @@
     <Filter Include="Source\Ember\Renderer">
       <UniqueIdentifier>{762576FC-E291-31F7-AB85-C95417B1535F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Ember\Renderer\Animation">
+      <UniqueIdentifier>{E5A9B8D4-518D-C714-5A90-F550C6F28D65}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Ember\ResourceManager">
       <UniqueIdentifier>{E2A0232C-CE5B-13D8-7713-8C2263AD5D68}</UniqueIdentifier>
     </Filter>
@@ -156,6 +159,15 @@
     <ClInclude Include="Source\Ember\Physcis\PhysicsWorld.h">
       <Filter>Source\Ember\Physcis</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Animation\Animation.h">
+      <Filter>Source\Ember\Renderer\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Animation\Bone.h">
+      <Filter>Source\Ember\Renderer\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Animation\Skeleton.h">
+      <Filter>Source\Ember\Renderer\Animation</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Ember\Renderer\Buffer.h">
       <Filter>Source\Ember\Renderer</Filter>
     </ClInclude>
@@ -229,6 +241,9 @@
       <Filter>Source\Ember\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Scripting\ScriptEngine.h">
+      <Filter>Source\Ember\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ember\Scripting\ScriptGlue.h">
       <Filter>Source\Ember\Scripting</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ember\Utils\PlatformUtils.h">
@@ -1557,6 +1572,8 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Ember\Renderer\Debug\DebugRenderer.h" />
+    <ClInclude Include="Source\Ember\Renderer\Animation\assimp_glm_helpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Ember\Core\Application.cpp">
@@ -1585,6 +1602,15 @@
     </ClCompile>
     <ClCompile Include="Source\Ember\Math\Math.cpp">
       <Filter>Source\Ember\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Animation\Animation.cpp">
+      <Filter>Source\Ember\Renderer\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Animation\Bone.cpp">
+      <Filter>Source\Ember\Renderer\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Animation\Skeleton.cpp">
+      <Filter>Source\Ember\Renderer\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Source\Ember\Renderer\Buffer.cpp">
       <Filter>Source\Ember\Renderer</Filter>
@@ -1652,6 +1678,9 @@
     <ClCompile Include="Source\Ember\Scripting\ScriptEngine.cpp">
       <Filter>Source\Ember\Scripting</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Scripting\ScriptGlue.cpp">
+      <Filter>Source\Ember\Scripting</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1712,5 +1741,6 @@
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
       <Filter>Vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Ember\Renderer\Debug\DebugRenderer.cpp" />
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "Ember/Utils/PlatformUtils.h"
 #include "Ember/Renderer/Texture.h"
+#include "Ember/Scripting/ScriptEngine.h"
 
 namespace Ember
 {
@@ -288,40 +289,29 @@ namespace Ember
 			ImGui::OpenPopup("AddComponent");
 		if (ImGui::BeginPopup("AddComponent"))
 		{
-			if (ImGui::MenuItem("Camera"))
-			{
-				m_SelectedEntity.AddComponent<CameraComponent>();
-				ImGui::CloseCurrentPopup();
-			}
+			// 摄像机组件
+			DisplayAddComponentEntry<CameraComponent>("Camera");
 
 			// 模型组件
 			ImGui::Separator();
-			if (ImGui::MenuItem("Model Renderer"))
-			{
-				m_SelectedEntity.AddComponent<ModelComponent>();
-				ImGui::CloseCurrentPopup();
-			}
+			DisplayAddComponentEntry<ModelComponent>("Model Renderer");
+
+			// 动画状态机
+			ImGui::Separator();
+			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 
 			// 光源组件
 			ImGui::Separator();
-			if (ImGui::MenuItem("Point Light"))
-			{
-				m_SelectedEntity.AddComponent<PointLightComponent>();
-				ImGui::CloseCurrentPopup();
-			}
-			if (ImGui::MenuItem("Directional Light"))
-			{
-				m_SelectedEntity.AddComponent<DirectionalLightComponent>();
-				ImGui::CloseCurrentPopup();
-			}
+			DisplayAddComponentEntry<PointLightComponent>("Point Light");
+			DisplayAddComponentEntry<DirectionalLightComponent>("Directional Light");
+
+			// 脚本组件
+			ImGui::Separator();
+			DisplayAddComponentEntry<ScriptComponent>("Script");
 
 			// 天空盒
 			ImGui::Separator();
-			if (ImGui::MenuItem("Skybox"))
-			{
-				m_SelectedEntity.AddComponent<SkyboxComponent>();
-				ImGui::CloseCurrentPopup();
-			}
+			DisplayAddComponentEntry<SkyboxComponent>("Skybox");
 
 			ImGui::EndPopup();
 		}
@@ -537,6 +527,33 @@ namespace Ember
 			});
 		ImGui::PopStyleColor();
 
+		// Animator Component
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.8f, 0.5f, 0.2f, 1.0f });
+		DrawSingleComponent<AnimatorComponent>("Animator", entity, [](auto& animatorComp)
+			{
+				std::string animationName = animatorComp.m_Animations.size() > 0 ? animatorComp.m_Animations[0]->GetName() : "None";
+
+				// 拖拽添加Animation
+				ImGui::Button(animationName.c_str(), ImVec2{ 100.0f, 0.0f });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path animationPath = std::filesystem::path(g_AssetPath) / path;
+
+						// 检查扩展名
+						if (animationPath.extension() == ".fbx")
+						{
+							Ref<Animation> animation = Animation::CreateFromFile(animationPath.string());
+							animatorComp.AddAnimation(animation);
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+			});
+		ImGui::PopStyleColor();
+
 		// Grid Component
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.2f, 0.8f, 0.2f, 1.0f });
 		DrawSingleComponent<GridComponent>("Grid Renderer", entity, [](auto& gridComp)
@@ -574,7 +591,7 @@ namespace Ember
 			});
 		ImGui::PopStyleColor();
 
-		// 天空盒组件
+		// Skybox Component
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.2f, 0.2f, 0.8f, 1.0f });
 		DrawSingleComponent<SkyboxComponent>("Skybox", entity, [](auto& skyboxComp)
 			{
@@ -627,5 +644,38 @@ namespace Ember
 				ImGui::Columns(1);
 			});
 		ImGui::PopStyleColor();
+
+		// Script Component
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.5f, 0.2f, 0.7f, 1.0f });
+		DrawSingleComponent<ScriptComponent>("Script", entity, [](auto& scriptComp)
+			{
+				bool isClassExists = ScriptEngine::EntityClassExists(scriptComp.Name);
+
+				static char buffer[64];
+				strcpy_s(buffer, scriptComp.Name.c_str());
+
+				if(!isClassExists)
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.92f, 0.3f, 0.2f, 1.0f });
+
+				if (ImGui::InputText("Class Name", buffer, sizeof(buffer)))
+					scriptComp.Name = std::string(buffer);
+
+				if (!isClassExists)
+					ImGui::PopStyleColor();
+			});
+		ImGui::PopStyleColor();
+	}
+
+	template<typename T>
+	void SceneHierarchy::DisplayAddComponentEntry(const std::string& entryName) 
+	{
+		if (!m_SelectedEntity.HasComponent<T>())
+		{
+			if (ImGui::MenuItem(entryName.c_str()))
+			{
+				m_SelectedEntity.AddComponent<T>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
 	}
 }

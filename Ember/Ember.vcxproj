@@ -175,8 +175,13 @@
     <ClInclude Include="Source\Ember\ImGui\ImGuiLayer.h" />
     <ClInclude Include="Source\Ember\Math\Math.h" />
     <ClInclude Include="Source\Ember\Physcis\PhysicsWorld.h" />
+    <ClInclude Include="Source\Ember\Renderer\Animation\Animation.h" />
+    <ClInclude Include="Source\Ember\Renderer\Animation\assimp_glm_helpers.h" />
+    <ClInclude Include="Source\Ember\Renderer\Animation\Bone.h" />
+    <ClInclude Include="Source\Ember\Renderer\Animation\Skeleton.h" />
     <ClInclude Include="Source\Ember\Renderer\Buffer.h" />
     <ClInclude Include="Source\Ember\Renderer\Camera.h" />
+    <ClInclude Include="Source\Ember\Renderer\Debug\DebugRenderer.h" />
     <ClInclude Include="Source\Ember\Renderer\EditorCamera.h" />
     <ClInclude Include="Source\Ember\Renderer\Framebuffer.h" />
     <ClInclude Include="Source\Ember\Renderer\GraphicsContext.h" />
@@ -200,6 +205,7 @@
     <ClInclude Include="Source\Ember\Scene\SceneSerializer.h" />
     <ClInclude Include="Source\Ember\Scene\ScriptableEntity.h" />
     <ClInclude Include="Source\Ember\Scripting\ScriptEngine.h" />
+    <ClInclude Include="Source\Ember\Scripting\ScriptGlue.h" />
     <ClInclude Include="Source\Ember\Utils\PlatformUtils.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
@@ -653,8 +659,12 @@
     <ClCompile Include="Source\Ember\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Ember\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Source\Ember\Math\Math.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Animation\Animation.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Animation\Bone.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Animation\Skeleton.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Buffer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Camera.cpp" />
+    <ClCompile Include="Source\Ember\Renderer\Debug\DebugRenderer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\EditorCamera.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Framebuffer.cpp" />
     <ClCompile Include="Source\Ember\Renderer\Light.cpp" />
@@ -675,6 +685,7 @@
     <ClCompile Include="Source\Ember\Scene\Scene.cpp" />
     <ClCompile Include="Source\Ember\Scene\SceneSerializer.cpp" />
     <ClCompile Include="Source\Ember\Scripting\ScriptEngine.cpp" />
+    <ClCompile Include="Source\Ember\Scripting\ScriptGlue.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLFramebuffer.cpp" />

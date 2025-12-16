@@ -5,6 +5,7 @@
 #include "emberpch.h"
 #include "Renderer.h"
 #include "Ember/ResourceManager/ShaderLibrary.h"
+#include "Ember/Renderer/Animation/Skeleton.h"
 
 namespace Ember
 {
@@ -96,10 +97,25 @@ namespace Ember
 		// Draw
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+
+		shader->Unbind();
+		vertexArray->Unbind();
 	}
 
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform)
 	{
+		// 设置骨骼矩阵
+		if (mesh.IsUseSkeleton())
+		{
+			const auto& boneMatrices = s_SceneData->BindingSkeleton->GetBoneMatrices();
+			mesh.GetShader()->Bind();
+			for (size_t i = 0; i < boneMatrices.size(); i++)
+			{
+				glm::mat4 temp(1.0f);
+				mesh.GetShader()->SetUniformMat4("u_BonesMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+			}
+		}
+
 		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
 	}
 
@@ -110,7 +126,7 @@ namespace Ember
 		shader->Bind();
 		shader->SetUniformInt("u_EntityID", entityId);
 
-		Submit(mesh.GetShader(), mesh.GetMaterial(), mesh.GetVertexArray(), transform);
+		Submit(mesh, transform);
 	}
 
 	void Renderer::RenderSkybox(const Ref<Shader>& shader, const Ref<CubemapTexture>& cubemap, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
@@ -165,6 +181,11 @@ namespace Ember
 	void Renderer::AddDirectionalLight(const DirectionalLight& dirLight)
 	{
 		s_SceneData->DirectionalLight = dirLight;
+	}
+
+	void Renderer::SetupSkeleton(Ref<Skeleton> skeleton)
+	{
+		s_SceneData->BindingSkeleton = skeleton;
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
