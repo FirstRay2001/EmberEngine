@@ -24,7 +24,6 @@ namespace Ember
 				{
 					bone = CreateRef<Bone>(boneName);
 					dst->AddBone(bone);
-					EMBER_CORE_INFO("Add Bone {0}, ID: {1}", boneName.c_str(), dst->FindIndex(boneName));
 				}
 
 				// 设置偏移矩阵

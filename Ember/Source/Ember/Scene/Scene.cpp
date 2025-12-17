@@ -151,6 +151,10 @@ namespace Ember
 		}
 	}
 
+	void Scene::UpdateShadowMaps()
+	{
+	}
+
 	void Scene::RenderRuntime()
 	{
 		// 获取光照组件
@@ -186,6 +190,9 @@ namespace Ember
 				Renderer::AddDirectionalLight(dirLightComp.m_DirectionalLight);
 			}
 		}
+
+		// 更新阴影贴图
+		UpdateShadowMaps();
 
 		// 获取主相机实体
 		Camera* camera = nullptr;
@@ -299,6 +306,9 @@ namespace Ember
 				Renderer::AddDirectionalLight(dirLightComp.m_DirectionalLight);
 			}
 		}
+
+		// 更新阴影贴图
+		UpdateShadowMaps();
 		
 		Renderer::BeginScene(editorCamera);
 

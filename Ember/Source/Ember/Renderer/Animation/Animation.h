@@ -68,6 +68,7 @@ namespace Ember
 		void Update(float deltaTime);
 
 		std::string GetName() const { return m_Name; }
+		std::string GetPath() const { return m_Path; }
 
 	public:
 		static Ref<Animation> LoadFromFBX(const std::filesystem::path& filepath);
@@ -77,6 +78,7 @@ namespace Ember
 
 	private:
 		std::string					m_Name;
+		std::string					m_Path;
 		Ref<Skeleton>				m_Skeleton;
 		std::vector<AnimationClip>	m_Clips;
 		int							m_CurrentClipIndex = 0;

@@ -275,6 +275,23 @@ namespace Ember
 			out << YAML::EndMap;
 		}
 
+		// Animator组件
+		if (entity.HasComponent<AnimatorComponent>())
+		{
+			out << YAML::Key << "Animator";
+			out << YAML::BeginMap;
+			auto& animatorComp = entity.GetComponent<AnimatorComponent>();
+			out << YAML::Key << "Aniamtions" << YAML::Value << YAML::BeginSeq;
+			for (const auto& animation : animatorComp.m_Animations)
+			{
+				out << YAML::BeginMap;
+				out << YAML::Key << "AnimationPath" << YAML::Value << animation->GetPath();
+				out << YAML::EndMap;
+			}
+			out << YAML::EndSeq;
+			out << YAML::EndMap;
+		}
+
 		// Grid组件
 		if (entity.HasComponent<GridComponent>())
 		{
@@ -494,6 +511,19 @@ namespace Ember
 		{
 			std::string modelPath = entityNode["Model"]["ModelPath"].as<std::string>();
 			auto& modelComp = entity.AddComponent<ModelComponent>(modelPath);
+		}
+
+		// Animator组件
+		if (entityNode["Animator"])
+		{
+			auto& animatorComp = entity.AddComponent<AnimatorComponent>();
+			auto animationsNode = entityNode["Animator"]["Aniamtions"];
+			for (auto animNode : animationsNode)
+			{
+				std::string animationPath = animNode["AnimationPath"].as<std::string>();
+				auto animation = Animation::CreateFromFile(animationPath);
+				animatorComp.AddAnimation(animation);
+			}
 		}
 
 		// Grid组件

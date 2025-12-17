@@ -46,13 +46,17 @@ Entities:
       ShaderPath: Asset\Shader\Skybox.glsl
   - EntityID: 10918884597280119351
     Tag:
-      Tag: Gun
+      Tag: Lenna
     Transform:
       Position: [0, -0.157412648, 1.89358592]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
     Model:
       ModelPath: Asset\Model\Lenna\root.fbx
+    Animator:
+      Aniamtions:
+        - AnimationPath: Asset\Animation\Lenna\Idle.fbx
+        - AnimationPath: Asset\Animation\Lenna\Walking.fbx
   - EntityID: 18278326804215896459
     Tag:
       Tag: Ball
