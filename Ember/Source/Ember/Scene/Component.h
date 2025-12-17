@@ -113,6 +113,7 @@ namespace Ember
 	{
 		Ref<Skeleton> m_BindingSkeleton = nullptr;
 		std::vector<Ref<Animation>> m_Animations;
+		std::unordered_set<std::string> m_AnimationNames;
 		int m_CurrentAnimationIndex = -1;
 
 		AnimatorComponent() = default;
@@ -124,11 +125,48 @@ namespace Ember
 
 		void AddAnimation(Ref<Animation>& animation)
 		{
+			if (m_AnimationNames.find(animation->GetName()) != m_AnimationNames.end())
+				return;
+
 			animation->SetBindingSkeleton(m_BindingSkeleton);
 			m_Animations.push_back(animation);
+			m_AnimationNames.insert(animation->GetName());
+		}
 
-			// TEST 临时动画播放
-			m_CurrentAnimationIndex = 0;
+		void RemoveAnimation(int index)
+		{
+			if (index >= 0 && index < m_Animations.size())
+			{
+				m_AnimationNames.erase(m_Animations[index]->GetName());
+				m_Animations.erase(m_Animations.begin() + index);
+			}
+		}
+
+		void ReplaceAnimation(Ref<Animation>& animation, int index)
+		{
+			if (m_AnimationNames.find(animation->GetName()) != m_AnimationNames.end())
+				return;
+
+			if (index >= 0 && index < m_Animations.size())
+			{
+				animation->SetBindingSkeleton(m_BindingSkeleton);
+				m_AnimationNames.erase(m_Animations[index]->GetName());
+				m_Animations[index] = animation;
+				m_AnimationNames.insert(animation->GetName());
+			}
+			else
+			{
+				AddAnimation(animation);
+			}
+		}
+
+		void PlayAnimation(const std::string animationName)
+		{
+			// 查找动画并设置当前动画索引
+			auto it = std::find_if(m_Animations.begin(), m_Animations.end(),
+				[&](const Ref<Animation>& anim) { return anim->GetName() == animationName; });
+			if (it != m_Animations.end())
+				m_CurrentAnimationIndex = std::distance(m_Animations.begin(), it);
 		}
 	};
 

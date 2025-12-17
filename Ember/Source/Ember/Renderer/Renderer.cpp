@@ -104,6 +104,7 @@ namespace Ember
 
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform)
 	{
+		// TODO: 使用UBO
 		// 设置骨骼矩阵
 		if (mesh.IsUseSkeleton())
 		{

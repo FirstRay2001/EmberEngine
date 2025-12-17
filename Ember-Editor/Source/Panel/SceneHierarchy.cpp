@@ -531,10 +531,45 @@ namespace Ember
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.8f, 0.5f, 0.2f, 1.0f });
 		DrawSingleComponent<AnimatorComponent>("Animator", entity, [](auto& animatorComp)
 			{
-				std::string animationName = animatorComp.m_Animations.size() > 0 ? animatorComp.m_Animations[0]->GetName() : "None";
+				// 绘制已有动画
+				for (int i = 0; i < animatorComp.m_Animations.size(); i++)
+				{
+					std::string animationName = animatorComp.m_Animations[i]->GetName();
 
-				// 拖拽添加Animation
-				ImGui::Button(animationName.c_str(), ImVec2{ 100.0f, 0.0f });
+					// 拖拽修改Animation
+					ImGui::Button(animationName.c_str(), ImVec2{ 300.0f, 0.0f });
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+						{
+							const wchar_t* path = (const wchar_t*)payload->Data;
+							std::filesystem::path animationPath = std::filesystem::path(g_AssetPath) / path;
+
+							// 检查扩展名
+							if (animationPath.extension() == ".fbx")
+							{
+								Ref<Animation> animation = Animation::CreateFromFile(animationPath.string());
+
+								// 替换动画
+								animatorComp.ReplaceAnimation(animation, i);
+							}
+						}
+						ImGui::EndDragDropTarget();
+					}
+
+					// 动画删除按钮
+					ImGui::SameLine();
+					ImGui::PushID(animationName.c_str());
+					if (ImGui::Button("X", ImVec2{ 20.0f, 0.0f }))
+					{
+						animatorComp.RemoveAnimation(i);
+						i--;
+					}
+					ImGui::PopID();
+				}
+
+				// 绘制新增动画
+				ImGui::Button("--New Animation--", ImVec2{300.0f, 0.0f});
 				if (ImGui::BeginDragDropTarget())
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -546,11 +581,14 @@ namespace Ember
 						if (animationPath.extension() == ".fbx")
 						{
 							Ref<Animation> animation = Animation::CreateFromFile(animationPath.string());
+
+							// 新增动画
 							animatorComp.AddAnimation(animation);
 						}
 					}
 					ImGui::EndDragDropTarget();
 				}
+				
 			});
 		ImGui::PopStyleColor();
 
