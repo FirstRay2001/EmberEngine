@@ -195,6 +195,7 @@ namespace Ember
 		{
 			animation = LoadFromFBX(filepath);
 			animation->m_Name = filepath.stem().string();
+			animation->m_Path = filepath.string();
 		}
 		else
 		{
