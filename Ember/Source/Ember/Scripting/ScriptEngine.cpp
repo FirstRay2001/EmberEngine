@@ -92,6 +92,8 @@ namespace Ember
 		MonoDomain* AppDomain = nullptr;
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
+		MonoAssembly* AppAssembly = nullptr;
+		MonoImage* AppAssemblyImage = nullptr;
 
 		ScriptClass EntityClass;
 
@@ -113,9 +115,12 @@ namespace Ember
 
 		// 加载核心程序集
 		LoadAssembly("Resources/Scripts/Ember-ScriptCore.dll");
-		
+
+		// 加载APP程序集
+		LoadAppAssembly("SandboxProject/Asset/Script/Binaries/Sandbox.dll");
+				
 		// 加载Entity类
-		LoadAssemblyClasses(s_Data->CoreAssembly);
+		LoadAssemblyClasses();
 
 		// 注册胶水代码
 		ScriptGlue::RegisterComponents();
@@ -235,6 +240,14 @@ namespace Ember
 		// Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
 	}
 
+	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	{
+		// 加载应用程序集
+		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string());
+		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
+		// Utils::PrintAssemblyTypes(s_Data->AppAssembly);
+	}
+
 	void ScriptEngine::InitMono()
 	{
 		// Mono路径
@@ -270,17 +283,15 @@ namespace Ember
 		return instance;
 	}
 
-	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	void ScriptEngine::LoadAssemblyClasses()
 	{
 		// 清理现有类
 		s_Data->EntityClasses.clear();
 
-		// 获取程序集镜像
-		MonoImage* image = mono_assembly_get_image(assembly);
-		const MonoTableInfo* typeDefTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		const MonoTableInfo* typeDefTable = mono_image_get_table_info(s_Data->AppAssemblyImage, MONO_TABLE_TYPEDEF);
 		int rows = mono_table_info_get_rows(typeDefTable);
-		MonoClass* entityClass = mono_class_from_name(image, "Ember", "Entity");
-		s_Data->EntityClass = ScriptClass("Ember", "Entity");
+		MonoClass* entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "Ember", "Entity");
+		s_Data->EntityClass = ScriptClass("Ember", "Entity", true);
 
 		// 遍历类型定义表
 		for (int i = 0; i < rows; ++i)
@@ -289,11 +300,11 @@ namespace Ember
 			mono_metadata_decode_row(typeDefTable, i, cols, MONO_TYPEDEF_SIZE);
 
 			// 获取类名和命名空间
-			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
+			const char* nameSpace = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
 
 			// 获取MonoClass
-			MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
+			MonoClass* monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nameSpace, name);
 
 			// 跳过Entity类本身
 			if(monoClass == entityClass)
@@ -319,11 +330,11 @@ namespace Ember
 		}
 	}
 
-	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className) :
+	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className, bool IsCore) :
 		m_ClassNamespace(classNamespace),
 		m_ClassName(className)
 	{
-		m_MonoClass = mono_class_from_name(s_Data->CoreAssemblyImage, m_ClassNamespace.c_str(), m_ClassName.c_str());
+		m_MonoClass = mono_class_from_name(IsCore? s_Data->CoreAssemblyImage : s_Data->AppAssemblyImage, m_ClassNamespace.c_str(), m_ClassName.c_str());
 	}
 
 	MonoObject* ScriptClass::Instantiate()

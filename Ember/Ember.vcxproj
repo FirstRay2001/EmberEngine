@@ -176,9 +176,9 @@
     <ClInclude Include="Source\Ember\Math\Math.h" />
     <ClInclude Include="Source\Ember\Physcis\PhysicsWorld.h" />
     <ClInclude Include="Source\Ember\Renderer\Animation\Animation.h" />
-    <ClInclude Include="Source\Ember\Renderer\Animation\assimp_glm_helpers.h" />
     <ClInclude Include="Source\Ember\Renderer\Animation\Bone.h" />
     <ClInclude Include="Source\Ember\Renderer\Animation\Skeleton.h" />
+    <ClInclude Include="Source\Ember\Renderer\Animation\assimp_glm_helpers.h" />
     <ClInclude Include="Source\Ember\Renderer\Buffer.h" />
     <ClInclude Include="Source\Ember\Renderer\Camera.h" />
     <ClInclude Include="Source\Ember\Renderer\Debug\DebugRenderer.h" />
