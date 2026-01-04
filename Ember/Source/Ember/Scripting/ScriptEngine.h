@@ -16,10 +16,36 @@ extern "C" {
 	typedef struct _MonoMethod MonoMethod;
 	typedef struct _MonoAssembly MonoAssembly;
 	typedef struct _MonoImage MonoImage;
+	typedef struct _MonoClassField MonoClassField;
 }
 
 namespace Ember
 {
+	enum class ScriptFieldType
+	{
+		None = 0,
+
+		// 基本类型
+		Int,
+		Float,
+		Double,
+		Bool,
+		String,
+
+		// Class
+		Entity,
+		Vector2,
+		Vector3,
+		Vector4
+	};
+
+	struct ScriptField
+	{
+		ScriptFieldType Type;
+		std::string Name;
+		MonoClassField* Field;
+	};
+
 	class ScriptClass
 	{
 	public:
@@ -29,10 +55,12 @@ namespace Ember
 		MonoObject* Instantiate();
 		MonoMethod* GetMethod(const std::string& name, int paramCount);
 		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
+		std::unordered_map<std::string, ScriptField>& GetFields() { return m_Fields; }
 
 	private:
 		std::string m_ClassNamespace;
 		std::string m_ClassName;
+		std::unordered_map<std::string, ScriptField> m_Fields;
 
 		MonoClass* m_MonoClass = nullptr;
 	};
@@ -60,6 +88,33 @@ namespace Ember
 		LifecycleState GetState() const { return m_State; }
 		void SetState(LifecycleState state) { m_State = state; }
 
+		ScriptClass& GetScriptClass() { return *m_ScriptClass; }
+
+		template<typename T>
+		T GetFieldValue(const std::string& name)
+		{
+			bool success = GetFieldValueInternal(name, (void*)s_FiledValueBuffer);
+
+			if (!success)
+			{
+				EMBER_CORE_ERROR("Failed to get field value: {}", name);
+				return T();
+			}
+
+			return *(T*)s_FiledValueBuffer;
+		}
+
+		template<typename T>
+		bool SetFieldValue(const std::string& name, const T& value)
+		{
+			bool success = SetFieldValueInternal(name, (void*)&value);
+			return success;
+		}
+
+	private:
+		bool GetFieldValueInternal(const std::string& name, void* buffer);
+		bool SetFieldValueInternal(const std::string& name, void* value);
+
 	private:
 		Ref<ScriptClass> m_ScriptClass;
 		MonoObject* m_Instance = nullptr;
@@ -69,8 +124,9 @@ namespace Ember
 		MonoMethod* m_OnUpdateMethod = nullptr;
 
 		LifecycleState m_State = LifecycleState::None;
-	};
 
+		inline static char s_FiledValueBuffer[8]; // 用于字段值传递的缓冲区
+	};
 
 	class ScriptEngine
 	{
@@ -87,6 +143,7 @@ namespace Ember
 
 		static Scene* GetSceneContext();
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
+		static Ref<ScriptInstance> GetScriptInstance(UUID entityID);
 
 		static MonoImage* GetCoreAssemblyImage();
 

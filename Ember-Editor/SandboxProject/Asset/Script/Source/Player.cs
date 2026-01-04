@@ -11,6 +11,7 @@ namespace Client
         private Vector2 m_PreMousePos;
         private float m_MouseSensity = 0.1f;
 
+        public float MoveSpeed;
 
         internal Player()
         {
@@ -52,7 +53,7 @@ namespace Client
                 m_Transform.Rotation = rotation;
             }
 
-            float speed = 1.0f;
+            float speed = MoveSpeed;
             Vector3 velocity = Vector3.Zero;
 
             if (Input.IsKeyPressed(KeyCode.W))

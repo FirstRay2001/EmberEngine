@@ -26,7 +26,7 @@ Application* Application::s_Instance = nullptr;
 
 Application::Application()
 {
-	system("pause");
+	// system("pause");
 
 	// 输出当前工作目录
 	EMBER_CORE_TRACE("Current working directory: {}", std::filesystem::current_path().string());

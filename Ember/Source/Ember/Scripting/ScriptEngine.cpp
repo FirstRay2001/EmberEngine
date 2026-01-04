@@ -9,6 +9,7 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object.h>
+#include <mono/metadata/tabledefs.h>
 
 namespace Ember
 {
@@ -82,6 +83,41 @@ namespace Ember
 				const char* namespaze = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 				EMBER_CORE_INFO("Type: {}.{}", namespaze, name);
 			}
+		}
+
+		// Mono类型转换为脚本字段类型
+		ScriptFieldType MonoTypeToScriptFieldType(MonoType* type)
+		{
+			switch (mono_type_get_type(type))
+			{
+			// 基本类型
+			case MONO_TYPE_BOOLEAN:   return ScriptFieldType::Bool;
+			case MONO_TYPE_I4:        return ScriptFieldType::Int;
+			case MONO_TYPE_R4:        return ScriptFieldType::Float;
+			case MONO_TYPE_R8:        return ScriptFieldType::Double;
+			case MONO_TYPE_STRING:    return ScriptFieldType::String;
+
+			// Class
+			case MONO_TYPE_CLASS:
+			{
+				MonoClass* klass = mono_type_get_class(type);
+				const char* className = mono_class_get_name(klass);
+				if (strcmp(className, "Vector2") == 0)
+					return ScriptFieldType::Vector2;
+				else if (strcmp(className, "Vector3") == 0)
+					return ScriptFieldType::Vector3;
+				else if (strcmp(className, "Vector4") == 0)
+					return ScriptFieldType::Vector4;
+				else if (strcmp(className, "Entity") == 0)
+					return ScriptFieldType::Entity;
+				break;
+			}
+
+			default:
+				return ScriptFieldType::None;
+			}
+
+			return ScriptFieldType::None;
 		}
 	}
 
@@ -222,6 +258,15 @@ namespace Ember
 		return s_Data->EntityClasses;
 	}
 
+	Ref<ScriptInstance> ScriptEngine::GetScriptInstance(UUID entityID)
+	{
+		auto it = s_Data->EntityInstances.find(entityID);
+		if (it == s_Data->EntityInstances.end())
+			return nullptr;
+
+		return it->second;
+	}
+
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()
 	{
 		return s_Data->CoreAssemblyImage;
@@ -300,32 +345,57 @@ namespace Ember
 			mono_metadata_decode_row(typeDefTable, i, cols, MONO_TYPEDEF_SIZE);
 
 			// 获取类名和命名空间
-			const char* name = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
+			const char* className = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
 			const char* nameSpace = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
 
 			// 获取MonoClass
-			MonoClass* monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nameSpace, name);
+			MonoClass* monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nameSpace, className);
 
 			// 跳过Entity类本身
 			if(monoClass == entityClass)
 				continue;
 
 			// 检查是否是Entity的子类
-			if (monoClass && mono_class_is_subclass_of(monoClass, entityClass, false))
+			if (!mono_class_is_subclass_of(monoClass, entityClass, false))
+				continue;
+
+			// 组合完整类名
+			std::string fullClassName = std::string(nameSpace) + "." + std::string(className);
+
+			// 处理无命名空间的类
+			if(strlen(nameSpace) == 0)
+				fullClassName = className;
+
+			// 创建ScriptClass
+			Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nameSpace, className);
+
+			// 存储类
+			s_Data->EntityClasses[fullClassName] = scriptClass;
+			EMBER_CORE_INFO("Loaded Script Class: {}", fullClassName);
+
+			// 获取字段
+			int fieldCount = mono_class_num_fields(monoClass);
+			EMBER_CORE_TRACE("  Fields ({}):", fieldCount);
+			void* iter = nullptr;
+			MonoClassField* field;
+			while (field = mono_class_get_fields(monoClass, &iter))
 			{
-				// 组合完整类名
-				std::string fullClassName = std::string(nameSpace) + "." + std::string(name);
+				const char* fieldName = mono_field_get_name(field);
+				uint32_t fieldFlags = mono_field_get_flags(field);
+				EMBER_CORE_TRACE("	Field name: {0} | Field Flag: {1}", fieldName, fieldFlags);
 
-				// 处理无命名空间的类
-				if(strlen(nameSpace) == 0)
-					fullClassName = name;
+				// 仅处理公共字段
+				if (fieldFlags & FIELD_ATTRIBUTE_PUBLIC)
+				{
+					EMBER_CORE_TRACE("		Public Field: {}", fieldName);
 
-				// 创建ScriptClass
-				Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nameSpace, name);
+					// 获取字段类型
+					MonoType* fieldType = mono_field_get_type(field);
 
-				// 存储类
-				s_Data->EntityClasses[fullClassName] = scriptClass;
-				EMBER_CORE_INFO("Loaded Script Class: {}", fullClassName);
+					// 存储字段
+					ScriptFieldType scriptFieldType = Utils::MonoTypeToScriptFieldType(fieldType);
+					scriptClass->GetFields()[fieldName] = { scriptFieldType, fieldName, field };
+				}
 			}
 		}
 	}
@@ -388,5 +458,29 @@ namespace Ember
 	{
 		if (m_OnStartMethod)
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnStartMethod);
+	}
+
+	bool ScriptInstance::GetFieldValueInternal(const std::string& name, void* buffer)
+	{
+		auto fields = m_ScriptClass->GetFields();
+
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		mono_field_get_value(m_Instance, it->second.Field, buffer);
+		return true;
+	}
+
+	bool ScriptInstance::SetFieldValueInternal(const std::string& name, void* value)
+	{
+		auto fields = m_ScriptClass->GetFields();
+
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		mono_field_set_value(m_Instance, it->second.Field, value);
+		return true;
 	}
 }

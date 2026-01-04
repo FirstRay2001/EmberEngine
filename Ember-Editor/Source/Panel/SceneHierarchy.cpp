@@ -685,7 +685,7 @@ namespace Ember
 
 		// Script Component
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0.5f, 0.2f, 0.7f, 1.0f });
-		DrawSingleComponent<ScriptComponent>("Script", entity, [](auto& scriptComp)
+		DrawSingleComponent<ScriptComponent>("Script", entity, [&entity](auto& scriptComp)
 			{
 				bool isClassExists = ScriptEngine::EntityClassExists(scriptComp.Name);
 
@@ -697,6 +697,36 @@ namespace Ember
 
 				if (ImGui::InputText("Class Name", buffer, sizeof(buffer)))
 					scriptComp.Name = std::string(buffer);
+
+				// 显示字段
+				auto instance = ScriptEngine::GetScriptInstance(entity.GetUUID());
+				if (instance && isClassExists)
+				{
+					auto& fields = instance->GetScriptClass().GetFields();
+					for (auto& [name, field] : fields)
+					{
+						switch (field.Type)
+						{
+						case ScriptFieldType::Float:
+						{
+							float value = instance->GetFieldValue<float>(name);
+							if (DrawFloatControl(name, value, 0.1f))
+								instance->SetFieldValue<float>(name, value);
+							break;
+						}
+						case ScriptFieldType::Vector3:
+						{
+							glm::vec3 value = instance->GetFieldValue<glm::vec3>(name);
+							DrawVec3Control(name, value, 0.1f);
+							instance->SetFieldValue<glm::vec3>(name, value);
+							break;
+						}
+						default:
+							ImGui::Text("Unsupported field type for '%s'", name.c_str());
+							break;
+						}
+					}
+				}
 
 				if (!isClassExists)
 					ImGui::PopStyleColor();
