@@ -34,6 +34,8 @@ namespace Ember
 
 		// Class
 		Entity,
+
+		// Struct
 		Vector2,
 		Vector3,
 		Vector4

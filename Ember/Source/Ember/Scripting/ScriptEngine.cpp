@@ -88,6 +88,8 @@ namespace Ember
 		// Mono类型转换为脚本字段类型
 		ScriptFieldType MonoTypeToScriptFieldType(MonoType* type)
 		{
+			EMBER_CORE_TRACE("MonoTypeToScriptFieldType: {0}, type:{1}", mono_type_get_name(type), mono_type_get_type(type));
+
 			switch (mono_type_get_type(type))
 			{
 			// 基本类型
@@ -102,14 +104,22 @@ namespace Ember
 			{
 				MonoClass* klass = mono_type_get_class(type);
 				const char* className = mono_class_get_name(klass);
-				if (strcmp(className, "Vector2") == 0)
-					return ScriptFieldType::Vector2;
-				else if (strcmp(className, "Vector3") == 0)
-					return ScriptFieldType::Vector3;
-				else if (strcmp(className, "Vector4") == 0)
-					return ScriptFieldType::Vector4;
-				else if (strcmp(className, "Entity") == 0)
+				if (strcmp(className, "Entity") == 0)
 					return ScriptFieldType::Entity;
+				break;
+			}
+
+			// Struct
+			case MONO_TYPE_VALUETYPE:
+			{
+				MonoClass* klass = mono_type_get_class(type);
+				const char* structName = mono_class_get_name(klass);
+				if (strcmp(structName, "Vector2") == 0)
+					return ScriptFieldType::Vector2;
+				else if (strcmp(structName, "Vector3") == 0)
+					return ScriptFieldType::Vector3;
+				else if (strcmp(structName, "Vector4") == 0)
+					return ScriptFieldType::Vector4;
 				break;
 			}
 
