@@ -153,6 +153,13 @@ namespace Ember
 
 	void Scene::UpdateShadowMaps()
 	{
+		// 保存当前渲染状态
+		Renderer::SaveRenderState();
+
+
+
+		// 加载保存的渲染状态
+		Renderer::LoadRenderState();
 	}
 
 	void Scene::RenderRuntime()

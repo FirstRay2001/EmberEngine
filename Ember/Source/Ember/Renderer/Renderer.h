@@ -16,6 +16,7 @@
 namespace Ember
 {
 	class Skeleton;
+	class Framebuffer;
 
 	class Renderer
 	{
@@ -53,6 +54,10 @@ namespace Ember
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
+		// 渲染状态相关
+		static void SaveRenderState();
+		static void LoadRenderState();
+
 	private:
 		struct SceneData
 		{
@@ -61,12 +66,18 @@ namespace Ember
 			glm::mat4 ViewProjectionMatrix;
 			PointLight PointLights[4];
 			DirectionalLight DirectionalLight;
-			Ref<Skeleton> BindingSkeleton;
+			Ref<Skeleton> BindingSkeleton;		// per model
+		};
+
+		struct RenderState
+		{
+			const Framebuffer* BoundFramebuffer = nullptr;
 		};
 
 		static int s_PointLightCount;
 		static SceneData* s_SceneData;
 		static Ref<VertexArray> s_DefaultCube;
+		static RenderState* s_SavedRenderState;
 	};
 }
 

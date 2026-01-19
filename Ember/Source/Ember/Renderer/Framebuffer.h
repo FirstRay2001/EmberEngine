@@ -63,6 +63,11 @@ namespace Ember
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
+
+		static const Framebuffer* GetCurrentFramebuffer() { return s_CurrentFramebuffer; }
+
+	protected:
+		static const Framebuffer* s_CurrentFramebuffer;
 	};
 }
 

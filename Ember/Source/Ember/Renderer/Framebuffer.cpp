@@ -9,6 +9,8 @@
 
 namespace Ember
 {
+	const Framebuffer* Framebuffer::s_CurrentFramebuffer = nullptr;
+
 	Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 	{
 		// 根据渲染API选择具体的帧缓冲实现

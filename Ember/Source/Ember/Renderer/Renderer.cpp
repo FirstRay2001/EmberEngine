@@ -6,12 +6,14 @@
 #include "Renderer.h"
 #include "Ember/ResourceManager/ShaderLibrary.h"
 #include "Ember/Renderer/Animation/Skeleton.h"
+#include "Ember/Renderer/Framebuffer.h"
 
 namespace Ember
 {
 	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
 	int Renderer::s_PointLightCount = 0;
 	Ref<VertexArray> Renderer::s_DefaultCube = nullptr;
+	Renderer::RenderState* Renderer::s_SavedRenderState = new Renderer::RenderState;
 
 	void Renderer::Init()
 	{
@@ -42,10 +44,14 @@ namespace Ember
 	{
 		s_PointLightCount = 0;
 		
+		/*
 		// TODO: 高效内存管理
 		// 目前每次结束场景都重新分配内存，后续可以改为对象池等方式优化
 		delete s_SceneData;
 		s_SceneData = new SceneData();
+		*/
+
+
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
@@ -192,5 +198,21 @@ namespace Ember
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{
 		RenderCommand::SetViewPort(width, height);
+	}
+
+	void Renderer::SaveRenderState()
+	{
+		// 记录当前绑定的帧缓冲
+		s_SavedRenderState->BoundFramebuffer = Framebuffer::GetCurrentFramebuffer();
+	}
+
+	void Renderer::LoadRenderState()
+	{
+		// 恢复之前保存的帧缓冲绑定状态
+		if (s_SavedRenderState->BoundFramebuffer)
+		{
+			s_SavedRenderState->BoundFramebuffer->Bind();
+			s_SavedRenderState->BoundFramebuffer = nullptr;
+		}
 	}
 }
