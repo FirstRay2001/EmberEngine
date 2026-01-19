@@ -152,6 +152,8 @@ namespace Ember
 		static void LoadAssembly(const std::filesystem::path& filepath);
 		static void LoadAppAssembly(const std::filesystem::path& filepath);
 
+		static void ReloadAssembly();
+
 	private:
 		static void InitMono();
 		static void ShutdownMono();

@@ -11,8 +11,7 @@ namespace Client
         private Vector2 m_PreMousePos;
         private float m_MouseSensity = 0.1f;
 
-        public float MoveSpeed;
-        public Vector3 Vec3Test;
+        public float MoveSpeed = 1.0f;
 
         internal Player()
         {

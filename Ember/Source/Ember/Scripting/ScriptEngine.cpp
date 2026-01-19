@@ -141,6 +141,10 @@ namespace Ember
 		MonoAssembly* AppAssembly = nullptr;
 		MonoImage* AppAssemblyImage = nullptr;
 
+		// 程序集地址
+		std::filesystem::path CoreAssemblyPath;
+		std::filesystem::path AppAssemblyPath;
+
 		ScriptClass EntityClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
@@ -288,8 +292,10 @@ namespace Ember
 		MonoDomain* appDomain = mono_domain_create_appdomain((char*)"EmberAppDomain", nullptr);
 		EMBER_CORE_ASSERT(appDomain, "Failed to create Mono App Domain");
 		s_Data->AppDomain = appDomain;
+		mono_domain_set(s_Data->AppDomain, true);
 
 		// 加载核心程序集
+		s_Data->CoreAssemblyPath = filepath;
 		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath.string());
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
 		// Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
@@ -298,9 +304,33 @@ namespace Ember
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		// 加载应用程序集
+		s_Data->AppAssemblyPath = filepath;
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string());
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 		// Utils::PrintAssemblyTypes(s_Data->AppAssembly);
+	}
+
+	void ScriptEngine::ReloadAssembly()
+	{
+		// 切换回根域，只有在根域中才能卸载应用域
+		mono_domain_set(s_Data->RootDomain, false);
+
+		// 卸载应用域
+		if (s_Data->AppDomain)
+		{
+			mono_domain_unload(s_Data->AppDomain);
+			s_Data->AppDomain = nullptr;
+		}
+
+		// 重新加载程序集
+		LoadAssembly(s_Data->CoreAssemblyPath);
+		LoadAppAssembly(s_Data->AppAssemblyPath);
+
+		// 重新加载类
+		LoadAssemblyClasses();
+
+		// 重新注册组件
+		ScriptGlue::RegisterComponents();
 	}
 
 	void ScriptEngine::InitMono()
@@ -316,17 +346,21 @@ namespace Ember
 
 	void ScriptEngine::ShutdownMono()
 	{
+		// 切换回根域，只有在根域中才能卸载应用域
+		if (s_Data->RootDomain)
+			mono_domain_set(s_Data->RootDomain, false);
+
 		// 卸载应用域
 		if (s_Data->AppDomain)
 		{
-			// mono_domain_unload(s_Data->AppDomain);
+			mono_domain_unload(s_Data->AppDomain);
 			s_Data->AppDomain = nullptr;
 		}
 
 		// 关闭Mono JIT
 		if (s_Data->RootDomain)
 		{
-			// mono_jit_cleanup(s_Data->RootDomain);
+			mono_jit_cleanup(s_Data->RootDomain);
 			s_Data->RootDomain = nullptr;
 		}
 	}

@@ -143,6 +143,8 @@ namespace Ember
 
 	void ScriptGlue::RegisterComponents()
 	{
+		s_HasComponentFuncs.clear();
+
 		RegisterComponent<TransformComponent>();
 		RegisterComponent<CameraComponent>();
 		// RegisterComponent<NativeScriptComponent>();

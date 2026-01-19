@@ -14,6 +14,7 @@
 #include "Script/CameraController.h"
 #include "Ember/Utils/PlatformUtils.h"
 #include "Ember/Math/Math.h"
+#include "Ember/Scripting/ScriptEngine.h"
 
 namespace Ember
 {
@@ -309,6 +310,23 @@ namespace Ember
 
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload Assembly"))
+				{
+					// 强制停止Play
+					if (m_SceneState == SceneState::Play)
+						OnSceneStop();
+
+					// 加载程序集
+					ScriptEngine::ReloadAssembly();
+
+					m_ToastPanel.AddToast_Info("C# Assembly Reloaded.");
+				}
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 	}

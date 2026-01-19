@@ -265,6 +265,19 @@ namespace Ember
 	struct DirectionalLightComponent
 	{
 		DirectionalLight m_DirectionalLight;
+
+		// 是否生成阴影
+		bool m_CastShadows = true;
+
+		// 阴影距离
+		float m_ShadowDistance = 50.0f;
+
+		// 阴影偏移
+		float m_ShadowBias = 0.005f;
+
+		// 阴影贴图大小
+		uint32_t m_ShadowMapSize = 2048;
+
 		DirectionalLightComponent() = default;
 		DirectionalLightComponent(const DirectionalLightComponent&) = default;
 		DirectionalLightComponent(const Ember::DirectionalLight& directionalLight) :
