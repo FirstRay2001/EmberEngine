@@ -53,15 +53,7 @@ namespace Ember
 	void Renderer::EndScene()
 	{
 		s_PointLightCount = 0;
-		
-		/*
-		// TODO: 高效内存管理
-		// 目前每次结束场景都重新分配内存，后续可以改为对象池等方式优化
-		delete s_SceneData;
-		s_SceneData = new SceneData();
-		*/
-
-
+		s_SceneData->bUseDirectionalLightShadow = false;
 	}
 
 	void Renderer::BeginShadowPass()
@@ -79,13 +71,18 @@ namespace Ember
 		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 50.0f);
 		glm::mat4 lightView = glm::lookAt(-s_SceneData->DirectionalLight.Direction * 20.0f,
 			glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		s_SceneData->DirLightSpaceMatrix = lightProjection * lightView;
 
 		// 用于阴影贴图的ViewProjection矩阵
-		s_SceneData->ViewProjectionMatrix = lightProjection * lightView;
+		s_SceneData->ViewProjectionMatrix = s_SceneData->DirLightSpaceMatrix;
 	}
 
-	void Renderer::EndShadowPass()
+	void Renderer::EndShadowPass(uint32_t shadowSlot)
 	{
+		// 绑定到纹理单元，以供后续使用
+		s_SceneData->ShadowMapFramebuffer->BindDepthToTextureUnit(shadowSlot);
+		s_SceneData->DirLightShadowMapTextureUnit = shadowSlot;
+
 		// 加载保存的渲染状态
 		Renderer::LoadRenderState();
 	}
@@ -117,6 +114,10 @@ namespace Ember
 		shader->SetUniformFloat3("u_DirectionalLight.Ambient", s_SceneData->DirectionalLight.Ambient);
 		shader->SetUniformFloat3("u_DirectionalLight.Diffuse", s_SceneData->DirectionalLight.Diffuse);
 		shader->SetUniformFloat3("u_DirectionalLight.Specular", s_SceneData->DirectionalLight.Specular);
+
+		// 阴影相关
+		shader->SetUniformMat4("u_LightSpaceMatrix", s_SceneData->DirLightSpaceMatrix);
+		shader->SetUniformInt("u_DirShadowMap", s_SceneData->DirLightShadowMapTextureUnit);
 
 		// 设置点光源
 		shader->Bind();
@@ -224,6 +225,7 @@ namespace Ember
 	void Renderer::AddDirectionalLight(const DirectionalLight& dirLight)
 	{
 		s_SceneData->DirectionalLight = dirLight;
+		s_SceneData->bUseDirectionalLightShadow = true;
 	}
 
 	glm::mat4 Renderer::GetDirLightSpaceMatrix()

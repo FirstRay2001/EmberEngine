@@ -28,7 +28,7 @@ namespace Ember
 		static void EndScene();
 
 		static void BeginShadowPass();
-		static void EndShadowPass();
+		static void EndShadowPass(uint32_t shadowSlot = 6);
 
 		// 提交Shader VAO
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0));
@@ -70,11 +70,14 @@ namespace Ember
 			glm::vec3 CameraPosition;
 			glm::vec3 CameraDirection;
 			glm::mat4 ViewProjectionMatrix;
+			glm::mat4 DirLightSpaceMatrix;
 			PointLight PointLights[4];
 			DirectionalLight DirectionalLight;
 			Ref<Skeleton> BindingSkeleton;		// per model
 
 			Ref<Framebuffer> ShadowMapFramebuffer;
+			bool bUseDirectionalLightShadow = false;
+			uint32_t DirLightShadowMapTextureUnit = 0;
 		};
 
 		struct RenderState

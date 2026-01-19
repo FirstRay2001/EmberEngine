@@ -16,6 +16,8 @@
 
 namespace Ember
 {
+	constexpr uint32_t ShadowMapTextureUnit = 6;
+
 	Scene::Scene()
 	{
 	}
@@ -193,7 +195,7 @@ namespace Ember
 			}
 		}
 
-		Renderer::EndShadowPass();
+		Renderer::EndShadowPass(ShadowMapTextureUnit);
 	}
 
 	void Scene::RenderRuntime()

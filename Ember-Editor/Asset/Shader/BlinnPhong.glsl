@@ -11,6 +11,8 @@ layout(location = 4) in vec4 a_Weights;
 uniform mat4 u_ViewProjection;
 uniform mat4 u_Transform;
 
+uniform mat4 u_LightSpaceMatrix; // 平行光源空间矩阵
+
 const int MAX_BONES = 200;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 u_BonesMatrices[MAX_BONES];
@@ -18,6 +20,7 @@ uniform mat4 u_BonesMatrices[MAX_BONES];
 out vec3 v_Normal;
 out vec2 v_TexCoord;
 out vec3 v_FragPos;
+out vec4 v_FragPosLightSpace;
 
 void main()
 {
@@ -63,6 +66,7 @@ void main()
     v_Normal = worldNormal;
     v_TexCoord = a_TexCoord;
     v_FragPos = vec3(worldPosition);
+    v_FragPosLightSpace = u_LightSpaceMatrix * vec4(v_FragPos, 1);
 }
 
 
@@ -123,15 +127,44 @@ uniform int u_PointLightCount;
 uniform PointLight u_PointLights[4];
 uniform DirectionalLight u_DirectionalLight;
 
+uniform sampler2D u_DirShadowMap;
+
 uniform int u_EntityID;
 
 in vec3 v_Normal;
 in vec2 v_TexCoord;
 in vec3 v_FragPos;
+in vec4 v_FragPosLightSpace;
 
 layout(location = 0) out vec4 FragColor;
 layout(location = 1) out int EntityID;
 
+float DirShadowCalculation(vec4 fragPosLightSpace)
+{
+    // 透视除法
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    
+    // NDC
+    projCoords = projCoords * 0.5 + 0.5;
+
+    float currentDepth = projCoords.z;
+
+    // PCF
+    float shadow = 0.0;
+    float bias = 0.005;
+    vec2 texelSize = 1.0 / vec2(1024, 1024);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(u_DirShadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    
+    return shadow;
+}
 
 vec3 CalcDirectionalLighting(vec3 albedo, vec3 specularColor, float shininess, vec3 normal)
 {
@@ -144,7 +177,10 @@ vec3 CalcDirectionalLighting(vec3 albedo, vec3 specularColor, float shininess, v
 	vec3 diffuse = albedo * clamp(dot(N, L), 0, 1) * u_DirectionalLight.Diffuse;
 	vec3 specular = specularColor * pow(clamp(dot(N, H), 0, 1), shininess) * u_DirectionalLight.Specular;
 
-    vec3 result = ambient + diffuse + specular;
+    // 阴影
+    float shadow = DirShadowCalculation(v_FragPosLightSpace);
+
+    vec3 result = ambient + (diffuse + specular) * (1 - shadow);
 
 	return result;
 }
