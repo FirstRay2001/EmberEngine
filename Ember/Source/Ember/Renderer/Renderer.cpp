@@ -24,6 +24,16 @@ namespace Ember
 
 		// 加载Shader
 		ShaderLibrary::Get().LoadAsync("Asset/shader/Outline.glsl");
+		ShaderLibrary::Get().LoadAsync("Asset/shader/SimpleShadowMap.glsl");
+
+		// 初始化ShadowMap Framebuffer
+		FramebufferSpecification shadowMapSpec;
+		shadowMapSpec.Width = 2048;
+		shadowMapSpec.Height = 2048;
+		shadowMapSpec.Attachments = {
+			FramebufferTextureSpecification(FramebufferTextureFormat::Depth)
+		};
+		s_SceneData->ShadowMapFramebuffer = Framebuffer::Create(shadowMapSpec);
 	}
 
 	void Renderer::BeginScene(Camera& camera)
@@ -52,6 +62,32 @@ namespace Ember
 		*/
 
 
+	}
+
+	void Renderer::BeginShadowPass()
+	{
+		// 保存当前渲染状态
+		SaveRenderState();
+
+		// 绑定阴影贴图帧缓冲
+		s_SceneData->ShadowMapFramebuffer->Bind();
+		RenderCommand::SetViewPort(s_SceneData->ShadowMapFramebuffer->GetSpecification().Width,
+			s_SceneData->ShadowMapFramebuffer->GetSpecification().Height);
+		RenderCommand::Clear();
+
+		// 计算光源矩阵
+		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 50.0f);
+		glm::mat4 lightView = glm::lookAt(-s_SceneData->DirectionalLight.Direction * 20.0f,
+			glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		// 用于阴影贴图的ViewProjection矩阵
+		s_SceneData->ViewProjectionMatrix = lightProjection * lightView;
+	}
+
+	void Renderer::EndShadowPass()
+	{
+		// 加载保存的渲染状态
+		Renderer::LoadRenderState();
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
@@ -188,6 +224,16 @@ namespace Ember
 	void Renderer::AddDirectionalLight(const DirectionalLight& dirLight)
 	{
 		s_SceneData->DirectionalLight = dirLight;
+	}
+
+	glm::mat4 Renderer::GetDirLightSpaceMatrix()
+	{
+		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f);
+		glm::mat4 lightView = glm::lookAt(-s_SceneData->DirectionalLight.Direction * 10.0f,
+			glm::vec3(0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		return lightProjection * lightView;
 	}
 
 	void Renderer::SetupSkeleton(Ref<Skeleton> skeleton)

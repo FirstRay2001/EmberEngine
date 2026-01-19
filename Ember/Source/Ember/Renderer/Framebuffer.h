@@ -59,9 +59,14 @@ namespace Ember
 		virtual void Unbind() const = 0;
 		virtual void Resize(uint32_t width, uint32_t heihgt) = 0;
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
+		virtual uint32_t GetDepthAttachmentRendererID() const = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) const = 0;
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
+
+		// 绑定深度附件到纹理单元
+		virtual void BindDepthToTextureUnit(uint32_t slot = 0) const = 0;
+
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 
 		static const Framebuffer* GetCurrentFramebuffer() { return s_CurrentFramebuffer; }

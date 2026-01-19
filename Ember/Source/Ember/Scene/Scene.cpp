@@ -12,6 +12,7 @@
 #include "Ember/Renderer/Model.h"
 #include "Ember/Renderer/Animation/Skeleton.h"
 #include "Ember/Renderer/Debug/DebugRenderer.h"
+#include "Ember/ResourceManager/ShaderLibrary.h"
 
 namespace Ember
 {
@@ -153,13 +154,46 @@ namespace Ember
 
 	void Scene::UpdateShadowMaps()
 	{
-		// 保存当前渲染状态
-		Renderer::SaveRenderState();
+		Renderer::BeginShadowPass();
 
+		// 获取ShadowMap Shader
+		auto shadowShader = ShaderLibrary::Get().GetShaderSync("SimpleShadowMap");
 
+		// 遍历所有带有MeshComponent和TransformComponent的实体并渲染它们到阴影贴图
+		auto meshView = m_Registry.view<TransformComponent, MeshComponent>();
+		for (auto entity : meshView)
+		{
+			auto& transform = meshView.get<TransformComponent>(entity).GetTransform();
+			auto& meshComp = meshView.get<MeshComponent>(entity);
+			auto& mesh = meshComp.GetMesh();
+			auto& vertexArray = mesh.GetVertexArray();
+			Renderer::Submit(shadowShader, vertexArray, transform);
+		}
 
-		// 加载保存的渲染状态
-		Renderer::LoadRenderState();
+		// 遍历所有带有ModelComponent和TransformComponent的实体并渲染它们到阴影贴图
+		auto modelView = m_Registry.view<TransformComponent, ModelComponent>();
+		for (auto entity : modelView)
+		{
+			auto& transform = modelView.get<TransformComponent>(entity).GetTransform();
+			auto& modelComp = modelView.get<ModelComponent>(entity);
+			auto& model = modelComp.m_Model;
+			if (!model)
+				continue;
+			if (model->UseSkeleton())
+			{
+				auto skeleton = model->GetSkeleton();
+				skeleton->SetUseInitialPose(true);
+				skeleton->Update();
+				Renderer::SetupSkeleton(skeleton);
+			}
+			for (const auto& mesh : model->GetMeshes())
+			{
+				auto& vertexArray = mesh->GetVertexArray();
+				Renderer::Submit(shadowShader, vertexArray, transform);
+			}
+		}
+
+		Renderer::EndShadowPass();
 	}
 
 	void Scene::RenderRuntime()

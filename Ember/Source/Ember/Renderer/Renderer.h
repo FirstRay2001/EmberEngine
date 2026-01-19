@@ -27,6 +27,9 @@ namespace Ember
 		static void BeginScene(EditorCamera& camera);
 		static void EndScene();
 
+		static void BeginShadowPass();
+		static void EndShadowPass();
+
 		// 提交Shader VAO
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0));
 
@@ -46,6 +49,9 @@ namespace Ember
 
 		static void AddPointLight(const PointLight& pointLight);
 		static void AddDirectionalLight(const DirectionalLight& dirLight);
+
+		// 获取平行光源空间变换
+		static glm::mat4 GetDirLightSpaceMatrix();
 
 		// 绑定一个骨骼
 		static void SetupSkeleton(Ref<Skeleton> skeleton);
@@ -67,6 +73,8 @@ namespace Ember
 			PointLight PointLights[4];
 			DirectionalLight DirectionalLight;
 			Ref<Skeleton> BindingSkeleton;		// per model
+
+			Ref<Framebuffer> ShadowMapFramebuffer;
 		};
 
 		struct RenderState

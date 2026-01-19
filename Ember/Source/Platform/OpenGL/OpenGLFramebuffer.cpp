@@ -96,6 +96,15 @@ namespace Ember
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
+	void OpenGlFrameBuffer::BindDepthToTextureUnit(uint32_t slot) const
+	{
+		glBindTextureUnit(slot, m_DepthAttachment);
+
+		// 另一种写法
+		// glActiveTexture(GL_TEXTURE0 + slot);
+		// Utils::BindTexture(m_Specification.Samples > 1, m_DepthAttachment);
+	}
+
 	void OpenGlFrameBuffer::Invalidate()
 	{
 		// 删除旧的帧缓冲和附件
